@@ -1,11 +1,12 @@
-<template>
-    
+<template>   
     <div v-show="showSearch" class="flex items-center w-80 h-11 relative ml-5">
         <div class="search-icon"><Magnify :fillColor=" isFocused ? '#FFFFFF' : '#A0A0A0' " /></div>
-        <input v-model="searchString" :placeholder="placeholder" type="text" @focus="isFocused=true" @blur="isFocused=false"
-        maxlength="50">        
-        <div v-show="searchString.length" class="close-icon" @click="searchClose()"><Close fillColor="#FFFFFF"/></div> 
-    </div>
+        <input v-model="store.input" :placeholder="placeholder" type="text" @focus="isFocused=true" @blur="isFocused=false"
+        maxlength="50" @keyup.enter="store.enter">  
+        <div v-show="store.input.length" class="close-icon" @click="searchClose()"><Close fillColor="#FFFFFF"/></div> 
+    </div> 
+    
+       
 </template>
 
 <script setup>
@@ -13,13 +14,18 @@
     import Close from 'vue-material-design-icons/Close.vue'
     import{ref, computed} from 'vue'
     import { useRoute } from 'vue-router';
-    const searchString = ref('')
-    const searchClose = () =>{searchString.value=''}
+    import { useSearchStore } from '../stores/search.js'
     const route = useRoute() 
     const path = computed (() => route.fullPath ) 
-    const isFocused = ref(false)
     const showSearch = computed (() => path.value == '/search' || path.value == '/library' ?  true : false ) 
-    const placeholder = computed (() => path.value === '/search' ? 'Search from spotify to add':'Search in your library' )
+    const placeholder = computed (() => path.value === '/search' ? 'Search Album from spotify':'Search Album in your library' ) 
+    const isFocused = ref(false)
+    const store = useSearchStore()
+    const searchClose = () =>{ store.input='' }
+    
+  
+
+
 </script>
 
 <style  scoped>

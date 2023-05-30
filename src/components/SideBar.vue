@@ -34,7 +34,7 @@
 
 <style>
     .sidebar{
-        @apply h-[100%] p-4 w-[240px] fixed z-50 bg-black text-white font-sans;
+        @apply h-[100%] p-4 w-[175px] fixed z-50 bg-black text-white font-sans;
     }
 
     .logo-container{

@@ -18,7 +18,7 @@
 <style scoped>
 
 .view-container{
-  @apply fixed right-0 top-0 w-[calc(100%-240px)] overflow-auto h-full bg-gradient-to-b from-[#1C1C1C] to-black;
+  @apply fixed right-0 top-0 w-[calc(100%-175px)] overflow-auto h-full bg-gradient-to-b from-[#1C1C1C] to-black;
 }
 
 .view{

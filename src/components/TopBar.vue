@@ -38,12 +38,15 @@
   import ChevronLeft from 'vue-material-design-icons/ChevronLeft.vue';
   import SearchBox from '../components/SearchBox.vue'
   import { ref, computed} from 'vue'
+  import { useRouter } from 'vue-router';
+  const router = useRouter()
+  
   
 
   const openMenu = ref(false)
 
-  const goBack = () =>{  }
-  const goFoward = () =>{  }
+  const goBack = () =>{ router.back() }
+  const goFoward = () =>{ router.forward()}
   const goProfile = () =>{  }
   const logOut = () => {  }
 </script>
@@ -52,7 +55,7 @@
 
 
 .topbar{
-    @apply w-[calc(100%-240px)] h-[60px] fixed right-0 z-20 bg-[#101010] bg-opacity-80 flex items-center justify-between;     
+    @apply w-[calc(100%-175px)] h-[60px] fixed right-0 z-20 bg-[#101010] bg-opacity-80 flex items-center justify-between;     
 }
 
 .nav-buttons{
