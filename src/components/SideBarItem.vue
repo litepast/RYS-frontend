@@ -35,21 +35,6 @@
         }
     }
 
-
-
-    // watchEffect(()=>{
-    //     if(isActive){           
-    //         fillColor.value = "#FFFFFF"
-    //     }else{
-    //         fillColor.value = "#000000"
-    //     }
-    // }    
-    // )
-    
-    
-
-
-
 </script>
 
 <style scoped>
@@ -59,6 +44,6 @@
 }
 
 .item span{
-    @apply text-left pl-2 font-sans text-[16px] font-semibold 
+    @apply text-left pl-2 text-[16px]; 
 }
 </style>

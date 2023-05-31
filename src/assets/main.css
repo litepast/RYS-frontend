@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: "Gotham";
+    src: url("/fonts/GothamMedium.ttf");
+  }
+
+  @layer base {
+    html {
+      @apply font-gotham;
+    }
+  }

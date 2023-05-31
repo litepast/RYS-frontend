@@ -55,7 +55,8 @@
 
 
 .topbar{
-    @apply w-[calc(100%-195px)] h-[60px] fixed left-[175px] z-20 bg-[#101010] bg-opacity-80 flex items-center justify-between;     
+    @apply w-[calc(100%-195px)] h-[60px] fixed left-[175px] z-20 bg-[#101010] bg-opacity-80 flex items-center justify-between;
+         
 }
 
 .nav-buttons{

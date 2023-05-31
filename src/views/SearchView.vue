@@ -1,85 +1,59 @@
 <template>
-    <div class="m-8">
-     <button class="rounded-full pl-3 pr-3 pt-2 pb-2 mr-3 " @click="typeSearch=false"
-     :class=" typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
-     >Album Name</button>
-     <button class="rounded-full pl-3 pr-3 pt-2 pb-2" @click="typeSearch=true"
-     :class=" !typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
-     >Artist Name</button>
-     </div>
-   
+    <div class="filter-container">
+        <button @click="storeSearchView.typeSearch=false" :class="typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
+        >Album Name</button>
+        <button @click="storeSearchView.typeSearch=true" :class="!typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
+        >Artist Name</button>
+        <div v-if="albums.length" class="text-white">Showing {{ albums.length }} results for {{ result }}</div>
+        <div v-else class="text-white"> No results for {{ result }}</div>       
+     </div>   
     <div class="results-container">
-        <div class="card" key="album.album_id" v-for="album in albums" > 
-            <div class="relative">
-                <div class="cursor-pointer absolute rounded-full w-[25%] h-[25%]
-                 z-10 bg-red-600 right-[25px] bottom-[20px] text-center align-middle text-5xl">+</div>
-                <img  :src="album.cover_url" />
-            </div> 
-            <div class="name" :title="album.name">{{album.name}} </div>
-            <div class="artist">{{album.release_date.substring(0,4)}} - {{album.artist}}</div>            
-        </div>
+        <CardAlbum v-for="album in albums" :id="album.album_id" :cover="album.cover_url" :name="album.name" :year="album.release_date.substring(0,4)" :artist="album.artist"/>
     </div>
  </template>
  
-
-<style scope>
-
-/* hover boder boton plus width */
-
-
-    .results-container{
-        @apply bg-transparent;
-        @apply flex flex-wrap;
-        @apply ml-8 mr-8 mb-8;
-    }
-
-    .card{
-    @apply m-2 rounded-lg bg-slate-900 hover:bg-slate-800 border-none;
-    @apply p-3;
-    width: 256px;
-    /*width: 15%;*/    
-       
-    }
-
-    .card img{
-        width: 100%;
-        height: width;
-    }
-
-    .card .name{
-        @apply truncate font-semibold mt-1 text-white;
-    }
-
-    .card .artist{
-        @apply truncate font-medium mt-1 text-gray-500;
-    }
-</style>
-
  
 <script setup>
-    import{ref, computed, watch} from 'vue'
+    import{ computed, watch, ref} from 'vue'
     import axios from 'axios'
     import { useSearchStore } from '../stores/search.js'
-    const store = useSearchStore()   
-    const enter = computed(() => store.enterCount)
-    const albums = ref([])
-    const typeSearch = ref(false)   
-    
-     
+    import { useSearchViewStore } from '../stores/search-view.js'
 
-    watch(enter, () =>{
-        var url = 'http://127.0.0.1:5000/api/v1/search-spotify?p1='+String(Number(typeSearch.value))+'&p2='+store.input        
+    import CardAlbum from '../components/CardAlbum.vue'
+    const storeSearch = useSearchStore()  
+    const storeSearchView =  useSearchViewStore()
+    const enter = computed(() => storeSearch.enterCount)    
+    const albums = computed(() => storeSearchView.albums)
+    const typeSearch = computed(() => storeSearchView.typeSearch) //ref(false)
+    const result = computed(() => storeSearchView.input)
+
+    watch([enter,typeSearch], () =>{
+        if (!storeSearch.input)
+            {return}
+            
+        var url = 'http://192.168.100.14:5000/api/v1/search-spotify?p1='+String(Number(typeSearch.value))+'&p2='+storeSearch.input        
         axios.get(url)
             .then((response) => {
-                albums.value = response.data.albums               
+                storeSearchView.albums = response.data.albums 
+                storeSearchView.input = storeSearch.input
+                console.log(response.data)              
             })
             .catch((error) => {
                 console.error(error);
             })
-    })
-
-
-    
-      
- 
+    })    
 </script>
+
+<style scope>
+    .filter-container{
+        @apply m-8 flex items-center
+    }
+
+    .filter-container button{
+        @apply rounded-full pl-3 pr-3 pt-2 pb-2 mr-3;
+    }
+
+    .results-container{
+        @apply bg-transparent flex flex-wrap ml-8 mr-8 mb-8;
+    }
+</style>
