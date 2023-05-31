@@ -17,17 +17,29 @@
 
 <style scoped>
 
-.view-container{
-  @apply fixed right-0 top-0 w-[calc(100%-175px)] overflow-auto h-full bg-gradient-to-b from-[#1C1C1C] to-black;
-}
+  ::-webkit-scrollbar {
+    width: 20px;    
+  }
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #232121;
+  }
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #9c9999;
+  }
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ede6e6;
+  }
 
-.view{
-  @apply mt-[70px] mb-[100px];
-}
+  .view-container{
+    @apply fixed right-0 top-0 w-[calc(100%-175px)] overflow-auto h-full bg-gradient-to-b from-[#1F1F1F] to-black;
+  }
 
-
-
-
+  .view{
+    @apply mt-[70px] mb-[100px];
+  }
 </style>
 
 
