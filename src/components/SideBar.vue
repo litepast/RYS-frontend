@@ -34,7 +34,7 @@
 
 <style>
     .sidebar{
-        @apply h-[100%] p-4 w-[175px] fixed z-50 bg-black text-white;
+        @apply h-[100%] p-4 w-[175px] fixed bg-black text-white;
     }
 
     .logo-container{
@@ -42,7 +42,7 @@
     }
 
     .logo-label{
-        @apply text-xl font-bold p-1 
+        @apply text-xl font-medium p-1 
     }
 </style>
 

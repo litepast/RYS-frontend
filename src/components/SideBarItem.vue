@@ -44,6 +44,6 @@
 }
 
 .item span{
-    @apply text-left pl-2 text-[16px]; 
+    @apply text-left pl-2 text-lg; 
 }
 </style>
