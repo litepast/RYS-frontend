@@ -9,7 +9,7 @@
         </div>
         <div class="options-container" v-show="showOptions" >
             <div class="actions">
-                <div class="actions-all" :class="optionsSelected.length == 4 ? 'text-sm' : 'text-xs' " @click="selectAllTypes()">[all]</div>
+                <div class="actions-all" :class="optionsSelected.length == options.length ? 'text-sm' : 'text-xs' " @click="selectAllTypes()">[all]</div>
                 <div class="action-close" @click="showOptions=!showOptions"> [close]</div>
             </div>
             <button class="option" v-for="type in options" @click="selectType(type.id)"
@@ -31,12 +31,14 @@
     const filter = ref(null)
     const options= ref([
         {id: 1, name: 'Album', selected: true, hover: false},
-        {id: 2, name: 'Single', selected: true, hover: false},
-        {id: 3, name: 'Compilation', selected: true, hover: false},
-        {id: 4, name: 'EP', selected: true, hover:false}
+        {id: 2, name: 'Single', selected: false, hover: false},
+        {id: 3, name: 'Compilation', selected: false, hover: false},
+        {id: 4, name: 'EP', selected: false, hover:false}
     ])
     const optionsSelected = computed(()=> options.value.filter(type => type.selected ).map(type => type.id ))
     onClickOutside(filter, () => (showOptions.value=false))
+    const lastTypeSelected = ref(0)
+
 
 
     function isHover(id,v){
@@ -55,15 +57,24 @@
         }
     }
 
-    function selectType(id){   
+    function selectType(id){  
+        lastTypeSelected.value = id-1 
         if (optionsSelected.value.length == 1 && optionsSelected.value[0] == id)
             return;        
         options.value[id-1].selected = !options.value[id-1].selected       
     }
 
     function selectAllTypes() {
-        if (optionsSelected.value.length == 4)
+
+        if (optionsSelected.value.length == options.value.length){
+            for (let i = 0; i < options.value.length; i++) {
+                options.value[i].selected = false;
+            }     
+            options.value[lastTypeSelected.value].selected = true;
             return;
+        }
+           
+
         for (let i = 0; i < options.value.length; i++) {
             options.value[i].selected = true;        
         }        
@@ -84,7 +95,7 @@
         @apply bg-gray-900 rounded-full mr-1 cursor-pointer;
     }
     .options-container{
-        @apply absolute top-[32px] flex flex-wrap w-[110px] px-1 h-auto rounded-xl py-1;
+        @apply absolute top-[32px] flex flex-wrap w-[110px] px-1 h-auto rounded-xl py-1 z-[1];
         @apply bg-black; 
     }
     .actions{

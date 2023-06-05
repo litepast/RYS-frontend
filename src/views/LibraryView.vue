@@ -2,6 +2,7 @@
     
     <div class="filters-container">
         <FilterType/>
+        <FilterYear/>
 
     </div>
 
@@ -17,6 +18,7 @@
  
  <script setup>
     import FilterType from '../components/FilterType.vue'
+    import FilterYear from '../components/FilterYear.vue'
   
  
     
@@ -31,7 +33,7 @@
 <style scoped>
 
 .filters-container{
-    @apply m-5
+    @apply flex flex-wrap m-5
 }
 
 
