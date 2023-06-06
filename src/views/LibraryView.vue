@@ -3,6 +3,7 @@
     <div class="filters-container">
         <FilterType/>
         <FilterYear/>
+        <FilterRating/>
 
     </div>
 
@@ -19,6 +20,8 @@
  <script setup>
     import FilterType from '../components/FilterType.vue'
     import FilterYear from '../components/FilterYear.vue'
+    import FilterRating from '../components/FilterRating.vue'
+
   
  
     
@@ -27,6 +30,8 @@
     // const end = new Date().getFullYear()
     // const years = [...Array(end - start + 1).keys()].map(x => x + start);
     // const decades = years.filter( decade => decade % 10 == 0 )
+    //generos crear json desde python en carpeta data
+    //stilos crear json desde python en carpeta data /como son muchos ver lo del box de filtro a lo ultimo si conviene
 
  </script>
 

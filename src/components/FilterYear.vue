@@ -8,16 +8,16 @@
             <ChevronUp v-else fillColor="#FFFFFF" :size="25" />
         </div>
         <div class="options-container" v-show="showOptions" >
-            <div class="actions">
-                <div class="actions-all" :class="optionsSelected.length == options.length ? 'text-sm' : 'text-xs' " @click="selectAllTypes()">[all]</div>
-                <div class="action-close" @click="showOptions=!showOptions"> [close]</div>
-            </div>
+            <button class="option" @click="selectAll()"
+            @mouseenter="all.hover=true" @mouseleave="all.hover = false"
+            :class="classSelectedAll()">
+                All years
+            </button>
             <button class="option" v-for="type in options" @click="selectType(type.id)"
             @mouseenter="isHover(type.id,true)" @mouseleave="isHover(type.id,false)"
             :class="classSelected(type.id)">
                 {{type.name}}
-            </button>
-            
+            </button>            
         </div>
     </div>
 </template>
@@ -30,11 +30,16 @@
     const filterLabel = ref("Years")
     const showOptions = ref(false)   
     const filter = ref(null)
-    const lastYearSelected = ref(0)
     const start = 1940;
     const end = new Date().getFullYear()
     const limit = end-start
+    const all = ref({
+        selected: true,
+        hover: false
+    })
     const options= ref([])
+    const optionsSelected = computed(()=> options.value.filter(type => type.selected ).map(type => type.name ))
+    onClickOutside(filter, () => (showOptions.value=false))
     
 
     function initOptionsYears(){       
@@ -45,13 +50,8 @@
                 selected: false, 
                 hover: false
             })
-        }
-        options.value[0].selected=true
+        }        
     }
-    
-    const optionsSelected = computed(()=> options.value.filter(type => type.selected ).map(type => type.name ))
-    onClickOutside(filter, () => (showOptions.value=false))
-
 
     function isHover(id,v){
         options.value[id].hover = v;
@@ -68,36 +68,36 @@
             return 'bg-slate-800 text-white'
         }
     }
-
-    function selectType(id){
-        lastYearSelected.value = id    
-        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == options.value[id].name)
-            return;        
-        options.value[id].selected = !options.value[id].selected
-              
+    
+    function classSelectedAll(){
+        if(all.value.selected){
+            return 'bg-slate-50 text-black'
+        }
+        if (all.value.hover){
+            return  'bg-slate-600 text-white'
+        }
+        else{
+            return 'bg-slate-800 text-white'
+        }
     }
 
-    function selectAllTypes() {
-        if (optionsSelected.value.length == options.value.length ){
-            for (let i = 0; i < options.value.length; i++) {
-                options.value[i].selected = false;
-            } 
-            options.value[lastYearSelected.value].selected = true;
-            return;
+    function selectType(id){  
+        all.value.selected = false
+        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == options.value[id].name)
+            return;        
+        options.value[id].selected = !options.value[id].selected       
+    }
 
-        }
-            
+    function selectAll() {
+        all.value.selected = true
         for (let i = 0; i < options.value.length; i++) {
-            options.value[i].selected = true;        
-        }        
+            options.value[i].selected = false;
+        }       
     }
 
     onBeforeMount(() => {        
         initOptionsYears()
     })
-    
-
-
 </script>
 
 <style scoped>
