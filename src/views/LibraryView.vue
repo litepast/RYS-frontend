@@ -4,6 +4,8 @@
         <FilterType/>
         <FilterYear/>
         <FilterRating/>
+        <FilterGenre/>
+        <FilterStyle/>
 
     </div>
 
@@ -21,6 +23,8 @@
     import FilterType from '../components/FilterType.vue'
     import FilterYear from '../components/FilterYear.vue'
     import FilterRating from '../components/FilterRating.vue'
+    import FilterGenre from '../components/FilterGenre.vue'
+    import FilterStyle from '../components/FilterStyle.vue'
 
   
  
