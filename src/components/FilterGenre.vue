@@ -13,10 +13,10 @@
             :class="classSelectedAll()">
                 All genres
             </button>
-            <button class="option" v-for="type in options" @click="selectType(type.id)"
-            @mouseenter="isHover(type.id,true)" @mouseleave="isHover(type.id,false)"
-            :class="classSelected(type.id)">
-                {{type.name}}
+            <button class="option" v-for= "(option, index) in options" @click="selectType(index)"
+            @mouseenter="isHover(index,true)" @mouseleave="isHover(index,false)"
+            :class="classSelected(index)">
+                {{option.name}}
             </button>            
         </div>
     </div>
@@ -39,15 +39,15 @@
     const optionsSelected = computed(()=> options.value.filter(type => type.selected ).map(type => type.name ))
     onClickOutside(filter, () => (showOptions.value=false))
     
-    function isHover(id,v){
-        options.value[id-1].hover = v;
+    function isHover(index,v){
+        options.value[index].hover = v;
     }
 
-    function classSelected(id){
-        if(options.value[id-1].selected){
+    function classSelected(index){
+        if(options.value[index].selected){
             return 'bg-slate-50 text-black'
         }
-        if (options.value[id-1].hover){
+        if (options.value[index].hover){
             return  'bg-slate-600 text-white'
         }
         else{
@@ -67,11 +67,11 @@
         }
     }
 
-    function selectType(id){  
+    function selectType(index){  
         all.value.selected = false
-        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == options.value[id-1].name)
+        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == options.value[index].name)
             return;        
-        options.value[id-1].selected = !options.value[id-1].selected       
+        options.value[index].selected = !options.value[index].selected       
     }
 
     function selectAll() {

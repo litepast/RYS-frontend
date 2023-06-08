@@ -13,12 +13,12 @@
             :class="classSelectedAll()">
                 All Ratings
             </button>
-            <button class="option" v-for="type in options" @click="selectType(type.id)"
-            @mouseenter="isHover(type.id,true)" @mouseleave="isHover(type.id,false)"
-            :class="classSelected(type.id)">
-                <StarRating v-if="type.name!='Unrated'" :title=" `${type.name} stars`" :rating="type.name" :star-size="16" :read-only="true" :increment="0.5"  :show-rating="false"
+            <button class="option" v-for="(option, index) in options" @click="selectType(index)"
+            @mouseenter="isHover(index,true)" @mouseleave="isHover(index,false)"
+            :class="classSelected(index)">
+                <StarRating v-if="option.name!='Unrated'" :title=" `${option.name} stars`" :rating="option.name" :star-size="16" :read-only="true" :increment="0.5"  :show-rating="false"
                 inactive-color="#332A2B" active-color="#1ED760"/>
-                <div v-else :title="`${type.name}`" >{{type.name}}</div>
+                <div v-else :title="`${option.name}`" >{{option.name}}</div>
             </button>            
         </div>
     </div>
@@ -59,15 +59,15 @@
             })       
     }
 
-    function isHover(id,v){
-        options.value[id].hover = v;
+    function isHover(index,v){
+        options.value[index].hover = v;
     }
 
-    function classSelected(id){
-        if(options.value[id].selected){
+    function classSelected(index){
+        if(options.value[index].selected){
             return 'bg-slate-50 text-black'
         }
-        if (options.value[id].hover){
+        if (options.value[index].hover){
             return  'bg-slate-600 text-white'
         }
         else{
@@ -87,11 +87,11 @@
         }
     }
 
-    function selectType(id){  
+    function selectType(index){  
         all.value.selected = false
-        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == options.value[id].name)
+        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == options.value[index].name)
             return;        
-        options.value[id].selected = !options.value[id].selected       
+        options.value[index].selected = !options.value[index].selected       
     }
 
     function selectAll() {
