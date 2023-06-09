@@ -44,7 +44,7 @@
 
     </div>
 
-    <div class="text-white bg-green-600">
+    <div class="text-white bg-green-700">
     {{ optionsSelected }} <br>
 
     </div>
