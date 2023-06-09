@@ -5,6 +5,8 @@
             >Album Name</button>
             <button @click="storeSearchView.typeSearch=true" :class="!typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
             >Artist Name</button>
+
+            
             <div v-if="result">        
                 <div v-if="albums.length" class="text-white">Showing {{ albums.length }} results for {{ result }}</div>
                 <div v-else class="text-white"> No results for {{ result }}</div>         

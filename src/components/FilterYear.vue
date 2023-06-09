@@ -23,10 +23,15 @@
 </template>
 
 <script setup>
-    import { ref, computed, onBeforeMount, onMounted } from 'vue';
+    import { ref, computed, watch, onBeforeMount, onMounted } from 'vue';
     import { onClickOutside } from '@vueuse/core'
     import ChevronUp from 'vue-material-design-icons/ChevronUp.vue';
     import ChevronDown from 'vue-material-design-icons/ChevronDown.vue';
+    import { useLibraryViewStore } from '../stores/library-view.js'
+  
+
+
+
     const filterLabel = ref("Years")
     const showOptions = ref(false)   
     const filter = ref(null)
@@ -40,6 +45,13 @@
     const options= ref([])
     const optionsSelected = computed(()=> options.value.filter(type => type.selected ).map(type => type.name ))
     onClickOutside(filter, () => (showOptions.value=false))
+
+    const LibraryViewStore =  useLibraryViewStore()
+
+    watch(optionsSelected, () => {
+        LibraryViewStore.query.years = optionsSelected.value 
+    }
+    )
     
 
     function initOptionsYears(){       

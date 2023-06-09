@@ -23,11 +23,13 @@
 </template>
 
 <script setup>
-    import { ref, computed, onBeforeMount, onMounted } from 'vue';
+    import { ref, computed, watch } from 'vue';
     import { onClickOutside } from '@vueuse/core'
     import ChevronUp from 'vue-material-design-icons/ChevronUp.vue';
     import ChevronDown from 'vue-material-design-icons/ChevronDown.vue';
     import genres from '../data/genres.json'
+    import { useLibraryViewStore } from '../stores/library-view.js'
+    const LibraryViewStore =  useLibraryViewStore()   
     const filterLabel = ref("Genres")
     const showOptions = ref(false)   
     const filter = ref(null)
@@ -42,6 +44,11 @@
     function isHover(index,v){
         options.value[index].hover = v;
     }
+
+    watch(optionsSelected, () => {
+        LibraryViewStore.query.genres = optionsSelected.value 
+    }
+    )
 
     function classSelected(index){
         if(options.value[index].selected){

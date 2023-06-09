@@ -25,11 +25,13 @@
 </template>
 
 <script setup>
-    import { ref, computed, onBeforeMount, onMounted } from 'vue';
+    import { ref, computed, onBeforeMount, watch, onMounted } from 'vue';
     import { onClickOutside } from '@vueuse/core'
     import ChevronUp from 'vue-material-design-icons/ChevronUp.vue';
     import ChevronDown from 'vue-material-design-icons/ChevronDown.vue';
     import StarRating from 'vue-star-rating'
+    import { useLibraryViewStore } from '../stores/library-view.js'
+    const LibraryViewStore =  useLibraryViewStore()   
 
     const filterLabel = ref("Ratings")
     const showOptions = ref(false)   
@@ -41,6 +43,12 @@
     const options= ref([])
     const optionsSelected = computed(()=> options.value.filter(type => type.selected ).map(type => type.name ))
     onClickOutside(filter, () => (showOptions.value=false))
+
+    watch(optionsSelected, () => {
+        LibraryViewStore.query.ratings = optionsSelected.value 
+    }
+    )
+
 
     function initOptionsRatings(){       
         for(let i=0; i<=9; i++){

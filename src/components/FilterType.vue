@@ -23,10 +23,12 @@
 </template>
 
 <script setup>
-    import { ref, computed } from 'vue';
-    import { onClickOutside } from '@vueuse/core'
+    import { ref, computed, watch } from 'vue';
+    import { onClickOutside } from '@vueuse/core'    
     import ChevronUp from 'vue-material-design-icons/ChevronUp.vue';
     import ChevronDown from 'vue-material-design-icons/ChevronDown.vue';
+    import { useLibraryViewStore } from '../stores/library-view.js'
+    const LibraryViewStore =  useLibraryViewStore()   
     const filterLabel = ref("Types")
     const showOptions = ref(false)   
     const filter = ref(null)
@@ -41,7 +43,20 @@
         {id: 4, name: 'EP', selected: false, hover:false}
     ]);
     const optionsSelected = computed(()=> options.value.filter(type => type.selected ).map(type => type.id ))
+
+
+    watch(optionsSelected, () => {
+        LibraryViewStore.query.types = optionsSelected.value 
+    }
+    )
+
+
+    
+
     onClickOutside(filter, () => (showOptions.value=false))
+
+
+   
     
     function isHover(index,v){
         options.value[index].hover = v;

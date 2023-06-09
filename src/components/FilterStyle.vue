@@ -43,11 +43,6 @@
         </div>
 
     </div>
-
-    <div class="text-white bg-green-700">
-    {{ optionsSelected }} <br>
-
-    </div>
 </template>
 
 <script setup>
@@ -56,6 +51,8 @@
     import ChevronUp from 'vue-material-design-icons/ChevronUp.vue';
     import ChevronDown from 'vue-material-design-icons/ChevronDown.vue';
     import styles from '../data/styles.json'
+    import { useLibraryViewStore } from '../stores/library-view.js'
+    const LibraryViewStore =  useLibraryViewStore()   
     const filterInput = ref('')
     const filterLabel = ref("Styles")
     const showOptions = ref(false)
@@ -73,6 +70,11 @@
         filteredOptions.value = options.value.filter(option => option.name.toLowerCase().includes(filterInput.value.toLowerCase()))
     }
     )    
+
+    watch(optionsSelected, () => {
+        LibraryViewStore.query.styles = optionsSelected.value 
+    }
+    )
 
 
     const sortOptions = () =>{
