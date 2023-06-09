@@ -44,7 +44,7 @@
 
     </div>
 
-    <div class="text-white">
+    <div class="text-white bg-green-600">
     {{ optionsSelected }} <br>
 
     </div>
@@ -200,8 +200,6 @@
         @apply text-white flex relative w-[150px] h-[30px] bg-black justify-between items-center;
         @apply rounded-3xl hover:bg-slate-600 ;
     }
-
-
 
     .header-label{
         @apply ml-3;
