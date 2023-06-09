@@ -45,7 +45,7 @@
 
     }
     .card{
-    @apply m-2 rounded-lg bg-slate-900 hover:bg-slate-800 border-none p-3 w-[200px];
+    @apply m-2 rounded-xl bg-slate-900 hover:bg-slate-800 border-none p-3 w-[200px];
     }
     .card img{
         width: 100%;
