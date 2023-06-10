@@ -1,7 +1,9 @@
 <template>
     
     <div class="filters-container">
-        <button class="bg-slate-800 text-sm text-white rounded-full pl-3 pr-3 pt-2 pb-2 mr-3">
+        <button class="bg-slate-800 text-sm text-white rounded-full pl-3 pr-3 pt-2 pb-2 mr-3"
+        @click="LibraryViewStore.clear()"
+        >
                 Clear Filters
         </button>
         <div class="filter-name">           
@@ -35,7 +37,8 @@
     import FilterStyle from '../components/FilterStyle.vue'
     import { computed, watch } from 'vue'
     import { useSearchStore } from '../stores/search.js'
-    import { useLibraryViewStore } from '../stores/library-view.js'   
+    import { useLibraryViewStore } from '../stores/library-view.js'
+    import axios from 'axios'   
 
     const storeSearch = useSearchStore()   
     const LibraryViewStore =  useLibraryViewStore()
@@ -44,7 +47,6 @@
     const input = computed(() => storeSearch.input)
 
     watch ([input,typeSearch], () => {
-        console.log('input changed')
         if(!typeSearch.value){
             LibraryViewStore.query.artist_name = ''
             LibraryViewStore.query.album_name = storeSearch.input
@@ -56,6 +58,17 @@
     )
 
     watch(enter, () => {
+
+        axios.get('http://192.168.100.14:5000/api/v1/search-album-catalog', { params: LibraryViewStore.query })
+        .then(response => {
+            // Get the response data as a JavaScript object
+            const responseData = response.data;
+            console.log(responseData.response)
+            console.log(responseData);
+        })
+        .catch(error => {
+            console.error('Request failed:', error.message);
+        });
    
         
     } 

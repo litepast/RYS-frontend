@@ -27,6 +27,33 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
     genres: [],
     styles: [],
   })
+  
+  function clear() {    
+    allTypes.value.selected = true
+    allYears.value.selected = true
+    allRatings.value.selected = true
+    allGenres.value.selected = true
+    allStyles.value.selected = true
+    optionsTypes.value.forEach((item) => {
+      item.selected = false
+    })
 
-  return { albums, typeSearch, query, allTypes, optionsTypes, allYears, optionsYears, allRatings, optionsRatings, allGenres, optionsGenres, allStyles, optionsStyles }
+    optionsYears.value.forEach((item) => {
+      item.selected = false
+    }) 
+
+    optionsRatings.value.forEach((item) => {
+      item.selected = false
+    })
+
+    optionsGenres.value.forEach((item) => {
+      item.selected = false
+    })
+    
+    optionsStyles.value.forEach((item) => {
+      item.selected = false
+    })
+  }
+  
+  return { albums, typeSearch, query, allTypes, optionsTypes, allYears, optionsYears, allRatings, optionsRatings, allGenres, optionsGenres, allStyles, optionsStyles, clear }
 })
