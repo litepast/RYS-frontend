@@ -9,11 +9,11 @@
         </div>
         <div class="options-container" v-show="showOptions" >
             <button class="option" @click="selectAll()"
-            @mouseenter="all.hover=true" @mouseleave="all.hover = false"
+            @mouseenter="LibraryViewStore.allRatings.hover=true" @mouseleave="LibraryViewStore.allRatings.hover = false"
             :class="classSelectedAll()">
                 All Ratings
             </button>
-            <button class="option" v-for="(option, index) in options" @click="selectType(index)"
+            <button class="option" v-for="(option, index) in LibraryViewStore.optionsRatings" @click="selectType(index)"
             @mouseenter="isHover(index,true)" @mouseleave="isHover(index,false)"
             :class="classSelected(index)">
                 <StarRating v-if="option.name!='Unrated'" :title=" `${option.name} stars`" :rating="option.name" :star-size="16" :read-only="true" :increment="0.5"  :show-rating="false"
@@ -36,12 +36,9 @@
     const filterLabel = ref("Ratings")
     const showOptions = ref(false)   
     const filter = ref(null)
-    const all = ref({
-        selected: true,
-        hover: false
-    })
-    const options= ref([])
-    const optionsSelected = computed(()=> options.value.filter(type => type.selected ).map(type => type.name ))
+   
+
+    const optionsSelected = computed(()=> LibraryViewStore.optionsRatings.filter(type => type.selected ).map(type => type.name ))
     onClickOutside(filter, () => (showOptions.value=false))
 
     watch(optionsSelected, () => {
@@ -49,33 +46,15 @@
     }
     )
 
-
-    function initOptionsRatings(){       
-        for(let i=0; i<=9; i++){
-            options.value.push({
-                id: i, 
-                name: 5-(i*0.5), 
-                selected: false, 
-                hover: false
-            })
-        } 
-        options.value.push({
-                id: 10, 
-                name: 'Unrated', 
-                selected: false, 
-                hover: false
-            })       
-    }
-
     function isHover(index,v){
-        options.value[index].hover = v;
+        LibraryViewStore.optionsRatings[index].hover = v;
     }
 
     function classSelected(index){
-        if(options.value[index].selected){
+        if(LibraryViewStore.optionsRatings[index].selected){
             return 'bg-slate-50 text-black'
         }
-        if (options.value[index].hover){
+        if (LibraryViewStore.optionsRatings[index].hover){
             return  'bg-slate-600 text-white'
         }
         else{
@@ -84,10 +63,10 @@
     }
     
     function classSelectedAll(){
-        if(all.value.selected){
+        if(LibraryViewStore.allRatings.selected){
             return 'bg-slate-50 text-black'
         }
-        if (all.value.hover){
+        if (LibraryViewStore.allRatings.hover){
             return  'bg-slate-600 text-white'
         }
         else{
@@ -96,22 +75,18 @@
     }
 
     function selectType(index){  
-        all.value.selected = false
-        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == options.value[index].name)
+        LibraryViewStore.allRatings.selected = false
+        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == LibraryViewStore.optionsRatings[index].name)
             return;        
-        options.value[index].selected = !options.value[index].selected       
+            LibraryViewStore.optionsRatings[index].selected = !LibraryViewStore.optionsRatings[index].selected       
     }
 
     function selectAll() {
-        all.value.selected = true
-        for (let i = 0; i < options.value.length; i++) {
-            options.value[i].selected = false;
+        LibraryViewStore.allRatings.selected = true
+        for (let i = 0; i < LibraryViewStore.optionsRatings.length; i++) {
+            LibraryViewStore.optionsRatings[i].selected = false;
         }       
     }
-
-    onBeforeMount(() => {        
-        initOptionsRatings()
-    })
 </script>
 
 <style scoped>

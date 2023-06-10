@@ -9,11 +9,13 @@
         </div>
         <div class="options-container" v-show="showOptions" >
             <button class="option" @click="selectAll()"
-            @mouseenter="all.hover=true" @mouseleave="all.hover = false"
+            @mouseenter="LibraryViewStore.allTypes.hover=true" @mouseleave="LibraryViewStore.allTypes.hover = false"
             :class="classSelectedAll()">
                 All types
             </button>
-            <button class="option" v-for="(option, index) in options" @click="selectType(index)"
+            <button class="option"
+            v-for="(option, index) in LibraryViewStore.optionsTypes"
+            @click="selectType(index)"
             @mouseenter="isHover(index,true)" @mouseleave="isHover(index,false)"
             :class="classSelected(index)" >
                 {{option.name}}
@@ -32,41 +34,25 @@
     const filterLabel = ref("Types")
     const showOptions = ref(false)   
     const filter = ref(null)
-    const all = ref({
-        selected: true,
-        hover: false
-    });
-    const options= ref([
-        {id: 1, name: 'Album', selected: false, hover: false},
-        {id: 2, name: 'Single', selected: false, hover: false},
-        {id: 3, name: 'Compilation', selected: false, hover: false},
-        {id: 4, name: 'EP', selected: false, hover:false}
-    ]);
-    const optionsSelected = computed(()=> options.value.filter(type => type.selected ).map(type => type.id ))
-
+    
+    const optionsSelected = computed(()=> LibraryViewStore.optionsTypes.filter(type => type.selected ).map(type => type.id ))
 
     watch(optionsSelected, () => {
         LibraryViewStore.query.types = optionsSelected.value 
     }
     )
 
-
-    
-
     onClickOutside(filter, () => (showOptions.value=false))
-
-
-   
     
     function isHover(index,v){
-        options.value[index].hover = v;
+        LibraryViewStore.optionsTypes[index].hover = v;
     }
 
     function classSelected(index){       
-        if(options.value[index].selected){
+        if(LibraryViewStore.optionsTypes[index].selected){
             return 'bg-slate-50 text-black'
         }
-        if (options.value[index].hover){
+        if (LibraryViewStore.optionsTypes[index].hover){
             return  'bg-slate-600 text-white'
         }
         else{
@@ -75,10 +61,10 @@
     }
 
     function classSelectedAll(){
-        if(all.value.selected){
+        if(LibraryViewStore.allTypes.selected){
             return 'bg-slate-50 text-black'
         }
-        if (all.value.hover){
+        if (LibraryViewStore.allTypes.hover){
             return  'bg-slate-600 text-white'
         }
         else{
@@ -86,18 +72,17 @@
         }
     }
 
-
     function selectType(index){  
-        all.value.selected = false
-        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == options.value[index].id)
+        LibraryViewStore.allTypes.selected = false
+        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == LibraryViewStore.optionsTypes[index].id)
             return;        
-        options.value[index].selected = !options.value[index].selected       
+            LibraryViewStore.optionsTypes[index].selected = !LibraryViewStore.optionsTypes[index].selected       
     }
 
     function selectAll() {
-        all.value.selected = true
-        for (let i = 0; i < options.value.length; i++) {
-            options.value[i].selected = false;
+        LibraryViewStore.allTypes.selected = true
+        for (let i = 0; i < LibraryViewStore.optionsTypes.length; i++) {
+            LibraryViewStore.optionsTypes[i].selected = false;
         }       
     }
 </script>

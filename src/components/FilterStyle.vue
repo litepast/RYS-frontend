@@ -13,11 +13,11 @@
 
         <div class="options-container" v-show="showOptions && !filterInput" >
             <button class="option" @click="selectAll()"
-            @mouseenter="all.hover=true" @mouseleave="all.hover = false"
+            @mouseenter="LibraryViewStore.allStyles.hover=true" @mouseleave="LibraryViewStore.allStyles.hover = false"
             :class="classSelectedAll()">
                 All Styles
             </button>
-            <button class="option" v-for="(option, index) in options" @click="selectType(index)"
+            <button class="option" v-for="(option, index) in LibraryViewStore.optionsStyles" @click="selectType(index)"
             @mouseenter="isHover(index,true,true)" @mouseleave="isHover(index,true,false)"
             :class="classSelected(index,true)">
                 {{option.name}}
@@ -33,12 +33,7 @@
             @click="selectFilteredType(index,option.id)"
             @mouseenter="isHover(index,false,true)" @mouseleave="isHover(index,false,false)"
             :class="classSelected(index,false)"
-            >
-
-            <!--  :class="classSelected(index)" -->
-
-
-                {{option.name}}
+            >   {{option.name}}
             </button>
         </div>
 
@@ -52,22 +47,34 @@
     import ChevronDown from 'vue-material-design-icons/ChevronDown.vue';
     import styles from '../data/styles.json'
     import { useLibraryViewStore } from '../stores/library-view.js'
-    const LibraryViewStore =  useLibraryViewStore()   
+    const LibraryViewStore =  useLibraryViewStore()
+    
+    LibraryViewStore.allStyles
+    LibraryViewStore.optionsStyles
+    
+
+
     const filterInput = ref('')
     const filterLabel = ref("Styles")
     const showOptions = ref(false)
     const filter = ref(null)
+
+
     const all = ref({
         selected: true,
         hover: false
     })
     const options= ref(styles)
-    const optionsSelected = computed(()=> options.value.filter(type => type.selected ).map(type => type.name ))
-    onClickOutside(filter, () => (showOptions.value=false))
+
+    const optionsSelected = computed(()=>LibraryViewStore.optionsStyles.filter(type => type.selected ).map(type => type.name ))
     const filteredOptions = ref([])
     
+
+
+    onClickOutside(filter, () => (showOptions.value=false))
+    
     watch(filterInput, ()=>{
-        filteredOptions.value = options.value.filter(option => option.name.toLowerCase().includes(filterInput.value.toLowerCase()))
+        filteredOptions.value = LibraryViewStore.optionsStyles.filter(option => option.name.toLowerCase().includes(filterInput.value.toLowerCase()))
     }
     )    
 
@@ -78,7 +85,7 @@
 
 
     const sortOptions = () =>{
-        options.value.sort((a, b) => {
+        LibraryViewStore.optionsStyles.sort((a, b) => {
             if (a.selected && !b.selected) {
                 return -1;
             } else if (!a.selected && b.selected) {
@@ -95,7 +102,7 @@
 
     function isHover(index,completeList,value){
         if(completeList){
-            options.value[index].hover = value;
+            LibraryViewStore.optionsStyles[index].hover = value;
         }else{
             filteredOptions.value[index].hover = value;
         }        
@@ -103,10 +110,10 @@
 
     function classSelected(index,completeList){
         if(completeList){
-            if(options.value[index].selected){
+            if(LibraryViewStore.optionsStyles[index].selected){
                 return 'bg-slate-50 text-black'
             }
-            if (options.value[index].hover){
+            if (LibraryViewStore.optionsStyles[index].hover){
                 return  'bg-slate-600 text-white'
             }
             else{
@@ -128,10 +135,10 @@
     }
 
     function classSelectedAll(){
-        if(all.value.selected){
+        if(LibraryViewStore.allStyles.selected){
             return 'bg-slate-50 text-black'
         }
-        if (all.value.hover){
+        if (LibraryViewStore.allStyles.hover){
             return  'bg-slate-600 text-white'
         }
         else{
@@ -140,10 +147,10 @@
     }
 
     function selectFilteredType(indexA, indexB){
-        all.value.selected = false
+        LibraryViewStore.allStyles.selected = false
 
         filteredOptions.value[indexA].selected = !filteredOptions.value[indexA].selected
-        options.value[indexB-1].selected = filteredOptions.value[indexA].selected
+        LibraryViewStore.optionsStyles[indexB-1].selected = filteredOptions.value[indexA].selected
         sortOptions()  
 
 
@@ -152,17 +159,17 @@
     }
 
     function selectType(index){
-        all.value.selected = false
-        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == options.value[index].name)
+        LibraryViewStore.allStyles.selected = false
+        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == LibraryViewStore.optionsStyles[index].name)
             return;
-        options.value[index].selected = !options.value[index].selected
+            LibraryViewStore.optionsStyles[index].selected = !LibraryViewStore.optionsStyles[index].selected
         sortOptions()        
     }
 
     function selectAll() {
-        all.value.selected = true
-        for (let i = 0; i < options.value.length; i++) {
-            options.value[i].selected = false;            
+        LibraryViewStore.allStyles.selected = true
+        for (let i = 0; i < LibraryViewStore.optionsStyles.length; i++) {
+            LibraryViewStore.optionsStyles[i].selected = false;            
         }
         sortOptions()  
     }

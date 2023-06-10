@@ -9,11 +9,13 @@
         </div>
         <div class="options-container" v-show="showOptions" >
             <button class="option" @click="selectAll()"
-            @mouseenter="all.hover=true" @mouseleave="all.hover = false"
+            @mouseenter="LibraryViewStore.allYears.hover=true" @mouseleave="LibraryViewStore.allYears.hover = false"
             :class="classSelectedAll()">
                 All years
             </button>
-            <button class="option" v-for="(option, index) in options" @click="selectType(index)"
+            <button class="option" 
+            v-for="(option, index) in LibraryViewStore.optionsYears"
+            @click="selectType(index)"
             @mouseenter="isHover(index,true)" @mouseleave="isHover(index,false)"
             :class="classSelected(index)">
                 {{option.name}}
@@ -23,57 +25,43 @@
 </template>
 
 <script setup>
-    import { ref, computed, watch, onBeforeMount, onMounted } from 'vue';
+    import { ref, computed, watch } from 'vue';
     import { onClickOutside } from '@vueuse/core'
     import ChevronUp from 'vue-material-design-icons/ChevronUp.vue';
     import ChevronDown from 'vue-material-design-icons/ChevronDown.vue';
     import { useLibraryViewStore } from '../stores/library-view.js'
-  
-
-
-
+    const LibraryViewStore =  useLibraryViewStore()
     const filterLabel = ref("Years")
     const showOptions = ref(false)   
     const filter = ref(null)
-    const start = 1940;
-    const end = new Date().getFullYear()
-    const limit = end-start
-    const all = ref({
-        selected: true,
-        hover: false
-    })
-    const options= ref([])
-    const optionsSelected = computed(()=> options.value.filter(type => type.selected ).map(type => type.name ))
+    const optionsSelected = computed(()=> LibraryViewStore.optionsYears.filter(type => type.selected ).map(type => type.name ))
+    
     onClickOutside(filter, () => (showOptions.value=false))
 
-    const LibraryViewStore =  useLibraryViewStore()
-
+    const sortYears = () => {
+            LibraryViewStore.optionsYears.sort((a,b) => {
+            if (a.selected && !b.selected) return -1
+            if (!a.selected && b.selected) return 1
+            if (a.name > b.name) return -1
+            if (a.name < b.name) return 1
+            return 0    
+        })       
+    }
+    
     watch(optionsSelected, () => {
         LibraryViewStore.query.years = optionsSelected.value 
     }
     )
-    
-
-    function initOptionsYears(){       
-        for(let i=0; i<=limit; i++){
-            options.value.push({
-                id: i, 
-                name: end-i, 
-                selected: false, 
-                hover: false
-            })
-        }        
-    }
-
+ 
     function isHover(index,v){
-        options.value[index].hover = v;
+        LibraryViewStore.optionsYears[index].hover = v;
     }
 
     function classSelected(index){
-        if(options.value[index].selected){
+        if(LibraryViewStore.optionsYears[index].selected){
             return 'bg-slate-50 text-black'
         }
-        if (options.value[index].hover){
+        if (LibraryViewStore.optionsYears[index].hover){
             return  'bg-slate-600 text-white'
         }
         else{
@@ -82,10 +70,10 @@
     }
     
     function classSelectedAll(){
-        if(all.value.selected){
+        if(LibraryViewStore.allYears.selected){
             return 'bg-slate-50 text-black'
         }
-        if (all.value.hover){
+        if (LibraryViewStore.allYears.hover){
             return  'bg-slate-600 text-white'
         }
         else{
@@ -94,22 +82,20 @@
     }
 
     function selectType(index){  
-        all.value.selected = false
-        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == options.value[index].name)
+        LibraryViewStore.allYears.selected = false
+        if (optionsSelected.value.length == 1 && optionsSelected.value[0] == LibraryViewStore.optionsYears[index].name)
             return;        
-        options.value[index].selected = !options.value[index].selected       
+            LibraryViewStore.optionsYears[index].selected = !LibraryViewStore.optionsYears[index].selected  
+        sortYears()     
     }
 
     function selectAll() {
-        all.value.selected = true
-        for (let i = 0; i < options.value.length; i++) {
-            options.value[i].selected = false;
-        }       
+        LibraryViewStore.allYears.selected = true
+        for (let i = 0; i < LibraryViewStore.optionsYears.length; i++) {
+            LibraryViewStore.optionsYears[i].selected = false;
+        }  
+        sortYears()     
     }
-
-    onBeforeMount(() => {        
-        initOptionsYears()
-    })
 </script>
 
 <style scoped>
