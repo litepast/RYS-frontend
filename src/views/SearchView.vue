@@ -52,7 +52,7 @@
     }
 
     watch([enter,typeSearch], () =>{
-        if (!storeSearch.input)
+        if (!storeSearch.input.length)
             {return}              
         var url = 'http://192.168.100.14:5000/api/v1/search-spotify?p1='+String(Number(typeSearch.value))+'&p2='+storeSearch.input        
         axios.get(url)

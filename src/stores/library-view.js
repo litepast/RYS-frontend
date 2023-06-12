@@ -17,6 +17,7 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
   const optionsGenres = ref(genres)
   const allStyles = ref(all)
   const optionsStyles = ref(styles)
+  const resultfor = ref('')
 
   const query = ref({
     album_name: '',

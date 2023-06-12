@@ -6,10 +6,7 @@ export const useSearchStore = defineStore('Search', () => {
   const enterCount = ref(false)
   //const doubleCount = computed(() => count.value * 2)
   function enter() {
-    if(input.value.length){
-        this.enterCount=!this.enterCount
-        
-    }
+    this.enterCount=!this.enterCount       
   }
 
   return { input, enterCount, enter }
