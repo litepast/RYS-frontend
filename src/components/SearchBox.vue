@@ -31,7 +31,7 @@
 <style  scoped>
 input{
     @apply w-full h-full border-none rounded-full pl-10 pr-10;
-    @apply text-white bg-gray-700;
+    @apply text-white text-[13px] bg-gray-700;
 }
 
 .search-icon{

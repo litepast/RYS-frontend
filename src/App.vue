@@ -38,7 +38,7 @@
   }
 
   .view{
-    @apply mt-[70px] mb-[100px];
+    @apply mt-[75px] mb-[100px];
   }
 </style>
 
