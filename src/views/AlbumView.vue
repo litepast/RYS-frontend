@@ -1,55 +1,69 @@
 <template>
-    <div class="p-8 overflow-x-hidden">      
-        <div class="flex items-center w-full relative h-full">
-            <img width="250" :src="album.cover_image">
+        <div class="album-header">
+            <div class="album-cover">
+                <img width="225" :src="album.cover_image">
+            </div>
 
-            <div class="w-full ml-5">
-
-                <div                  
-                    class="text-white absolute w-full hover:underline cursor-pointer top-0 font-semibold text-7xl"
-                >
+        
+            <div class="album-data">
+                <div class="album-type">
+                    {{ album.release_type}}
+                </div>
+                <div class="album-name">
                     {{ album.album_name}}
                 </div>
+                <div class="album-artist">
+                    <div class="font-semibold"> {{album.artist_name}} </div>
+                    <div class="circle"></div>
+                    <div> {{ album.release_date.substring(0,4) }}</div>
+                    <div class="circle"></div>                    
+                    <div> {{ album.total_tracks }} {{ album.total_tracks > 1 ? " songs" :"somg" }}</div>
+                    <div class="circle"></div>                    
+                    <div class="text-gray-400"> {{ totalDuration()}} </div>
+                </div>                
+                <div class="text-white text-[13px]">
+                    <div class="genres flex">
+                        <div class="font-semibold w-[50px]"> Genres: </div>
+                        <div class="ml-2 genres-list">
+                            {{ genres }}
+                        </div>
+                    </div>
 
-
-                <div class="text-gray-300 text-[13px] flex">
-                    <div class="flex font-semibold">{{album.artist_name}}</div>
-                    <div class="ml-2 flex">
-                        <div class="circle mt-2 mr-2" />
-                        <span class="-ml-0.5">{{ album.release_date.substring(0,4) }}</span>
+                    <div class="styles flex">
+                        <div class="font-semibold w-[50px]"> Styles: </div>
+                        <div class="ml-2 styles-list">
+                            {{ styles }}
+                        </div>
                     </div>
-                    <div class="ml-2 flex">
-                        <div class="circle mt-2 mr-2" />
-                        <span class="-ml-0.5">{{ album.total_tracks }} songs </span>
-                    </div>
-                    <div class="ml-2 flex">
-                        <div class="circle mt-2 mr-2" />
-                        <span class="-ml-0.5">{{ totalDuration()}} </span>
-                    </div>
-                     
                 </div>
+                <div class="user-rating mt-1">
+                    <div class="div w-[115px] font-semibold pt-1"> Your Rating: </div>
 
-                <div class="absolute flex gap-4 items-center justify-start bottom-0 mb-1.5">
-                    <button class="p-1 rounded-full bg-white" @click="playFunc()">
-                        <Play v-if="!isPlaying" fillColor="#181818" :size="25"/>
-                        <Pause v-else fillColor="#181818" :size="25"/>
-                    </button>
-                    <button type="button">
-                        <Heart fillColor="#1BD760" :size="30"/>
-                    </button>
-                    <button type="button">
-                        <DotsHorizontal fillColor="#FFFFFF" :size="25"/>
-                    </button>
+                    <StarRating :title=" rating ? rating + ' Stars' : 'Unrated'" 
+                    :rating="rating" :star-size="22" :increment="0.5"  :show-rating="false"
+                    inactive-color="#332A2B" active-color="#1ED760" :border-width="1"/>
+
                 </div>
+                <div class="suggested-rating flex text-white text-[13px] mt-1">
+                    <div class="div w-[115px] font-semibold pt-1" title="Suggested rating based on your track ratings"> Suggest Rating: </div>
+
+                    <StarRating :title=" rating ? rating + ' Stars' : 'Unrated'" 
+                    :rating="average_rating" :star-size="22" :increment="0.5"  :show-rating="false"
+                    inactive-color="#332A2B" active-color="#1ED760" :border-width="1" :read-only="true"/>
+                </div>              
+
             </div>
         </div>
-
-     
-     
-    </div>
 </template>
 
+
+
+
+
 <script setup>
+    import StarRating from 'vue-star-rating'
+    import { ref, computed } from 'vue'
+
     const album={
         release_type: 'Album',
         album_name: 'In Rainbows',
@@ -68,7 +82,7 @@
                 track_number_on_disc: 1,
                 track_name: '15 Step',
                 track_artist: 'Radiohead',
-                track_rating: null,
+                track_rating: 4.5,
                 goated: false,
                 included: true,
                 track_duration_ms: 237293 
@@ -79,7 +93,7 @@
                 track_number_on_disc: 2,
                 track_name: 'Bodysnatchers',
                 track_artist: 'Radiohead',
-                track_rating: null,
+                track_rating: 4.0,
                 goated: false,
                 included: true,
                 track_duration_ms: 242293                
@@ -90,8 +104,8 @@
                 track_number_on_disc: 3,
                 track_name: 'Nude',
                 track_artist: 'Radiohead',
-                track_rating: null,
-                goated: false,
+                track_rating: 5.0,
+                goated: true,
                 included: true,
                 track_duration_ms: 255386
             },
@@ -101,8 +115,8 @@
                 track_number_on_disc: 4,
                 track_name: 'Weird Fishes/Arpeggi',
                 track_artist: 'Radiohead',
-                track_rating: null,
-                goated: false,
+                track_rating: 5.0,
+                goated: true,
                 included: true,
                 track_duration_ms: 318186
             },
@@ -112,7 +126,7 @@
                 track_number_on_disc: 5,
                 track_name: 'All I Need',
                 track_artist: 'Radiohead',
-                track_rating: null,
+                track_rating: 4.5,
                 goated: false,
                 included: true,
                 track_duration_ms: 228746
@@ -123,7 +137,7 @@
                 track_number_on_disc: 6,
                 track_name: 'Faust Arp',
                 track_artist: 'Radiohead',
-                track_rating: null,
+                track_rating: 4.5,
                 goated: false,
                 included: true,
                 track_duration_ms: 129679
@@ -134,7 +148,7 @@
                 track_number_on_disc: 7,
                 track_name: 'Reckoner',
                 track_artist: 'Radiohead',
-                track_rating: null,
+                track_rating: 5.0,
                 goated: false,
                 included: true,
                 track_duration_ms: 290213
@@ -145,7 +159,7 @@
                 track_number_on_disc: 8,
                 track_name: 'House of Cards',
                 track_artist: 'Radiohead',
-                track_rating: null,
+                track_rating: 4.5,
                 goated: false,
                 included: true,
                 track_duration_ms: 328293
@@ -156,7 +170,7 @@
                 track_number_on_disc: 9,
                 track_name: 'Jigsaw Falling Into Place',
                 track_artist: 'Radiohead',
-                track_rating: null,
+                track_rating: 5.0,
                 goated: false,
                 included: true,
                 track_duration_ms: 248893
@@ -167,7 +181,7 @@
                 track_number_on_disc: 10,
                 track_name: 'Videotape',
                 track_artist: 'Radiohead',
-                track_rating: null,
+                track_rating: 5.0,
                 goated: false,
                 included: true,
                 track_duration_ms: 279634
@@ -175,6 +189,23 @@
         ]
     }
 
+    const average_rating = computed(() => {
+        let sum = 0
+        let count = 0
+        for (const track of album.tracks) {
+            if (track.included) {
+                sum += track.goated ? 5.5 : track.track_rating
+                count++
+            }
+        }
+        return Math.min(5.0, sum / count)
+    })
+
+    // a computed ref where the album genres are joined by commas
+    const genres = computed(() => album.genres.join(', '))
+
+    // the same as above but for the styles
+    const styles = computed(() => album.styles.join(', '))
    
     const totalDuration = () => {
         let total = 0;
@@ -191,11 +222,42 @@
 
 </script>
 
+
 <style scoped>
-  .circle {
-        width: 4px;
-        height: 4px;
-        background-color: rgb(189, 189, 189);
-        border-radius: 100%;
-    }
+
+.album-header{
+    @apply w-full flex bg-gradient-to-b from-[#c36666] to-[#0a0a0a] rounded-t-sm py-5 overflow-hidden;
+    min-width: 500px
+
+}
+
+.album-cover{
+@apply mx-3;
+min-width: 225px
+}
+
+.album-data{
+    @apply w-[calc(100%-275px)] flex flex-col ;
+}
+
+.album-type{
+    @apply text-white text-[13x] font-semibold mb-1;
+}
+.album-name{
+    @apply text-white h-[60px] font-semibold text-6xl mb-1 truncate pr-9 ;
+}
+.album-artist{
+    @apply text-white text-[13px] flex items-center;
+}
+
+
+
+.user-rating{
+    @apply text-white text-[13px] flex items-center align-middle h-[22px];
+}
+
+.circle {
+    @apply mx-1 w-1 h-1 bg-white rounded-full;   
+}
 </style>
+
