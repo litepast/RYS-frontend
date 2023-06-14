@@ -232,8 +232,7 @@
 }
 
 .album-cover{
-@apply mx-3;
-min-width: 225px
+@apply mx-3 min-w-[225px];
 }
 
 .album-data{
