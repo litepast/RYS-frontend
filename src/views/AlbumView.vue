@@ -1,7 +1,7 @@
 <template>
         <div class="album-header">
             <div class="album-cover">
-                <img width="225" :src="album.cover_image">
+                <img class="object-contain h-[225px] w-[225px]" :src="album.cover_image">
             </div>
 
         
@@ -37,22 +37,23 @@
                     </div>
                 </div>
                 <div class="user-rating mt-1">
-                    <div class="div w-[115px] font-semibold pt-1"> Your Rating: </div>
-
-                    <StarRating :title=" rating ? rating + ' Stars' : 'Unrated'" 
-                    :rating="rating" :star-size="22" :increment="0.5"  :show-rating="false"
+                    <div class="div w-[115px] font-semibold pt-1" :title=" rating ? rating + ' Stars' : 'Unrated'" > Your Rating: </div>
+                    <StarRating 
+                    @update:rating="updateRating" :star-size="22" :increment="0.5"  :show-rating="false"
                     inactive-color="#332A2B" active-color="#1ED760" :border-width="1"/>
-
                 </div>
                 <div class="suggested-rating flex text-white text-[13px] mt-1">
                     <div class="div w-[115px] font-semibold pt-1" title="Suggested rating based on your track ratings"> Suggest Rating: </div>
-
-                    <StarRating :title=" rating ? rating + ' Stars' : 'Unrated'" 
-                    :rating="average_rating" :star-size="22" :increment="0.5"  :show-rating="false"
+                    <StarRating :title=" suggested_rating ? suggested_rating + ' Stars' : 'Unrated'" 
+                    :rating="Number(suggested_rating)" :star-size="22" :increment="0.5"  :show-rating="false"
                     inactive-color="#332A2B" active-color="#1ED760" :border-width="1" :read-only="true"/>
                 </div>              
 
             </div>
+        </div>
+        <div class="text-white">
+            {{ rating }} <br>
+            {{ average_rating }} <br> {{greatness_rating}} <br> {{ consistency_rating }} <br> {{ suggested_rating1 }} <br> {{ suggested_rating2 }} <br>
         </div>
 </template>
 
@@ -71,6 +72,7 @@
         album_id: '5vkqYmiPBYLaalcmjujWxK',
         genres: ['Electronic','Rock'],
         styles: ['Alternative Rock','Art Rock','Experimental','Indie Rock' ],
+        rating: 4,
         total_discs: 1,
         total_tracks: 10,
         release_date: '2007-10-10',
@@ -159,7 +161,7 @@
                 track_number_on_disc: 8,
                 track_name: 'House of Cards',
                 track_artist: 'Radiohead',
-                track_rating: 4.5,
+                track_rating: 4.0,
                 goated: false,
                 included: true,
                 track_duration_ms: 328293
@@ -189,6 +191,14 @@
         ]
     }
 
+    const genres = computed(() => album.genres.join(', '))
+    const styles = computed(() => album.styles.join(', '))
+    const rating = ref(album.rating)
+
+    const updateRating = (newrating) => {
+        rating.value = newrating
+    }
+
     const average_rating = computed(() => {
         let sum = 0
         let count = 0
@@ -198,24 +208,77 @@
                 count++
             }
         }
-        return Math.min(5.0, sum / count)
+        let avg = sum / count
+        return Math.min(5.0, avg).toFixed(2) 
     })
 
-    // a computed ref where the album genres are joined by commas
-    const genres = computed(() => album.genres.join(', '))
+    //computed ref that counts the percentae of tracks included where the rating is greater than 4.5
+    const greatness_rating = computed(() => {
+        let great = 0
+        let count = 0
+        for (const track of album.tracks) {
+            if (track.included) {
+                count++
+                if (track.track_rating >= 4.5) {
+                    great++
+                }
+            }
+        }
+        return ((great / count) * 5).toFixed(2)
+    })
 
-    // the same as above but for the styles
-    const styles = computed(() => album.styles.join(', '))
+    //computed ref that subtracts 0.125 to 5 when a track rating is less than 4.0
+    const consistency_rating = computed(() => {
+        let consistency = 5
+        for (const track of album.tracks) {
+            if (track.included) {
+                if (track.track_rating < 4.0) {
+                    consistency -= 0.125
+                }
+            }
+        }
+        return Math.max(0, consistency).toFixed(2)
+    })
+
+    //computed ref that gives 0.85 of weight to the average rating and 0.15 to the greatness rating
+    const suggested_rating1 = computed(() => {
+        return ((average_rating.value * 0.85) + (greatness_rating.value * 0.15)).toFixed(2)
+    })
+
+    //computed ref that gives 0.85 of weight to the average rating and 0.15 to the consistency rating
+    const suggested_rating2 = computed(() => {
+        return ((average_rating.value * 0.85) + (consistency_rating.value * 0.15)).toFixed(2)
+    })
+
    
+    //computed ref of the max of the two suggested ratings rounded to the nearest 0.5
+    const suggested_rating = computed(() => {
+        return (Math.ceil(Math.max(suggested_rating1.value, suggested_rating2.value)*2) / 2).toFixed(1)
+    })
+
+  
+
     const totalDuration = () => {
         let total = 0;
         album.tracks.forEach(track => {
             total += track.track_duration_ms;
         });
-        let minutes = Math.floor(total / 60000);
-        let seconds = ((total % 60000) / 1000).toFixed(0);
-        return `${minutes} mins ${(seconds < 10 ? "0" : "")}${seconds} s`;
+
+        if (total < 3600000) {
+            let minutes = Math.floor(total / 60000);
+            let seconds = ((total % 60000) / 1000).toFixed(0);
+            return `${minutes} mins ${(seconds < 10 ? "0" : "")}${seconds} s`;
+        }else{
+            let hours = Math.floor(total / 3600000);
+            let minutes = Math.floor((total - (hours * 3600000)) / 60000);
+            return `${hours} hrs ${minutes} mins`;
+        }
     }
+
+   
+
+   //console log how many miliseconds in 60 minutes
+
 
     
 
@@ -232,7 +295,8 @@
 }
 
 .album-cover{
-@apply mx-3 min-w-[225px];
+@apply mx-3 min-w-[225px] h-[225px] ;
+
 }
 
 .album-data{
