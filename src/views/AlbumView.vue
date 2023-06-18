@@ -1,4 +1,6 @@
 <template>
+    <div v-if="album">
+
         <div class="album-header">
             <div class="album-cover">
                 <img :src="album.cover_image">
@@ -7,7 +9,7 @@
                 <div class="album-type">
                     {{ album.release_type}}
                 </div>
-                <div class="album-name">
+                <div class="album-name" :title="album.album_name">
                     {{ album.album_name}}
                 </div>
                 <div class="album-artist">
@@ -15,7 +17,7 @@
                     <div class="circle"></div>
                     <div> {{ album.release_date.substring(0,4) }}</div>
                     <div class="circle"></div>                    
-                    <div> {{ album.total_tracks }} {{ album.total_tracks > 1 ? " songs" :"somg" }}</div>
+                    <div> {{ album.total_tracks }} {{ album.total_tracks > 1 ? " songs" :"song" }}</div>
                     <div class="circle"></div>                    
                     <div class="text-gray-400"> {{ totalDuration()}} </div>
                 </div> 
@@ -37,7 +39,7 @@
                 </div>
                 <div class="rating-container">
                     <div class="rating-label" title="Suggested rating based on your track ratings"> Suggest Rating: </div>
-                    <StarRating :title=" suggested_rating ? suggested_rating + ' Stars' : 'Unrated'" :rating="Number(suggested_rating)" :star-size="22" :increment="0.5"  :show-rating="false"
+                    <StarRating :title=" suggested_rating ? Math.ceil(suggested_rating*2)/2 + ' Stars' : 'Unrated'" :rating="suggested_rating" :star-size="22" :increment="0.5"  :show-rating="false"
                     inactive-color="#332A2B" active-color="#1ED760" :border-width="1" :read-only="true"/>
                 </div> 
             </div>
@@ -45,10 +47,10 @@
 
 
         <!-- <div class="text-white flex w-[600px] min-w-[600px] m-3">
-           "rating: " {{ album.rating}}" avg: " {{ average_rating }} " greatness: " {{greatness_rating}} " consitency: " {{ consistency_rating }} " s1: " {{ suggested_rating1 }}" s2: " {{ suggested_rating2 }}
-           " final: " {{ suggested_rating }}
-        </div>
-       -->
+           "rating: " {{ album.rating}}" avg:" {{ average_rating }} " greatness:" {{greatness_rating}} " consitency:" {{ consistency_rating }} " s1:" {{ suggested_rating1 }}" s2:" {{ suggested_rating2 }}
+           "final: " {{ suggested_rating }}
+        </div> -->
+      
 
         <div class="tracks-container bg-[#121212] mx-6 text-white my-4">
             <ul>
@@ -104,16 +106,16 @@
                         </div>
                         <div class="right-column flex">
                             <div class="flex justify-center w-[135px]">
-                                <StarRating 
+                                <StarRating @click="updateRatingGoated2(i-1,index)"
                                 v-model:rating="album.tracks[i-1][index].track_rating" :star-size="22" :increment="0.5"  :show-rating="false" inactive-color="#332A2B"
                                 active-color="#1ED760" :border-width="1" />
                             </div>                   
                             <div class="flex justify-center items-center w-[75px]">
-                                <input  type="checkbox"  class="checkbox" v-model="track.goated" @click="updateRatingGoated(i-1,index)">
+                                <input  name="goated" type="checkbox"  class="checkbox" v-model="track.goated" @click="updateRatingGoated(i-1,index)">
 
                             </div>
                             <div class="flex justify-center items-center w-[75px]">
-                                <input type="checkbox" class="checkbox" v-model="track.included">
+                                <input name="included" type="checkbox" class="checkbox" v-model="track.included">
                             </div>
                             <div class="flex justify-center items-center text-[13px] w-[75px]">
                                 {{ songDuration(track.track_duration_ms) }}
@@ -123,149 +125,22 @@
                 </div>
             </ul>
         </div>
-        
-
+    </div>
+    <div v-else class="text-white">
+        No album found
+    </div>
+       
 </template>
 
 
 <script setup>
-
-//
     import ClockTimeFourOutline from 'vue-material-design-icons/ClockTimeFourOutline.vue'
     import Disc from 'vue-material-design-icons/Disc.vue'
     import StarRating from 'vue-star-rating'
-    import { ref, computed } from 'vue'
+    import { ref, computed, onMounted, onBeforeMount } from 'vue'
+    import axios from 'axios'
 
-    const albumData={
-        release_type: 'Album',
-        album_name: 'In Rainbows',
-        artist_name: 'Radiohead',
-        album_id: '5vkqYmiPBYLaalcmjujWxK',
-        genres: ['Electronic','Rock'],
-        styles: ['Alternative Rock','Art Rock','Experimental','Indie Rock' ],
-        rating: 5,
-        total_discs: 1,
-        total_tracks: 10,
-        release_date: '2007-10-10',
-        cover_image: 'https://i.scdn.co/image/ab67616d00001e02de3c04b5fc750b68899b20a9',
-        tracks: [
-                [
-                    {
-                        track_id: '4oXg7xT4ksBxHTx8PcmSXw',
-                        track_disc_number: 1,
-                        track_number_on_disc: 1,
-                        track_name: '15 Step',
-                        track_artist: 'Radiohead',
-                        track_rating: 4.5,
-                        goated: false,
-                        included: true,
-                        track_duration_ms: 237293 
-                    },
-                    {
-                        track_id: '7ouMYWpwJ422jRcDASZB7P',
-                        track_disc_number: 1,
-                        track_number_on_disc: 2,
-                        track_name: 'Bodysnatchers',
-                        track_artist: 'Radiohead',
-                        track_rating: 4.0,
-                        goated: false,
-                        included: true,
-                        track_duration_ms: 242293                
-                    },
-                    {
-                        track_id: '2QcZxj3mI4aVBEmk4e0R4g',
-                        track_disc_number: 1,
-                        track_number_on_disc: 3,
-                        track_name: 'Nude',
-                        track_artist: 'Radiohead',
-                        track_rating: 5.0,
-                        goated: true,
-                        included: true,
-                        track_duration_ms: 255386
-                    },
-                    {
-                        track_id: '6V9YnBmFjWmXCBaUVRCVXP',
-                        track_disc_number: 1,
-                        track_number_on_disc: 4,
-                        track_name: 'Weird Fishes/Arpeggi',
-                        track_artist: 'Radiohead',
-                        track_rating: 5.0,
-                        goated: true,
-                        included: true,
-                        track_duration_ms: 318186
-                    },
-                    {
-                        track_id: '3sv3TtGRqgJGn7XsYkscx2',
-                        track_disc_number: 1,
-                        track_number_on_disc: 5,
-                        track_name: 'All I Need',
-                        track_artist: 'Radiohead',
-                        track_rating: 4.5,
-                        goated: false,
-                        included: true,
-                        track_duration_ms: 228746
-                    },
-                    {
-                        track_id: '7hDVYcQqEwGj5gk0dIdgI7',
-                        track_disc_number: 1,
-                        track_number_on_disc: 6,
-                        track_name: 'Faust Arp',
-                        track_artist: 'Radiohead',
-                        track_rating: 4.5,
-                        goated: false,
-                        included: true,
-                        track_duration_ms: 129679
-                    },
-                    {
-                        track_id: '2nTsKOXIVGDf2iPeVQO2Gm',
-                        track_disc_number: 1,
-                        track_number_on_disc: 7,
-                        track_name: 'Reckoner',
-                        track_artist: 'Radiohead',
-                        track_rating: 5.0,
-                        goated: false,
-                        included: true,
-                        track_duration_ms: 290213
-                    },
-                    {
-                        track_id: '2PzU4IB8Dr6mxV3lHuaG34',
-                        track_disc_number: 1,
-                        track_number_on_disc: 8,
-                        track_name: 'House of Cards',
-                        track_artist: 'Radiohead',
-                        track_rating: 4.0,
-                        goated: false,
-                        included: true,
-                        track_duration_ms: 328293
-                    },
-                    {
-                        track_id: '2PzU4IB8Dr6mxV3lHuaG34',
-                        track_disc_number: 1,
-                        track_number_on_disc: 9,
-                        track_name: 'Jigsaw Falling Into Place',
-                        track_artist: 'Radiohead',
-                        track_rating: 5.0,
-                        goated: false,
-                        included: true,
-                        track_duration_ms: 248893
-                    },
-                    {
-                        track_id: '2PzU4IB8Dr6mxV3lHuaG34',
-                        track_disc_number: 1,
-                        track_number_on_disc: 10,
-                        track_name: 'Videotape',
-                        track_artist: 'Radiohead',
-                        track_rating: 5.0,
-                        goated: false,
-                        included: true,
-                        track_duration_ms: 279634
-                    }
-                ],
-               
-        ]
-    }
-
-    const album = ref(albumData)
+    const album = ref(false)
     const genres = computed(() => album.value.genres.join(', '))
     const styles = computed(() => album.value.styles.join(', '))
     
@@ -273,6 +148,13 @@
     const updateRatingGoated = (disc,track) => {
         if (!album.value.tracks[disc][track].goated) {
             album.value.tracks[disc][track].track_rating = 5
+        }
+      
+    }
+
+    const updateRatingGoated2 = (disc,track) => {
+        if(album.value.tracks[disc][track].track_rating < 5) {
+            album.value.tracks[disc][track].goated = false
         }
     }
 
@@ -282,12 +164,13 @@
         let count = 0
         for ( const disc of album.value.tracks) {
             for (const track of disc) {
-                if (track.included) {
+                if (track.included) {               
                     sum += track.goated ? 5.5 : track.track_rating
                     count++
                 }
             }
-        }     
+        }    
+        //sum = sum ? sum : 0
         let avg = sum / count
         return Math.min(5.0, avg)
     })
@@ -334,9 +217,7 @@
 
 
     const suggested_rating = computed(() => {
-
-        return (suggested_rating1.value + suggested_rating2.value)/2
-        
+        return (suggested_rating1.value + suggested_rating2.value)/2        
     })
 
     const songDuration = (ms) => {
@@ -365,6 +246,18 @@
         }
     }
 
+    onBeforeMount(async () => {
+        let id_album = '1j57Q5ntVi7crpibb0h4sv'
+        var url = 'http://192.168.100.14:5000/api/v1/get-album-data/' + id_album
+        axios.get(url)
+            .then((response) => {
+                album.value = response.data.album                
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+    })
+
 </script>
 
 <style scoped>
@@ -372,52 +265,40 @@
 .checkbox{
     @apply h-5 w-5 accent-green-400 cursor-pointer;
 }
-
-
 .rating-container{
     @apply flex items-center;
 }
 .rating-label{
     @apply text-white text-[13px]  w-[115px] font-semibold pt-1;
 }
-
-
 .styles-container{
     @apply text-white text-[13px];
 }
-
 .styles-label{
     @apply font-semibold w-[50px];
-
 }
-
 .styles-value{
     @apply ml-2;
 }
 
 .album-header{
     @apply w-full flex bg-gradient-to-b from-[#c36666] to-[#0a0a0a] rounded-t-sm py-5 overflow-hidden;
-    @apply max-h-[265px] ;
- 
+    @apply max-h-[265px] ; 
 }
-
 .album-cover{
 @apply mx-3 min-w-[225px] h-[225px] ;
 }
-
 .album-cover img{
     @apply object-contain h-[225px] w-[225px] ;
 }
-
 .album-data{
     @apply w-[calc(100%-275px)] flex flex-col min-w-[500px];
 }
-
 .album-type{
     @apply text-white text-[13x] font-semibold mb-1;
 }
 .album-name{
-    @apply text-white h-[60px] font-semibold text-6xl mb-1 truncate pr-9 ;
+    @apply text-white h-[70px] font-semibold text-6xl mb-1 truncate pr-9 ;
 }
 .album-artist{
     @apply text-white text-[13px] flex items-center;

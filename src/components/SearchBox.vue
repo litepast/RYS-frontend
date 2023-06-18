@@ -1,7 +1,7 @@
 <template>   
     <div v-show="showSearch" class="flex items-center w-80 h-11 relative ml-5">
         <div class="search-icon"><Magnify :fillColor=" isFocused ? '#FFFFFF' : '#A0A0A0' " /></div>
-        <input v-model.trim="store.input" :placeholder="placeholder" type="text" @focus="isFocused=true" @blur="isFocused=false"
+        <input name="searchbox" v-model.trim="store.input" :placeholder="placeholder" type="text" @focus="isFocused=true" @blur="isFocused=false"
         maxlength="50" @keyup.enter="store.enter">  
         <div v-show="store.input.length" class="close-icon" @click="searchClose()"><Close fillColor="#FFFFFF"/></div> 
     </div> 
