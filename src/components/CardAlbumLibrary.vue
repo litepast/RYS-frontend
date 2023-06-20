@@ -1,5 +1,5 @@
 <template>
-    <div class="card" @mouseenter="hoverCard=true" @mouseleave="hoverCard=false" :key="id">
+    <div class="card" @click="goToAlbumView" @mouseenter="hoverCard=true" @mouseleave="hoverCard=false" :key="id">
         <div class="cover-container">
             <img  :src="cover" />
         </div> 
@@ -13,9 +13,10 @@
 </template>
 
 <script setup>
-    import{ref, defineEmits} from 'vue'
+    import{ref} from 'vue'
+    import { useRouter } from 'vue-router';
     import StarRating from 'vue-star-rating'
-
+    const router = useRouter()
     const hoverCard = ref(false)
     
     const { id, cover, name , year, artist  }  = defineProps([
@@ -27,11 +28,11 @@
             'rating'
         ]) 
 
-    // const emit = defineEmits(["addAlbum"])
+    const goToAlbumView = () => {       
+            router.push(`/library/${id}`)
+            
+        }
 
-    // function addAlbum(a_id,a_name){  
-    //         emit("addAlbum",a_id,a_name)
-    // }
 
 </script>
 
@@ -44,6 +45,7 @@
   
     .card{
     @apply m-2 rounded-xl bg-slate-900 hover:bg-slate-800 border-none p-3 w-[200px];
+    @apply cursor-pointer;
     }
     .card img{
         width: 100%;

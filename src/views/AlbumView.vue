@@ -1,13 +1,13 @@
 <template>
     <div v-if="album">
 
-        <div class="album-header">
+        <div :class="'bg-gradient-to-b from-[' + album.cover_color + '] to-[#0a0a0a]'" class="album-header">
             <div class="album-cover">
                 <img :src="album.cover_image">
             </div>        
             <div class="album-data">
                 <div class="album-type">
-                    {{ album.release_type}}
+                    {{ album.release_type}} {{ album.cover_color }}
                 </div>
                 <div class="album-name" :title="album.album_name">
                     {{ album.album_name}}
@@ -36,9 +36,14 @@
                     <StarRating 
                     v-model:rating="album.rating" :star-size="22" :increment="0.5"  :show-rating="false" inactive-color="#332A2B"
                     active-color="#1ED760" :border-width="1"/>
+
+                    <button class="text-[13px] rounded-full text-black bg-[#1ED760] font-semibold w-[55px] h-[22px] ml-2 mt-1"
+                    @click="album.rating = NaN">Clear</button>
+
                 </div>
                 <div class="rating-container">
-                    <div class="rating-label" title="Suggested rating based on your track ratings"> Suggest Rating: </div>
+                    <div class="rating-label" title="Suggested rating based on your track ratings&#10;Rate all the included tracks to get one!">
+                    Suggest Rating: </div>
                     <StarRating :title=" suggested_rating ? Math.ceil(suggested_rating*2)/2 + ' Stars' : 'Unrated'" :rating="suggested_rating" :star-size="22" :increment="0.5"  :show-rating="false"
                     inactive-color="#332A2B" active-color="#1ED760" :border-width="1" :read-only="true"/>
                 </div> 
@@ -52,9 +57,9 @@
         </div> -->
       
 
-        <div class="tracks-container bg-[#121212] mx-6 text-white my-4">
+        <div class="tracks-container">
             <ul>
-                <li class="flex h-[25px] justify-between text-[13px] text-gray-400 pb-2 mb-4 border-b-[1px] border-[#2C2C2C]">                    
+                <li class="tracks-header">                    
                     <div class="left-column flex w-[600px] min-w-[600px]">
                         <div class="w-[50px] min-w-[50px] flex justify-center items-center">
                             #
@@ -64,7 +69,7 @@
                         </div>
                     </div>
                     <div class="right-column flex" >
-                        <div class="flex justify-center items-center w-[135px]" title="Your Track Rating">
+                        <div class="flex justify-center items-center w-[195px] pl-[60px]" title="Your Track Rating">
                             Rating
                         </div>                   
                         <div class="flex justify-center items-center w-[75px]" title="is this track goated? &#10;The track is so good, it is beyond 5 stars&#10;It will bost the album's suggested rating">
@@ -78,6 +83,8 @@
                         </div>
                     </div>
                 </li>
+
+
                 <div class="discs flex flex-col" v-for="i in album.total_discs">                    
                     <li class="h-[50px] flex justify-start" v-if="album.total_discs > 1">                        
                          <div class="flex w-auto min-w-[600px]">
@@ -105,14 +112,19 @@
                             </div>
                         </div>
                         <div class="right-column flex">
-                            <div class="flex justify-center w-[135px]">
-                                <StarRating @click="updateRatingGoated2(i-1,index)"
-                                v-model:rating="album.tracks[i-1][index].track_rating" :star-size="22" :increment="0.5"  :show-rating="false" inactive-color="#332A2B"
-                                active-color="#1ED760" :border-width="1" />
+                            <div class="flex justify-between items-center w-[195px] pr-1">
+                                <button class="text-[13px] rounded-full text-black bg-[#1ED760] font-semibold w-[55px] h-[22px] ml-1"
+                                @click="album.tracks[i-1][index].track_rating = NaN">Clear</button>
+
+                                <div class="mb-[6px]">
+                                    <StarRating @click="updateRatingGoated2(i-1,index)"
+                                    v-model:rating="album.tracks[i-1][index].track_rating" :star-size="22" :increment="0.5"  :show-rating="false" inactive-color="#332A2B"
+                                    active-color="#1ED760" :border-width="1" />
+                                </div>                                
                             </div>                   
+                            
                             <div class="flex justify-center items-center w-[75px]">
                                 <input  name="goated" type="checkbox"  class="checkbox" v-model="track.goated" @click="updateRatingGoated(i-1,index)">
-
                             </div>
                             <div class="flex justify-center items-center w-[75px]">
                                 <input name="included" type="checkbox" class="checkbox" v-model="track.included">
@@ -127,10 +139,71 @@
         </div>
     </div>
     <div v-else class="text-white">
-        No album found
-    </div>
-       
+        <div v-if="!loading">
+            <NotFound/>
+        </div>        
+    </div>       
 </template>
+
+
+<style scoped>
+
+.tracks-container{
+    @apply  bg-[#121212] mx-6 text-white my-4;
+}
+
+.tracks-header{
+    @apply flex h-[25px] justify-between text-[13px] text-gray-400 pb-2 mb-4 border-b-[1px] border-[#2C2C2C];
+}
+
+.checkbox{
+    @apply h-5 w-5 accent-green-400 cursor-pointer;
+}
+.rating-container{
+    @apply flex items-center;
+}
+.rating-label{
+    @apply text-white text-[13px]  w-[115px] font-semibold pt-1;
+}
+.styles-container{
+    @apply text-white text-[13px];
+}
+.styles-label{
+    @apply font-semibold w-[50px];
+}
+.styles-value{
+    @apply ml-2;
+}
+
+.album-header{
+    @apply w-full flex  rounded-t-sm py-5 overflow-hidden;
+    @apply max-h-[265px] ; 
+}
+.album-cover{
+@apply mx-3 min-w-[225px] h-[225px] ;
+}
+.album-cover img{
+    @apply object-contain h-[225px] w-[225px] ;
+}
+.album-data{
+    @apply w-[calc(100%-275px)] flex flex-col min-w-[500px];
+}
+.album-type{
+    @apply text-white text-[13x] font-semibold mb-1;
+}
+.album-name{
+    @apply text-white h-[70px] font-semibold text-6xl mb-1 truncate pr-9 ;
+}
+.album-artist{
+    @apply text-white text-[13px] flex items-center;
+}
+
+.circle {
+    @apply mx-1 w-1 h-1 bg-white rounded-full;   
+}
+</style>
+
+
 
 
 <script setup>
@@ -139,10 +212,16 @@
     import StarRating from 'vue-star-rating'
     import { ref, computed, onMounted, onBeforeMount } from 'vue'
     import axios from 'axios'
-
+    import {useRoute} from "vue-router"
+    import NotFound from '../components/NotFound.vue'
+    const loading = ref(true)
+    const route = useRoute()
     const album = ref(false)
     const genres = computed(() => album.value.genres.join(', '))
     const styles = computed(() => album.value.styles.join(', '))
+
+    
+
     
 
     const updateRatingGoated = (disc,track) => {
@@ -157,7 +236,6 @@
             album.value.tracks[disc][track].goated = false
         }
     }
-
 
     const average_rating = computed(() => {
         let sum = 0
@@ -246,8 +324,15 @@
         }
     }
 
+    const bg_color = () => {      
+        let classy = "bg-gradient-to-b from-[" + album.value.cover_color + "] to-[#0a0a0a]"
+        return classy 
+        
+    }
+
     onBeforeMount(async () => {
-        let id_album = '1j57Q5ntVi7crpibb0h4sv'
+        loading.value = true
+        const id_album = route.params.id
         var url = 'http://192.168.100.14:5000/api/v1/get-album-data/' + id_album
         axios.get(url)
             .then((response) => {
@@ -256,59 +341,14 @@
             .catch((error) => {
                 console.error(error);
             })
+            .finally(() => {
+                loading.value = false
+            })
+
+
     })
 
 </script>
-
-<style scoped>
-
-.checkbox{
-    @apply h-5 w-5 accent-green-400 cursor-pointer;
-}
-.rating-container{
-    @apply flex items-center;
-}
-.rating-label{
-    @apply text-white text-[13px]  w-[115px] font-semibold pt-1;
-}
-.styles-container{
-    @apply text-white text-[13px];
-}
-.styles-label{
-    @apply font-semibold w-[50px];
-}
-.styles-value{
-    @apply ml-2;
-}
-
-.album-header{
-    @apply w-full flex bg-gradient-to-b from-[#c36666] to-[#0a0a0a] rounded-t-sm py-5 overflow-hidden;
-    @apply max-h-[265px] ; 
-}
-.album-cover{
-@apply mx-3 min-w-[225px] h-[225px] ;
-}
-.album-cover img{
-    @apply object-contain h-[225px] w-[225px] ;
-}
-.album-data{
-    @apply w-[calc(100%-275px)] flex flex-col min-w-[500px];
-}
-.album-type{
-    @apply text-white text-[13x] font-semibold mb-1;
-}
-.album-name{
-    @apply text-white h-[70px] font-semibold text-6xl mb-1 truncate pr-9 ;
-}
-.album-artist{
-    @apply text-white text-[13px] flex items-center;
-}
-
-.circle {
-    @apply mx-1 w-1 h-1 bg-white rounded-full;   
-}
-</style>
-
 
 
 

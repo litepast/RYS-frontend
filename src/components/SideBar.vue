@@ -17,10 +17,7 @@
         </RouterLink>
         <RouterLink to="/library">
             <SideBarItem materialIcon="Library" :sizeIcon="sizeIcon" label="Library"  pageUrl="/library" />
-        </RouterLink>  
-        <RouterLink to="/album">
-            <div class="text-white">Album</div>
-        </RouterLink>       
+        </RouterLink>        
         
     </div>
       

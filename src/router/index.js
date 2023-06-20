@@ -20,13 +20,14 @@ const router = createRouter({
     {
       path: '/library',
       name: 'library',
-      component: LibraryView
+      component: LibraryView,      
     },
     {
-      path: '/album',
+      path: '/library/:id',
       name: 'album',
-      component: AlbumView
-    }
+      component: AlbumView,      
+    },
+   
   ]
 })
 
