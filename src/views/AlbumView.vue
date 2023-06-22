@@ -1,53 +1,53 @@
 <template>
     <div v-if="album">
-
-        <div :class="'bg-gradient-to-b from-[' + album.cover_color + '] to-[#0a0a0a]'" class="album-header">
-            <div class="album-cover">
-                <img :src="album.cover_image">
-            </div>        
-            <div class="album-data">
-                <div class="album-type">
-                    {{ album.release_type}} {{ album.cover_color }}
-                </div>
-                <div class="album-name" :title="album.album_name">
-                    {{ album.album_name}}
-                </div>
-                <div class="album-artist">
-                    <div class="font-semibold"> {{album.artist_name}} </div>
-                    <div class="circle"></div>
-                    <div> {{ album.release_date.substring(0,4) }}</div>
-                    <div class="circle"></div>                    
-                    <div> {{ album.total_tracks }} {{ album.total_tracks > 1 ? " songs" :"song" }}</div>
-                    <div class="circle"></div>                    
-                    <div class="text-gray-400"> {{ totalDuration()}} </div>
-                </div> 
-                <div class="styles-container">
-                    <div class="flex">
-                        <div class="styles-label"> Genres: </div>
-                        <div class="styles-value"> {{ genres }} </div>
+        <div class="album-header-container" :style="bgColor">
+            <div class="album-header" :style="bgGradient">
+                <div class="album-cover">
+                    <img :src="album.cover_image">
+                </div>        
+                <div class="album-data">
+                    <div class="album-type">
+                        {{ album.release_type}}
                     </div>
-                    <div class="flex">
-                        <div class="styles-label"> Styles: </div>
-                        <div class="styles-value"> {{ styles }} </div>
+                    <div class="album-name" :title="album.album_name">
+                        {{ album.album_name}}
                     </div>
+                    <div class="album-artist">
+                        <div class="font-semibold"> {{album.artist_name}} </div>
+                        <div class="circle"></div>
+                        <div> {{ album.release_date.substring(0,4) }}</div>
+                        <div class="circle"></div>                    
+                        <div> {{ album.total_tracks }} {{ album.total_tracks > 1 ? " songs" :"song" }}</div>
+                        <div class="circle"></div>                    
+                        <div class="text-gray-200"> {{ totalDuration()}} </div>
+                    </div> 
+                    <div class="styles-container">
+                        <div class="flex">
+                            <div class="styles-label"> Genres: </div>
+                            <div class="styles-value"> {{ genres }} </div>
+                        </div>
+                        <div class="flex">
+                            <div class="styles-label"> Styles: </div>
+                            <div class="styles-value"> {{ styles }} </div>
+                        </div>
+                    </div>
+                    <div class="rating-container">
+                        <div class ="rating-label" :title=" album.rating ? album.rating + ' Stars' : 'Unrated'" > Your Rating: </div>
+                        <StarRating 
+                        v-model:rating="album.rating" :star-size="22" :increment="0.5"  :show-rating="false" inactive-color="#332A2B"
+                        active-color="#1ED760" :border-width="1"/>
+                        <button class="text-[13px] rounded-full text-black bg-[#1ED760] font-semibold w-[55px] h-[22px] ml-2 mt-1"
+                        @click="album.rating = NaN">Clear</button>
+                    </div>
+                    <div class="rating-container">
+                        <div class="rating-label" title="Suggested rating based on your track ratings&#10;Rate all the included tracks to get one!">
+                        Suggest Rating: </div>
+                        <StarRating :title=" suggested_rating ? Math.ceil(suggested_rating*2)/2 + ' Stars' : 'Unrated'" :rating="suggested_rating" :star-size="22" :increment="0.5"  :show-rating="false"
+                        inactive-color="#332A2B" active-color="#1ED760" :border-width="1" :read-only="true"/>
+                    </div> 
                 </div>
-                <div class="rating-container">
-                    <div class ="rating-label" :title=" album.rating ? album.rating + ' Stars' : 'Unrated'" > Your Rating: </div>
-                    <StarRating 
-                    v-model:rating="album.rating" :star-size="22" :increment="0.5"  :show-rating="false" inactive-color="#332A2B"
-                    active-color="#1ED760" :border-width="1"/>
-
-                    <button class="text-[13px] rounded-full text-black bg-[#1ED760] font-semibold w-[55px] h-[22px] ml-2 mt-1"
-                    @click="album.rating = NaN">Clear</button>
-
-                </div>
-                <div class="rating-container">
-                    <div class="rating-label" title="Suggested rating based on your track ratings&#10;Rate all the included tracks to get one!">
-                    Suggest Rating: </div>
-                    <StarRating :title=" suggested_rating ? Math.ceil(suggested_rating*2)/2 + ' Stars' : 'Unrated'" :rating="suggested_rating" :star-size="22" :increment="0.5"  :show-rating="false"
-                    inactive-color="#332A2B" active-color="#1ED760" :border-width="1" :read-only="true"/>
-                </div> 
             </div>
+         
         </div>
 
 
@@ -146,64 +146,6 @@
 </template>
 
 
-<style scoped>
-
-.tracks-container{
-    @apply  bg-[#121212] mx-6 text-white my-4;
-}
-
-.tracks-header{
-    @apply flex h-[25px] justify-between text-[13px] text-gray-400 pb-2 mb-4 border-b-[1px] border-[#2C2C2C];
-}
-
-.checkbox{
-    @apply h-5 w-5 accent-green-400 cursor-pointer;
-}
-.rating-container{
-    @apply flex items-center;
-}
-.rating-label{
-    @apply text-white text-[13px]  w-[115px] font-semibold pt-1;
-}
-.styles-container{
-    @apply text-white text-[13px];
-}
-.styles-label{
-    @apply font-semibold w-[50px];
-}
-.styles-value{
-    @apply ml-2;
-}
-
-.album-header{
-    @apply w-full flex  rounded-t-sm py-5 overflow-hidden;
-    @apply max-h-[265px] ; 
-}
-.album-cover{
-@apply mx-3 min-w-[225px] h-[225px] ;
-}
-.album-cover img{
-    @apply object-contain h-[225px] w-[225px] ;
-}
-.album-data{
-    @apply w-[calc(100%-275px)] flex flex-col min-w-[500px];
-}
-.album-type{
-    @apply text-white text-[13x] font-semibold mb-1;
-}
-.album-name{
-    @apply text-white h-[70px] font-semibold text-6xl mb-1 truncate pr-9 ;
-}
-.album-artist{
-    @apply text-white text-[13px] flex items-center;
-}
-
-.circle {
-    @apply mx-1 w-1 h-1 bg-white rounded-full;   
-}
-</style>
-
-
 
 
 <script setup>
@@ -220,7 +162,15 @@
     const genres = computed(() => album.value.genres.join(', '))
     const styles = computed(() => album.value.styles.join(', '))
 
+    const bgColor = computed(() => 
+             //`background: linear-gradient(315deg, ${album.value.cover_color} 0%, ${album.value.cover_color_to} 60%, #00000032 95%)`
+            `background-color: ${album.value.cover_color}`
+            //  ; background : linear-gradient(to bottom, transparent, rgba(0,0,0,0.5) );'
+        )
     
+    const bgGradient = 'background : linear-gradient(to bottom, transparent, rgba(0,0,0,0.5) )'
+
+        //webkit-gradient(linear,left top,left bottom,from(transparent),to(rgba(0,0,0,.5))),var(--background-noise);
 
     
 
@@ -324,11 +274,7 @@
         }
     }
 
-    const bg_color = () => {      
-        let classy = "bg-gradient-to-b from-[" + album.value.cover_color + "] to-[#0a0a0a]"
-        return classy 
-        
-    }
+   
 
     onBeforeMount(async () => {
         loading.value = true
@@ -336,7 +282,7 @@
         var url = 'http://192.168.100.14:5000/api/v1/get-album-data/' + id_album
         axios.get(url)
             .then((response) => {
-                album.value = response.data.album                
+                album.value = response.data.album                     
             })
             .catch((error) => {
                 console.error(error);
@@ -349,6 +295,69 @@
     })
 
 </script>
+
+
+<style scoped>
+
+.tracks-container{
+    @apply  bg-[#121212] mx-6 text-white my-4;
+}
+
+.tracks-header{
+    @apply flex h-[25px] justify-between text-[13px] text-gray-400 pb-2 mb-4 border-b-[1px] border-[#2C2C2C];
+}
+
+.checkbox{
+    @apply h-5 w-5 accent-green-400 cursor-pointer;
+}
+.rating-container{
+    @apply flex items-center;
+}
+.rating-label{
+    @apply text-white text-[13px]  w-[115px] font-semibold pt-1;
+}
+.styles-container{
+    @apply text-white text-[13px];
+}
+.styles-label{
+    @apply font-semibold w-[50px];
+}
+.styles-value{
+    @apply ml-2;
+}
+
+.album-header-container{
+    @apply flex w-full max-h-[265px] rounded-t-sm overflow-hidden;
+}
+.album-header{
+    @apply w-full h-full flex  rounded-t-sm py-5;
+    
+}
+.album-cover{
+@apply mx-3 min-w-[225px] h-[225px];
+}
+.album-cover img{
+    @apply object-contain h-[225px] w-[225px] shadow-md shadow-black;
+}
+.album-data{
+    @apply w-[calc(100%-275px)] flex flex-col min-w-[500px];
+}
+.album-type{
+    @apply text-zinc-50 text-[13x] font-semibold mb-1;
+}
+.album-name{
+    @apply text-white h-[70px] font-semibold text-6xl mb-1 truncate pr-9 ;
+}
+.album-artist{
+    @apply text-white text-[13px] flex items-center;
+}
+
+.circle {
+    @apply mx-1 w-1 h-1 bg-white rounded-full;   
+}
+</style>
+
+
 
 
 
