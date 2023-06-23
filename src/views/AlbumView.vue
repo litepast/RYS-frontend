@@ -36,8 +36,7 @@
                         <StarRating 
                         v-model:rating="album.rating" :star-size="22" :increment="0.5"  :show-rating="false" inactive-color="#332A2B"
                         active-color="#1ED760" :border-width="1"/>
-                        <button class="text-[13px] rounded-full text-black bg-[#1ED760] font-semibold w-[55px] h-[22px] ml-2 mt-1"
-                        @click="album.rating = NaN">Clear</button>
+                        <button class="button-clear ml-2 mt-1" @click="album.rating = NaN">Clear</button>
                     </div>
                     <div class="rating-container">
                         <div class="rating-label" title="Suggested rating based on your track ratings&#10;Rate all the included tracks to get one!">
@@ -46,90 +45,74 @@
                         inactive-color="#332A2B" active-color="#1ED760" :border-width="1" :read-only="true"/>
                     </div> 
                 </div>
-            </div>
-         
+                <div class="actions-container flex w-auto mx-3 mt-4">
+                    <Unsaved v-if="saved" :size="50" fillColor="#1ED760" title="Save track ratings" class="cursor-pointer" @click="saved=!saved"/>
+                    <Saved v-else :size="50" fillColor="#1ED760" title="Track ratings saved" class="cursor-pointer"  @click="saved=!saved"/>
+                    <button class="text-[#1ED760] ml-8"> Save test</button>
+                </div>
+            </div>    
+        </div>
+        <div class="text-white">
+            div test
         </div>
 
-
-        <!-- <div class="text-white flex w-[600px] min-w-[600px] m-3">
-           "rating: " {{ album.rating}}" avg:" {{ average_rating }} " greatness:" {{greatness_rating}} " consitency:" {{ consistency_rating }} " s1:" {{ suggested_rating1 }}" s2:" {{ suggested_rating2 }}
-           "final: " {{ suggested_rating }}
-        </div> -->
-      
-
-        <div class="tracks-container">
+        
+        <div class="tracks-full-container">
             <ul>
-                <li class="tracks-header">                    
-                    <div class="left-column flex w-[600px] min-w-[600px]">
-                        <div class="w-[50px] min-w-[50px] flex justify-center items-center">
-                            #
-                        </div>
-                        <div class="flex flex-col justify-center w-[540px]">
-                            Title 
-                        </div>
-                    </div>
-                    <div class="right-column flex" >
-                        <div class="flex justify-center items-center w-[195px] pl-[60px]" title="Your Track Rating">
+                <li class="tracks-header-row">
+                    <div class="tracks-left-slot">
+                        <div class="tracks-number"> # </div>
+                        <div class="tracks-title"> Title </div>
+                    </div>                    
+                    <div class="tracks-right-slot">
+                        <div class="tracks-rating pl-[60px]" title="Your Track Rating">
                             Rating
-                        </div>                   
-                        <div class="flex justify-center items-center w-[75px]" title="is this track goated? &#10;The track is so good, it is beyond 5 stars&#10;It will bost the album's suggested rating">
-                            🐐 ?
                         </div>
-                        <div class="flex justify-center items-center w-[75px]" title="Include this track on your suggested rating calculation">
+                        <div class= "column" title="is this track goated? &#10;The track is so good, it is beyond 5 stars&#10;It will bost the album's suggested rating">
+                            🐐 
+                        </div>                        
+                        <div class="column" title="Include this track on your suggested rating calculation">
                             Included
-                        </div>
-                        <div class="flex justify-center items-center w-[75px]" title="Duration">
+                        </div>                        
+                        <div class="column" title="Duration">
                             <ClockTimeFourOutline :size="22" fillColor="#9CA3AF"/>
                         </div>
                     </div>
                 </li>
-
-
-                <div class="discs flex flex-col" v-for="i in album.total_discs">                    
-                    <li class="h-[50px] flex justify-start" v-if="album.total_discs > 1">                        
-                         <div class="flex w-auto min-w-[600px]">
-                            <div class="w-[50px] min-w-[50px] flex justify-center items-center">
-                                <Disc :size="22" fillColor="#9CA3AF"/>
-                            </div>
-                            <div class="flex justify-center items-center  text-gray-400">
-                                Disc {{ i }}                                                 
-                            </div>
+                <div class="tracks-by-discs-container" v-for="i in album.total_discs">
+                    <li class="discs-row" v-if="album.total_discs > 1">
+                        <div class="tracks-number">
+                            <Disc :size="22" fillColor="#9CA3AF"/>
+                        </div>
+                        <div class="tracks-title  text-gray-400">
+                            Disc {{ i }}                                                 
                         </div>
                     </li>
-
-                    <li class="flex h-[50px]  hover:bg-[#2C2C2C] hover:rounded-sm justify-between" v-for="(track, index) in album.tracks[i-1]" :key="track.track_id">                    
-                        <div class="left-column flex w-[600px] min-w-[600px]">
-                            <div class="w-[50px] min-w-[50px] flex justify-center items-center">
+                    <li class="tracks-row" v-for="(track, index) in album.tracks[i-1]" :key="track.track_id">
+                        <div class="tracks-left-slot">
+                            <div class="tracks-number">
                                 {{ track.track_number_on_disc }}
                             </div>
-                            <div class="flex flex-col justify-center w-[540px]" :title="track.track_name">
-                                <div class="text-[16px] truncate">
-                                    {{ track.track_name }}  
-                                </div>
-                                <div class="text-[13px] truncate" :title="track.track_artist">
-                                    {{ track.track_artist }}
-                                </div>                      
+                            <div class="tracks-title" :title="track.track_name">
+                                <div class="text-[16px] truncate"> {{ track.track_name }} </div>
+                                <div class="text-[13px] truncate" :title="track.track_artist">{{ track.track_artist }}</div>                      
                             </div>
                         </div>
-                        <div class="right-column flex">
-                            <div class="flex justify-between items-center w-[195px] pr-1">
-                                <button class="text-[13px] rounded-full text-black bg-[#1ED760] font-semibold w-[55px] h-[22px] ml-1"
-                                @click="album.tracks[i-1][index].track_rating = NaN">Clear</button>
-
+                        <div class="tracks-right-slot">
+                            <div class="tracks-rating pr-1">
+                                <button class="button-clear ml-1" @click="album.tracks[i-1][index].track_rating = NaN">Clear</button>
                                 <div class="mb-[6px]">
-                                    <StarRating @click="updateRatingGoated2(i-1,index)"
-                                    v-model:rating="album.tracks[i-1][index].track_rating" :star-size="22" :increment="0.5"  :show-rating="false" inactive-color="#332A2B"
-                                    active-color="#1ED760" :border-width="1" />
+                                    <StarRating @click="updateRatingGoated2(i-1,index)" v-model:rating="album.tracks[i-1][index].track_rating" 
+                                    :star-size="22" :increment="0.5"  :show-rating="false" inactive-color="#332A2B" active-color="#1ED760" :border-width="1" />
                                 </div>                                
-                            </div>                   
-                            
-                            <div class="flex justify-center items-center w-[75px]">
+                            </div> 
+                            <div class="column">
                                 <input  name="goated" type="checkbox"  class="checkbox" v-model="track.goated" @click="updateRatingGoated(i-1,index)">
                             </div>
-                            <div class="flex justify-center items-center w-[75px]">
+                            <div class="column">
                                 <input name="included" type="checkbox" class="checkbox" v-model="track.included">
                             </div>
-                            <div class="flex justify-center items-center text-[13px] w-[75px]">
+                            <div class="column text-[13px]">
                                 {{ songDuration(track.track_duration_ms) }}
                             </div>
                         </div>
@@ -145,34 +128,111 @@
     </div>       
 </template>
 
-
+<style scoped>
+.tracks-full-container{
+    @apply  bg-[#121212] mx-6 text-white my-4;
+}
+.tracks-header-row{
+    @apply flex h-[25px] justify-between text-[13px] text-gray-400 pb-2 mb-4 border-b-[1px] border-[#2C2C2C];
+}
+.tracks-row{
+    @apply flex h-[50px] justify-between hover:bg-[#2C2C2C] hover:rounded-sm ;
+}
+.tracks-left-slot{
+    @apply flex w-[600px] min-w-[600px]
+}
+.tracks-number{
+    @apply w-[50px] min-w-[50px] flex justify-center items-center;
+}
+.tracks-title{
+   @apply flex flex-col justify-center w-[540px];
+}
+.tracks-right-slot{
+    @apply flex;
+}
+.tracks-right-slot > .column{
+    @apply flex justify-center items-center w-[75px];
+}
+.tracks-by-discs-container{
+    @apply flex flex-col;
+}
+.discs-row{
+    @apply flex justify-start w-auto min-w-[600px] h-[50px];
+}
+.button-clear{
+    @apply text-[13px] rounded-full text-black bg-[#1ED760] font-semibold w-[55px] h-[22px];
+}
+.tracks-rating{ 
+    @apply flex justify-between items-center w-[195px];
+}
+.checkbox{
+    @apply h-5 w-5 accent-green-400 cursor-pointer;
+}
+.rating-container{
+    @apply flex items-center;
+}
+.rating-label{
+    @apply text-white text-[13px]  w-[115px] font-semibold pt-1;
+}
+.styles-container{
+    @apply text-white w-full text-[13px];
+}
+.styles-label{
+    @apply font-semibold w-[50px];
+}
+.styles-value{
+    @apply ml-2;
+}
+.album-header-container{
+    @apply flex w-full max-h-[335px] rounded-t-sm overflow-hidden;
+}
+.album-header{
+    @apply w-full h-full flex flex-wrap rounded-t-sm py-5;    
+}
+.album-cover{
+@apply mx-3 w-[225px] min-w-[225px] h-[225px];
+}
+.album-cover img{
+    @apply object-contain h-[225px] w-[225px] shadow-md shadow-black;
+}
+.album-data{
+    @apply w-[calc(100%-250px)] h-[225px] flex flex-col ;
+    /* @apply w-full min-w-[500px] flex flex-col ; */
+}
+.album-type{
+    @apply text-zinc-50 text-[13x] w-full font-semibold mb-1;
+}
+.album-name{
+    @apply text-white h-[70px] w-full font-semibold text-6xl mb-1 truncate pr-9 ;
+}
+.album-artist{
+    @apply text-white text-[13px] w-full flex items-center;
+}
+.circle {
+    @apply mx-1 w-1 h-1 bg-white rounded-full;   
+}
+</style>
 
 
 <script setup>
     import ClockTimeFourOutline from 'vue-material-design-icons/ClockTimeFourOutline.vue'
+    import Unsaved from 'vue-material-design-icons/ContentSaveOutline.vue'
+    import Saved from 'vue-material-design-icons/ContentSaveCheck.vue'
     import Disc from 'vue-material-design-icons/Disc.vue'
     import StarRating from 'vue-star-rating'
     import { ref, computed, onMounted, onBeforeMount } from 'vue'
     import axios from 'axios'
     import {useRoute} from "vue-router"
     import NotFound from '../components/NotFound.vue'
+
+    const saved = ref(false)
     const loading = ref(true)
     const route = useRoute()
     const album = ref(false)
     const genres = computed(() => album.value.genres.join(', '))
     const styles = computed(() => album.value.styles.join(', '))
-
-    const bgColor = computed(() => 
-             //`background: linear-gradient(315deg, ${album.value.cover_color} 0%, ${album.value.cover_color_to} 60%, #00000032 95%)`
-            `background-color: ${album.value.cover_color}`
-            //  ; background : linear-gradient(to bottom, transparent, rgba(0,0,0,0.5) );'
-        )
-    
+    const bgColor = computed(() =>  `background-color: ${album.value.cover_color}` )
     const bgGradient = 'background : linear-gradient(to bottom, transparent, rgba(0,0,0,0.5) )'
-
-        //webkit-gradient(linear,left top,left bottom,from(transparent),to(rgba(0,0,0,.5))),var(--background-noise);
-
-    
 
     const updateRatingGoated = (disc,track) => {
         if (!album.value.tracks[disc][track].goated) {
@@ -197,8 +257,7 @@
                     count++
                 }
             }
-        }    
-        //sum = sum ? sum : 0
+        }
         let avg = sum / count
         return Math.min(5.0, avg)
     })
@@ -258,9 +317,7 @@
         let total = 0;
         for (const disc of album.value.tracks) {
             for (const track of disc) {
-                if (track.included) {
-                    total += track.track_duration_ms
-                }
+                total += track.track_duration_ms                
             }
         }               
         if (total < 3600000) {
@@ -272,9 +329,7 @@
             let minutes = Math.floor((total - (hours * 3600000)) / 60000);
             return `${hours} hrs ${minutes} mins`;
         }
-    }
-
-   
+    }   
 
     onBeforeMount(async () => {
         loading.value = true
@@ -290,72 +345,11 @@
             .finally(() => {
                 loading.value = false
             })
-
-
     })
 
 </script>
 
 
-<style scoped>
-
-.tracks-container{
-    @apply  bg-[#121212] mx-6 text-white my-4;
-}
-
-.tracks-header{
-    @apply flex h-[25px] justify-between text-[13px] text-gray-400 pb-2 mb-4 border-b-[1px] border-[#2C2C2C];
-}
-
-.checkbox{
-    @apply h-5 w-5 accent-green-400 cursor-pointer;
-}
-.rating-container{
-    @apply flex items-center;
-}
-.rating-label{
-    @apply text-white text-[13px]  w-[115px] font-semibold pt-1;
-}
-.styles-container{
-    @apply text-white text-[13px];
-}
-.styles-label{
-    @apply font-semibold w-[50px];
-}
-.styles-value{
-    @apply ml-2;
-}
-
-.album-header-container{
-    @apply flex w-full max-h-[265px] rounded-t-sm overflow-hidden;
-}
-.album-header{
-    @apply w-full h-full flex  rounded-t-sm py-5;
-    
-}
-.album-cover{
-@apply mx-3 min-w-[225px] h-[225px];
-}
-.album-cover img{
-    @apply object-contain h-[225px] w-[225px] shadow-md shadow-black;
-}
-.album-data{
-    @apply w-[calc(100%-275px)] flex flex-col min-w-[500px];
-}
-.album-type{
-    @apply text-zinc-50 text-[13x] font-semibold mb-1;
-}
-.album-name{
-    @apply text-white h-[70px] font-semibold text-6xl mb-1 truncate pr-9 ;
-}
-.album-artist{
-    @apply text-white text-[13px] flex items-center;
-}
-
-.circle {
-    @apply mx-1 w-1 h-1 bg-white rounded-full;   
-}
-</style>
 
 
 
