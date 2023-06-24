@@ -36,24 +36,27 @@
                         <StarRating 
                         v-model:rating="album.rating" :star-size="22" :increment="0.5"  :show-rating="false" inactive-color="#332A2B"
                         active-color="#1ED760" :border-width="1"/>
-                        <button class="button-clear ml-2 mt-1" @click="album.rating = NaN">Clear</button>
+                        <button class="button-clear ml-2 mt-1" @click="album.rating = 0">Clear</button>
                     </div>
                     <div class="rating-container">
                         <div class="rating-label" title="Suggested rating based on your track ratings&#10;Rate all the included tracks to get one!">
                         Suggest Rating: </div>
-                        <StarRating :title=" suggested_rating ? Math.ceil(suggested_rating*2)/2 + ' Stars' : 'Unrated'" :rating="suggested_rating" :star-size="22" :increment="0.5"  :show-rating="false"
+                        <StarRating :title=" suggested_rating_final ? Math.ceil(suggested_rating_final*2)/2 + ' Stars' : 'Unrated'" :rating="suggested_rating_final" :star-size="22" :increment="0.5"  :show-rating="false"
                         inactive-color="#332A2B" active-color="#1ED760" :border-width="1" :read-only="true"/>
                     </div> 
                 </div>
+
                 <div class="actions-container flex w-auto mx-3 mt-4">
-                    <Unsaved v-if="saved" :size="50" fillColor="#1ED760" title="Save track ratings" class="cursor-pointer" @click="saved=!saved"/>
-                    <Saved v-else :size="50" fillColor="#1ED760" title="Track ratings saved" class="cursor-pointer"  @click="saved=!saved"/>
-                    <button class="text-[#1ED760] ml-8"> Save test</button>
+                    <Unsaved v-if="hasAlbumChanged" :size="50" fillColor="#1ED760" title="Save track ratings" class="cursor-pointer" @click="savedAlbumRatings"/>
+                    <Saved v-else :size="50" fillColor="#1ED760" title="Track ratings saved" />
+                    <button class="text-[#1ED760] ml-8"> {{ hasAlbumChanged ? "Save Ratings" : "Ratings Syncronized"}}</button>
                 </div>
+
             </div>    
-        </div>
+        </div>  
+
         <div class="text-white">
-            div test
+            {{albumRatingsParams}}
         </div>
 
         
@@ -100,7 +103,7 @@
                         </div>
                         <div class="tracks-right-slot">
                             <div class="tracks-rating pr-1">
-                                <button class="button-clear ml-1" @click="album.tracks[i-1][index].track_rating = NaN">Clear</button>
+                                <button class="button-clear ml-1" @click="album.tracks[i-1][index].track_rating = 0 ; album.tracks[i-1][index].goated = false">Clear</button>
                                 <div class="mb-[6px]">
                                     <StarRating @click="updateRatingGoated2(i-1,index)" v-model:rating="album.tracks[i-1][index].track_rating" 
                                     :star-size="22" :increment="0.5"  :show-rating="false" inactive-color="#332A2B" active-color="#1ED760" :border-width="1" />
@@ -127,6 +130,224 @@
         </div>        
     </div>       
 </template>
+
+<script setup>
+    import ClockTimeFourOutline from 'vue-material-design-icons/ClockTimeFourOutline.vue'
+    import Unsaved from 'vue-material-design-icons/ContentSaveOutline.vue'
+    import Saved from 'vue-material-design-icons/ContentSaveCheck.vue'
+    import Disc from 'vue-material-design-icons/Disc.vue'
+    import StarRating from 'vue-star-rating'
+    import { ref, computed, onBeforeMount, watch } from 'vue'
+    import axios from 'axios'
+    import {useRoute} from "vue-router"
+    import NotFound from '../components/NotFound.vue'
+
+    
+    const isSaved = ref(false)    
+    const loading = ref(true)    
+    const album = ref(false) 
+    const hasAlbumChanged = ref(false)
+    const genres = computed(() => album.value.genres.join(', '))
+    const styles = computed(() => album.value.styles.join(', '))
+    const bgColor = computed(() =>  `background-color: ${album.value.cover_color}` )
+    const bgGradient = 'background : linear-gradient(to bottom, transparent, rgba(0,0,0,0.5) )'
+    const route = useRoute()
+    const albumRatingsParams = ref({})
+    const tracksRatingsParams = ref([])
+    let albumSaved = false
+
+
+    watch( album, () => {
+        if (album.value) {                    
+            if(albumSaved == JSON.stringify(album.value)){
+                hasAlbumChanged.value = false
+            }else{
+                hasAlbumChanged.value = true
+            }
+
+            tracksRatingsParams.value = album.value.tracks.flat().map(track => {
+                return { track_id: track.track_id, track_rating: track.track_rating, goated: track.goated, included: track.included }
+            })
+                
+            albumRatingsParams.value = {  
+                album_id: album.value.album_id,          
+                simple_average_rating: simple_average_rating.value,
+                weighted_average_ratinge_rating: weighted_average_rating.value,
+                consistency_rating: consistency_rating.value,
+                greatness_rating: greatness_rating.value,            
+                suggested_rating_a: suggested_rating_a.value,
+                suggested_rating_b: suggested_rating_b.value,
+                suggested_rating_final: suggested_rating_final.value,
+                user_final_rating: album.value.rating, 
+                updated_date: new Date().toISOString().slice(0, 19).replace('T', ' ')           
+            }            
+        }        
+    },
+    { deep: true }
+    )
+
+    const savedAlbumRatings = () => {
+
+        const data = {            
+            ar: albumRatingsParams.value,
+            tr: tracksRatingsParams.value
+        }
+        console.log(data)
+        axios.put('http://192.168.100.14:5000/api/v1/update-album-ratings/', { data })
+        .then(response => {            
+            console.log(response.data.msg)
+                       
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+
+    }
+
+
+    const canAlbumBeRated = computed(() => {
+        let rated = true
+        for (const disc of album.value.tracks) {
+            for (const track of disc) {
+                if (track.included){                    
+                    if (!track.track_rating ){                        
+                        return false
+                    }else{
+                        rated = true
+                    }
+                }else{
+                    rated = true
+                }
+            }
+        }
+        return rated       
+    })
+    
+    const simple_average_rating = computed(() => {        
+        if (!canAlbumBeRated.value || !album.value){ 
+            return 0
+        }  
+        let ratings = album.value.tracks.flat().filter(track => track.included && track.track_rating > 0).map(track => track.track_rating)        
+        if (ratings.length == 0){
+            return 0
+        }        
+        let sum = ratings.reduce((previous, current) => current += previous)
+        let rating = sum / ratings.length
+        return rating      
+    })
+
+    //a function like simple_average_rating but if a track is goated, it's rating is 5.5
+    const weighted_average_rating = computed(() => {
+        if (!canAlbumBeRated.value || !album.value){ 
+            return 0
+        } 
+        let ratings = album.value.tracks.flat().filter(track => track.included && track.track_rating > 0).map(track => track.goated ? 5.5 : track.track_rating)        
+        if (ratings.length == 0){
+            return 0
+        }        
+        let sum = ratings.reduce((previous, current) => current += previous)
+        let rating = sum / ratings.length
+        return Math.min( rating , 5)
+    })
+
+    const greatness_rating = computed(() => {
+        if (!canAlbumBeRated.value || !album.value){ 
+            return 0
+        } 
+        let ratings = album.value.tracks.flat().filter(track => track.included && track.track_rating > 0).map(track => track.track_rating >= 4.5 ? 1 : 0)        
+        if (ratings.length == 0){
+            return 0
+        }        
+        let sum = ratings.reduce((previous, current) => current += previous)
+        let rating = sum / ratings.length
+        return rating * 5
+    })
+
+    const consistency_rating = computed(() => {
+        if (!canAlbumBeRated.value || !album.value){ 
+            return 0
+        } 
+        let ratings = album.value.tracks.flat().filter(track => track.included && track.track_rating > 0).map(track => track.track_rating < 4 ? 1 : 0)        
+        if (ratings.length == 0){
+            return 0
+        }        
+        let sum = ratings.reduce((previous, current) => current += previous)        
+        let rating = 5 - (sum * 0.125)
+        return Math.max(rating,0)
+    })
+
+    const suggested_rating_a = computed(() => {
+        return ((weighted_average_rating.value * 0.85) + (greatness_rating.value * 0.15))
+    })
+
+
+    const suggested_rating_b = computed(() => {
+        return ((weighted_average_rating.value * 0.85) + (consistency_rating.value * 0.15))
+    }
+    )
+
+    const suggested_rating_final = computed(() => {
+        return (suggested_rating_a.value + suggested_rating_b.value)/2        
+    })
+
+    const songDuration = (ms) => {
+        let minutes = Math.floor(ms / 60000)
+        let seconds = ((ms % 60000) / 1000).toFixed(0)
+        return `${minutes}:${(seconds < 10 ? '0' : '')}${seconds}`
+    }
+
+    const totalDuration = () => {
+        let total = 0;
+        for (const disc of album.value.tracks) {
+            for (const track of disc) {
+                total += track.track_duration_ms                
+            }
+        }               
+        if (total < 3600000) {
+            let minutes = Math.floor(total / 60000);
+            let seconds = ((total % 60000) / 1000).toFixed(0);
+            return `${minutes} mins ${(seconds < 10 ? "0" : "")}${seconds} s`;
+        }else{
+            let hours = Math.floor(total / 3600000);
+            let minutes = Math.floor((total - (hours * 3600000)) / 60000);
+            return `${hours} hrs ${minutes} mins`;
+        }
+    }
+    
+    const updateRatingGoated = (disc,track) => {
+        if (!album.value.tracks[disc][track].goated) {
+            album.value.tracks[disc][track].track_rating = 5
+        }
+      
+    }
+
+    const updateRatingGoated2 = (disc,track) => {
+        if(album.value.tracks[disc][track].track_rating < 5) {
+            album.value.tracks[disc][track].goated = false
+        }
+    }
+
+    onBeforeMount(async () => {
+        loading.value = true
+        const id_album = route.params.id
+        let url = `http://192.168.100.14:5000/api/v1/get-album-data/${id_album}`
+        axios.get(url)
+            .then((response) => {
+                album.value = response.data.album
+                albumSaved = JSON.stringify(album.value) 
+                console.log(response.data.message)
+                                             
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+            .finally(() => {
+                loading.value = false
+            })
+    })
+
+</script>
 
 <style scoped>
 .tracks-full-container{
@@ -212,142 +433,6 @@
     @apply mx-1 w-1 h-1 bg-white rounded-full;   
 }
 </style>
-
-
-<script setup>
-    import ClockTimeFourOutline from 'vue-material-design-icons/ClockTimeFourOutline.vue'
-    import Unsaved from 'vue-material-design-icons/ContentSaveOutline.vue'
-    import Saved from 'vue-material-design-icons/ContentSaveCheck.vue'
-    import Disc from 'vue-material-design-icons/Disc.vue'
-    import StarRating from 'vue-star-rating'
-    import { ref, computed, onMounted, onBeforeMount } from 'vue'
-    import axios from 'axios'
-    import {useRoute} from "vue-router"
-    import NotFound from '../components/NotFound.vue'
-
-    const saved = ref(false)
-    const loading = ref(true)
-    const route = useRoute()
-    const album = ref(false)
-    const genres = computed(() => album.value.genres.join(', '))
-    const styles = computed(() => album.value.styles.join(', '))
-    const bgColor = computed(() =>  `background-color: ${album.value.cover_color}` )
-    const bgGradient = 'background : linear-gradient(to bottom, transparent, rgba(0,0,0,0.5) )'
-
-    const updateRatingGoated = (disc,track) => {
-        if (!album.value.tracks[disc][track].goated) {
-            album.value.tracks[disc][track].track_rating = 5
-        }
-      
-    }
-
-    const updateRatingGoated2 = (disc,track) => {
-        if(album.value.tracks[disc][track].track_rating < 5) {
-            album.value.tracks[disc][track].goated = false
-        }
-    }
-
-    const average_rating = computed(() => {
-        let sum = 0
-        let count = 0
-        for ( const disc of album.value.tracks) {
-            for (const track of disc) {
-                if (track.included) {               
-                    sum += track.goated ? 5.5 : track.track_rating
-                    count++
-                }
-            }
-        }
-        let avg = sum / count
-        return Math.min(5.0, avg)
-    })
-
-    const greatness_rating = computed(() => {
-        let great = 0
-        let count = 0
-        for (const disc of album.value.tracks) {
-            for (const track of disc) {
-                if (track.included) {
-                    count++
-                    if (track.track_rating >= 4.5) {
-                        great++
-                    }
-                }
-            }
-        }       
-        return ((great / count) * 5)
-    })
-
-    const consistency_rating = computed(() => {
-        let consistency = 5
-        for (const disc of album.value.tracks) {
-            for (const track of disc) {
-                if (track.included) {
-                    if (track.track_rating < 4.0) {
-                        consistency -= 0.125
-                    }
-                }
-            }
-        }    
-        return Math.max(0, consistency)
-    })
-
-    const suggested_rating1 = computed(() => {
-        return ((average_rating.value * 0.85) + (greatness_rating.value * 0.15))
-    })
-
-
-    const suggested_rating2 = computed(() => {
-        return ((average_rating.value * 0.85) + (consistency_rating.value * 0.15))
-    }
-    )
-
-
-    const suggested_rating = computed(() => {
-        return (suggested_rating1.value + suggested_rating2.value)/2        
-    })
-
-    const songDuration = (ms) => {
-        let minutes = Math.floor(ms / 60000)
-        let seconds = ((ms % 60000) / 1000).toFixed(0)
-        return `${minutes}:${(seconds < 10 ? '0' : '')}${seconds}`
-    }
-
-    const totalDuration = () => {
-        let total = 0;
-        for (const disc of album.value.tracks) {
-            for (const track of disc) {
-                total += track.track_duration_ms                
-            }
-        }               
-        if (total < 3600000) {
-            let minutes = Math.floor(total / 60000);
-            let seconds = ((total % 60000) / 1000).toFixed(0);
-            return `${minutes} mins ${(seconds < 10 ? "0" : "")}${seconds} s`;
-        }else{
-            let hours = Math.floor(total / 3600000);
-            let minutes = Math.floor((total - (hours * 3600000)) / 60000);
-            return `${hours} hrs ${minutes} mins`;
-        }
-    }   
-
-    onBeforeMount(async () => {
-        loading.value = true
-        const id_album = route.params.id
-        var url = 'http://192.168.100.14:5000/api/v1/get-album-data/' + id_album
-        axios.get(url)
-            .then((response) => {
-                album.value = response.data.album                     
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-            .finally(() => {
-                loading.value = false
-            })
-    })
-
-</script>
 
 
 
