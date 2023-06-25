@@ -113,7 +113,7 @@
     
 
     .filter-container{
-        @apply m-8 flex items-center
+        @apply m-8 flex items-center mt-[75px];
     }
 
     .filter-container button{

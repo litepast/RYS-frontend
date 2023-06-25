@@ -37,9 +37,7 @@
     @apply fixed right-0 top-0 w-[calc(100%-175px)] overflow-auto h-full bg-gradient-to-b from-[#1F1F1F] to-black;
   }
 
-  .view{
-    @apply mt-[60px];
-  }
+
 </style>
 
 

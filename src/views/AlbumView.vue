@@ -46,20 +46,33 @@
                     </div> 
                 </div>
 
-                <div class="actions-container flex w-auto mx-3 mt-4">
-                    <Unsaved v-if="hasAlbumChanged" :size="50" fillColor="#1ED760" title="Save track ratings" class="cursor-pointer" @click="savedAlbumRatings"/>
-                    <Saved v-else :size="50" fillColor="#1ED760" title="Track ratings saved" />
-                    <button class="text-[#1ED760] ml-8"> {{ hasAlbumChanged ? "Save Ratings" : "Ratings Syncronized"}}</button>
+                <div class="actions-container h-[55px] w-full flex flex-row items-center justify-between mx-3 mt-1">
+                    <button class=" w-[155px] shadow-md flex items-center cursor-pointer bg-[#1ED760] rounded-lg disabled:bg-slate-400 disabled:cursor-not-allowed"
+                    @click="savedAlbumRatings" :disabled="!hasAlbumChanged" :title=" hasAlbumChanged ? 'Save Ratings' : 'Ratings Syncronized'  ">
+                        <Unsaved :size="40" fillColor="#00000"/>
+                        Save Ratings
+                    </button>
+
+                    <div v-if="!connectionError">
+                        <div class="text-white flex items-center mr-5">                        
+                            <Check v-if="!hasAlbumChanged" :size="20" fillColor="#1ED760"  />
+                            <Alert v-else :size="20" fillColor="#FAFAA0" />
+                            <div class="mx-1"></div>
+                            {{ hasAlbumChanged ? "Save Ratings" : "Ratings Syncronized" }}
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div class="text-white flex items-center mr-5">                        
+                            <Error :size="20" fillColor="#FAA0A0"  />                            
+                            <div class="mx-1"></div>
+                            Error Syncing Ratings, Try again
+                        </div>                        
+                    </div>
                 </div>
 
             </div>    
         </div>  
 
-        <div class="text-white">
-            {{albumRatingsParams}}
-        </div>
-
-        
         <div class="tracks-full-container">
             <ul>
                 <li class="tracks-header-row">
@@ -110,7 +123,7 @@
                                 </div>                                
                             </div> 
                             <div class="column">
-                                <input  name="goated" type="checkbox"  class="checkbox" v-model="track.goated" @click="updateRatingGoated(i-1,index)">
+                                <input  name="goated" type="checkbox"  class="checkbox" v-model="track.goated" @click="updateRatingGoated1(i-1,index)">
                             </div>
                             <div class="column">
                                 <input name="included" type="checkbox" class="checkbox" v-model="track.included">
@@ -133,9 +146,11 @@
 
 <script setup>
     import ClockTimeFourOutline from 'vue-material-design-icons/ClockTimeFourOutline.vue'
-    import Unsaved from 'vue-material-design-icons/ContentSaveOutline.vue'
-    import Saved from 'vue-material-design-icons/ContentSaveCheck.vue'
+    import Unsaved from 'vue-material-design-icons/ContentSaveOutline.vue'  
     import Disc from 'vue-material-design-icons/Disc.vue'
+    import Check from 'vue-material-design-icons/CheckBold.vue'
+    import Alert from 'vue-material-design-icons/AlertCircle.vue'
+    import Error from 'vue-material-design-icons/CloseCircle.vue'
     import StarRating from 'vue-star-rating'
     import { ref, computed, onBeforeMount, watch } from 'vue'
     import axios from 'axios'
@@ -143,18 +158,28 @@
     import NotFound from '../components/NotFound.vue'
 
     
-    const isSaved = ref(false)    
+    const connectionError = ref(false)    
     const loading = ref(true)    
     const album = ref(false) 
     const hasAlbumChanged = ref(false)
     const genres = computed(() => album.value.genres.join(', '))
     const styles = computed(() => album.value.styles.join(', '))
     const bgColor = computed(() =>  `background-color: ${album.value.cover_color}` )
-    const bgGradient = 'background : linear-gradient(to bottom, transparent, rgba(0,0,0,0.5) )'
+    const bgGradient = 'background : linear-gradient(to bottom, transparent, rgba(0,0,0,0.75) )'
     const route = useRoute()
     const albumRatingsParams = ref({})
     const tracksRatingsParams = ref([])
     let albumSaved = false
+    const dateOptions = {
+        timeZone: 'America/Mexico_City',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+    };
+  
 
 
     watch( album, () => {
@@ -172,39 +197,19 @@
             albumRatingsParams.value = {  
                 album_id: album.value.album_id,          
                 simple_average_rating: simple_average_rating.value,
-                weighted_average_ratinge_rating: weighted_average_rating.value,
+                weighted_average_rating: weighted_average_rating.value,
                 consistency_rating: consistency_rating.value,
                 greatness_rating: greatness_rating.value,            
                 suggested_rating_a: suggested_rating_a.value,
                 suggested_rating_b: suggested_rating_b.value,
                 suggested_rating_final: suggested_rating_final.value,
                 user_final_rating: album.value.rating, 
-                updated_date: new Date().toISOString().slice(0, 19).replace('T', ' ')           
+                updated_date: new Date().toLocaleString('af', dateOptions).replace(',', '')                        
             }            
         }        
     },
     { deep: true }
     )
-
-    const savedAlbumRatings = () => {
-
-        const data = {            
-            ar: albumRatingsParams.value,
-            tr: tracksRatingsParams.value
-        }
-        console.log(data)
-        axios.put('http://192.168.100.14:5000/api/v1/update-album-ratings/', { data })
-        .then(response => {            
-            console.log(response.data.msg)
-                       
-        })
-        .catch(error => {
-            console.error(error);
-        });
-
-
-    }
-
 
     const canAlbumBeRated = computed(() => {
         let rated = true
@@ -237,7 +242,6 @@
         return rating      
     })
 
-    //a function like simple_average_rating but if a track is goated, it's rating is 5.5
     const weighted_average_rating = computed(() => {
         if (!canAlbumBeRated.value || !album.value){ 
             return 0
@@ -315,17 +319,39 @@
         }
     }
     
-    const updateRatingGoated = (disc,track) => {
+    const updateRatingGoated1 = (disc,track) => {
         if (!album.value.tracks[disc][track].goated) {
             album.value.tracks[disc][track].track_rating = 5
-        }
-      
+        }      
     }
 
     const updateRatingGoated2 = (disc,track) => {
         if(album.value.tracks[disc][track].track_rating < 5) {
             album.value.tracks[disc][track].goated = false
         }
+    }
+
+    const savedAlbumRatings = () => {
+        const data = {            
+            ar: albumRatingsParams.value,
+            tr: tracksRatingsParams.value
+        }        
+        axios.put('http://192.168.100.14:5000/api/v1/update-album-ratings/', { data })
+        .then(response => {
+            let result = response.data.msg 
+            if (result){
+                albumSaved = JSON.stringify(album.value)
+                hasAlbumChanged.value = false
+                connectionError.value = false
+            }else{
+                hasAlbumChanged.value = true
+                connectionError.value = true                
+            }                       
+        })
+        .catch(error => {
+            hasAlbumChanged.value = true
+            connectionError.value = true
+        });
     }
 
     onBeforeMount(async () => {
@@ -335,9 +361,8 @@
         axios.get(url)
             .then((response) => {
                 album.value = response.data.album
-                albumSaved = JSON.stringify(album.value) 
-                console.log(response.data.message)
-                                             
+                albumSaved = JSON.stringify(album.value)
+                hasAlbumChanged.value = false
             })
             .catch((error) => {
                 console.error(error);
@@ -405,7 +430,7 @@
     @apply ml-2;
 }
 .album-header-container{
-    @apply flex w-full max-h-[335px] rounded-t-sm overflow-hidden;
+    @apply flex w-full min-w-[600px] h-[345px] rounded-t-sm overflow-hidden pt-[35px];
 }
 .album-header{
     @apply w-full h-full flex flex-wrap rounded-t-sm py-5;    

@@ -1,5 +1,5 @@
 <template>
-     <div class="topbar">
+     <div class="topbar" :style=" nameView == 'album' ? 'background-color: transparent' : 'background-color: #101010'  ">
         <div class="flex">
             <div class="nav-buttons">
                 <button type="button" >
@@ -11,11 +11,11 @@
                 </button>
             </div>
             <SearchBox/>            
-        </div>             
+        </div> 
         <button  class="profile-container" @click="openMenu = !openMenu" :class="openMenu ? 'bg-[#282828]' : 'bg-black'">
             <div class="flex items-center">
                 <img class="profile-img"  width="27" src="src\components\img\profile.jpg">
-                <div class="profile-name">Enrique Martinez</div>
+                <div class="profile-name"> Enrique</div>
                 <ChevronDown v-if="!openMenu" fillColor="#FFFFFF" :size="25" />
                 <ChevronUp v-else fillColor="#FFFFFF" :size="25" />
             </div>
@@ -38,8 +38,15 @@
   import ChevronLeft from 'vue-material-design-icons/ChevronLeft.vue';
   import SearchBox from '../components/SearchBox.vue'
   import { ref, computed} from 'vue'
-  import { useRouter } from 'vue-router';
+  import { useRouter, useRoute } from 'vue-router';
   const router = useRouter()
+
+  const route = useRoute()
+
+  const nameView = computed(() => route.name)
+
+
+  
   
   
 
@@ -55,12 +62,12 @@
 
 
 .topbar{
-    @apply w-[calc(100%-195px)] h-[60px] fixed left-[175px] z-10 bg-[#101010] bg-opacity-80 flex items-center justify-between;
+    @apply w-[calc(100%-195px)] h-[60px] fixed left-[175px] z-10 flex items-center justify-between  bg-[#101010] bg-opacity-80 ;
          
 }
 
 .nav-buttons{
-    @apply flex items-center;
+    @apply flex items-center ml-2;
 }
 
 .nav-buttons button{
@@ -68,7 +75,7 @@
 }
 
 .profile-container{
-    @apply right-0 mr-3;
+    @apply right-0 mr-3 px-2 opacity-50 hover:opacity-100 rounded-lg;
 }
 .profile-img{
      @apply rounded-full mr-3;

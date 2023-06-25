@@ -17,7 +17,7 @@
         <FilterGenre/>
         <FilterStyle/>
     </div>
-    <div class="query-container text-white">
+    <div class="query-container text-white mx-5 mt-2">
         {{ LibraryViewStore.resultFor }}
     </div>
     
@@ -172,7 +172,7 @@
 
 
 .filters-container{
-    @apply flex flex-wrap m-5
+    @apply flex flex-wrap mx-5 mt-[75px]
 }
 
 
