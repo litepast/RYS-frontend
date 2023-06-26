@@ -58,7 +58,7 @@
                             <Check v-if="!hasAlbumChanged" :size="20" fillColor="#1ED760"  />
                             <Alert v-else :size="20" fillColor="#FAFAA0" />
                             <div class="mx-1"></div>
-                            {{ hasAlbumChanged ? "Save Ratings" : "Ratings Syncronized" }}
+                            {{ hasAlbumChanged ? "Ratings modified and unsaved" : "Ratings Syncronized" }}
                         </div>
                     </div>
                     <div v-else>

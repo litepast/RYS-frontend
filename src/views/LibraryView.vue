@@ -5,11 +5,16 @@
         @click="LibraryViewStore.clear()">
                 Clear Filters
         </button>
-        <div class="filter-name">           
+        <button class="bg-slate-800 text-sm text-white rounded-full pl-3 pr-3 pt-2 pb-2 mr-3"
+        @click="getAlbums">
+                Update Search
+        </button>
+        <div class="filter-name"> 
+            <button @click=" LibraryViewStore.typeSearch=true" :class="!typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
+            >Artist Name</button>          
             <button @click=" LibraryViewStore.typeSearch=false" :class="typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
             >Album Name</button>
-            <button @click=" LibraryViewStore.typeSearch=true" :class="!typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
-            >Artist Name</button>
+            
         </div>
         <FilterType/>
         <FilterYear/>
@@ -17,16 +22,20 @@
         <FilterGenre/>
         <FilterStyle/>
     </div>
-    <div class="query-container text-white mx-5 mt-2">
-        {{ LibraryViewStore.resultFor }}
+    <div v-if="!loading">
+        <div class="query-container text-white mx-5 mt-2">
+            {{ LibraryViewStore.resultFor }}
+        </div>        
+        <div class="results-container">             
+            <CardAlbumLibrary v-for="album in albums" :id="album.album_id" :cover="album.cover_url" :name="album.name" :year="album.release_date.substring(0,4)" :artist="album.artist"
+            :rating="Number(album.rating)"
+            />
+        </div>
     </div>
-    
-    <div class="results-container">             
-        <CardAlbumLibrary v-for="album in albums" :id="album.album_id" :cover="album.cover_url" :name="album.name" :year="album.release_date.substring(0,4)" :artist="album.artist"
-        :rating="Number(album.rating)"
-        />
+    <div v-else class="h-7 w-7">
+        <img class="object-contain" src="../components/img/loading.gif" alt="">
     </div>
- 
+  
  </template>
  
  <script setup>
@@ -35,11 +44,12 @@
     import FilterRating from '../components/FilterRating.vue'
     import FilterGenre from '../components/FilterGenre.vue'
     import FilterStyle from '../components/FilterStyle.vue'
-    import { computed, ref, watch } from 'vue'
+    import { computed, ref, watch, onBeforeMount} from 'vue'
     import { useSearchStore } from '../stores/search.js'
     import { useLibraryViewStore } from '../stores/library-view.js'
     import axios from 'axios'   
     import CardAlbumLibrary from '../components/CardAlbumLibrary.vue'
+    
     
     
 
@@ -48,31 +58,66 @@
     const enter = computed(() => storeSearch.enterCount) 
     const typeSearch = computed(() => LibraryViewStore.typeSearch)
     const input = computed(() => storeSearch.input)
-    const albums = computed(() => LibraryViewStore.albums)
+    const albums = ref([])
+    const loading = ref(false)
     
+ watch ([typeSearch,input], () => {
+    updateNameinQuery()    
+    })
 
-    watch ([input,typeSearch], () => {
-        if(!typeSearch.value){
-            LibraryViewStore.query.artist_name = ''
-            LibraryViewStore.query.album_name = storeSearch.input
-        }else{
-            LibraryViewStore.query.album_name = ''
-            LibraryViewStore.query.artist_name = storeSearch.input
-        }        
-    }
-    )
-
-    watch([enter,LibraryViewStore.query], () => {
-        axios.get('http://192.168.100.14:5000/api/v1/search-album-catalog', { params: LibraryViewStore.query })
-        .then(response => {            
-            LibraryViewStore.albums = response.data.albums
-            LibraryViewStore.resultFor = resultsLabel()            
-        })
-        .catch(error => {
-            console.error(error);
-        });
+    watch(enter, () => { 
+        updateNameinQuery()       
+        getAlbums()
     } 
     )
+
+
+    function delay(milliseconds){
+        return new Promise(resolve => {
+            setTimeout(resolve, milliseconds);
+        });
+    }
+
+    const updateNameinQuery = () => {
+        if(!typeSearch.value){
+            LibraryViewStore.query.artist_name = ''
+            LibraryViewStore.query.album_name = input.value
+        }else{
+            LibraryViewStore.query.album_name = ''
+            LibraryViewStore.query.artist_name = input.value
+        } 
+    }
+
+
+    async function getAlbums() {
+        loading.value = true
+
+             
+
+        axios.get('http://192.168.100.14:5000/api/v1/search-album-catalog', { params: LibraryViewStore.query })
+        .then(async response => {  
+            await delay(1000);          
+            albums.value = await response.data.albums
+            LibraryViewStore.resultFor = resultsLabel()            
+        })
+        .catch((error) => {
+                console.error(error);
+            })
+        .finally(async () => {
+            await delay(1000);
+            loading.value = false
+        })
+
+    }
+
+    
+
+
+
+    onBeforeMount(async () => {
+        getAlbums()
+    })
+
 
     function resultsLabel(){ 
         let results = [] 
@@ -142,21 +187,20 @@
             resultsStyles = 'All Styles'
         }
 
-        results.push(resultsAlbum)
         results.push(resultsArtist)
+        results.push(resultsAlbum)
         results.push(resultsTypes)
         results.push(resultsYears)
         results.push(resultsRatings)
         results.push(resultsGenres)
         results.push(resultsStyles)
 
-        if (LibraryViewStore.albums.length){
-            return 'Showing '+ LibraryViewStore.albums.length +' results for: ' + results.join('; ')
+        if (albums.value.length){
+            return 'Showing '+ albums.value.length +' results for: ' + results.join('; ')
             
          }else{
             return 'No results for: ' +  results.join('; ')
-         }    
-        
+         }  
     } 
     
 

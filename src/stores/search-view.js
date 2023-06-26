@@ -3,6 +3,6 @@ import { defineStore } from 'pinia'
 
 export const useSearchViewStore = defineStore('SearchView', () => {
   const albums = ref([])
-  const typeSearch = ref(false)
+  const typeSearch = ref(true)
   return { albums, typeSearch }
 })
