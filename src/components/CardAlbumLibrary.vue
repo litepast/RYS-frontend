@@ -2,8 +2,6 @@
     <div class="card" @mouseenter="hoverCard=true" @mouseleave="hoverCard=false" :key="id">
         <div class="cover-container">
             <img  :src="cover" />  
-<!-- 
-            @click="deleteAlbum(id,name) -->
             <div v-show="hoverCard" class="button-delete" :title="`Delete ${name}  from Library`" @click="deleteAlbum(id,name)" >
                 <Delete :size="30"/>
             </div>
@@ -69,8 +67,7 @@
     }
   
     .card{
-    @apply m-2 rounded-xl bg-slate-900 hover:bg-slate-800 border-none p-3 w-[200px];
-    @apply cursor-pointer;
+    @apply m-2 rounded-xl bg-slate-900 hover:bg-slate-800 border-none p-3 w-[200px];   
     }
    
     .card .name{
