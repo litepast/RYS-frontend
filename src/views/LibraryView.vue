@@ -5,8 +5,7 @@
         @click="LibraryViewStore.clear()">
                 Clear Filters
         </button>
-        <button class="bg-slate-800 text-sm text-white rounded-full pl-3 pr-3 pt-2 pb-2 mr-3"
-        @click="getAlbums">
+        <button class="bg-slate-800 text-sm text-white rounded-full pl-3 pr-3 pt-2 pb-2 mr-3" @click="getAlbums">
                 Update Search
         </button>
         <div class="filter-name"> 
@@ -28,13 +27,18 @@
         </div>        
         <div class="results-container">             
             <CardAlbumLibrary v-for="album in albums" :id="album.album_id" :cover="album.cover_url" :name="album.name" :year="album.release_date.substring(0,4)" :artist="album.artist"
-            :rating="Number(album.rating)"
-            />
+            :rating="Number(album.rating)" @deleteAlbum="deleteAlbumLibrary"/>
         </div>
     </div>
     <div v-else class="h-7 w-7">
         <img class="object-contain" src="../components/img/loading.gif" alt="">
     </div>
+
+    <Teleport to="Body">
+        <div v-if="showModal">
+            <PopUp @closeModal="showModal=false" @closewithDelete=" refreshfromDelete" :id="dataToDelete.id" :name="dataToDelete.name"/>
+        </div>    
+    </Teleport>
   
  </template>
  
@@ -44,14 +48,12 @@
     import FilterRating from '../components/FilterRating.vue'
     import FilterGenre from '../components/FilterGenre.vue'
     import FilterStyle from '../components/FilterStyle.vue'
+    import PopUp from '../components/PopUpDelete.vue'
     import { computed, ref, watch, onBeforeMount} from 'vue'
     import { useSearchStore } from '../stores/search.js'
     import { useLibraryViewStore } from '../stores/library-view.js'
     import axios from 'axios'   
     import CardAlbumLibrary from '../components/CardAlbumLibrary.vue'
-    
-    
-    
 
     const storeSearch = useSearchStore()   
     const LibraryViewStore =  useLibraryViewStore()
@@ -60,9 +62,11 @@
     const input = computed(() => storeSearch.input)
     const albums = ref([])
     const loading = ref(false)
+    const showModal = ref(false)
+    const dataToDelete = { id:'', name:''}
     
- watch ([typeSearch,input], () => {
-    updateNameinQuery()    
+    watch ([typeSearch,input], () => {
+        updateNameinQuery()    
     })
 
     watch(enter, () => { 
@@ -88,15 +92,22 @@
         } 
     }
 
+    function deleteAlbumLibrary(a_id,a_name){
+        dataToDelete.id = a_id
+        dataToDelete.name = a_name
+        showModal.value = true
+        
+ 
+    }
+
+
+
 
     async function getAlbums() {
         loading.value = true
-
-             
-
         axios.get('http://192.168.100.14:5000/api/v1/search-album-catalog', { params: LibraryViewStore.query })
         .then(async response => {  
-            await delay(1000);          
+            await delay(300);          
             albums.value = await response.data.albums
             LibraryViewStore.resultFor = resultsLabel()            
         })
@@ -104,10 +115,15 @@
                 console.error(error);
             })
         .finally(async () => {
-            await delay(1000);
+            await delay(300);
             loading.value = false
         })
 
+    }
+
+    async function refreshfromDelete(){
+        showModal.value = false
+        getAlbums()
     }
 
     
@@ -166,7 +182,7 @@
         }else{
             resultsRatings = 'All Ratings'
         }
-       
+
         if(LibraryViewStore.query.genres.length){
             if(LibraryViewStore.query.genres.length < 15){
                 resultsGenres = 'Genres: ' + LibraryViewStore.query.genres.join(', ')

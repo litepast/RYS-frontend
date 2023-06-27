@@ -1,18 +1,21 @@
 <template>
-    <div class="card" @click="goToAlbumView" @mouseenter="hoverCard=true" @mouseleave="hoverCard=false" :key="id">
+    <div class="card" @mouseenter="hoverCard=true" @mouseleave="hoverCard=false" :key="id">
         <div class="cover-container">
-            <img  :src="cover" />
-            <div v-show="hoverCard" class="button-delete" :title="`Delete ${name}  from Library`">
+            <img  :src="cover" />  
+<!-- 
+            @click="deleteAlbum(id,name) -->
+            <div v-show="hoverCard" class="button-delete" :title="`Delete ${name}  from Library`" @click="deleteAlbum(id,name)" >
                 <Delete :size="30"/>
             </div>
+          
         </div> 
         <StarRating :title=" rating ? rating + ' Stars' : 'Unrated'" 
         :rating="rating" :star-size="16" :read-only="true" :increment="0.5"  :show-rating="false"
                 inactive-color="#332A2B" active-color="#1ED760" :border-width="1"/>
-        <div class="name" :title="name">{{name}} </div>
+        <div  @click="goToAlbumView" class="name" :title="name">{{name}} </div>
         <div class="artist" :title="artist">{{year}} - {{artist}}</div>            
     </div>
-
+  
 </template>
 
 <script setup>
@@ -36,6 +39,14 @@
             router.push(`/library/${id}`)
             
         }
+
+    const emit = defineEmits(["deleteAlbum"])
+
+    function deleteAlbum(a_id,a_name){              
+            emit("deleteAlbum",a_id,a_name)
+    }
+
+    
 
 
 </script>
@@ -63,7 +74,7 @@
     }
    
     .card .name{
-        @apply truncate font-semibold mt-1 text-white;
+        @apply cursor-pointer truncate font-semibold mt-1 text-white hover:underline;
     }
     .card .artist{
         @apply truncate font-medium mt-1 text-gray-500;

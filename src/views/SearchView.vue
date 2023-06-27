@@ -83,17 +83,7 @@
             .finally(() => {
                 loading.value = false
                 showModal.value=true
-                console.log('Adding '+a_name,': ',msg)
-
-
-
             })
-            
-        
-       
-        
-        
-        //showModal.value=true;
     }
 
 
