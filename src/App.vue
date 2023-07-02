@@ -2,9 +2,9 @@
   <TopBar/>
   <SideBar/>
   <div class="view-container" >  
-    <div class="view">
+    
       <RouterView />
-    </div>  
+      
   </div>
 </template>
 
