@@ -1,6 +1,7 @@
 <template>
-    <div  ref="c" class="mt-[70px] text-white w-full h-full bg-orange-300">
-        <iframe :width="w" :height="h" src="http://localhost:8050" ></iframe> 
+    <div class="w-full h-[60px] bg-gray-900"></div>
+    <div  ref="c" class=" text-white w-full h-full bg-[rgb(63,67,70)]">
+        <iframe :width="w" :height="h" src="http://192.168.100.14:8050" ></iframe> 
       
     </div>
 </template>
