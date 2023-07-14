@@ -1,12 +1,13 @@
 <template>
     <div class="w-full h-[60px] bg-gray-900"></div>
-    <div  ref="c" class=" text-white w-full h-full bg-[rgb(63,67,70)]">
+    <div  ref="c" class=" text-white w-full h-full bg-gradient-to-b from-slate-600 via-sky-900 to-green-950">
         <iframe :width="w" :height="h" src="http://192.168.100.14:8050" ></iframe> 
       
     </div>
 </template>
 
 <script setup>
+// bg-[rgb(63,67,70)]
 import { ref, computed } from 'vue'
 import { useElementSize } from '@vueuse/core'
 
@@ -22,5 +23,6 @@ const h = computed(() => size.height.value )
 </script>
 
 <style scoped>
+
 
 </style>
