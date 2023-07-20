@@ -39,7 +39,7 @@
         @apply relative
     }
     .button-container .button-add{
-        @apply cursor-pointer absolute rounded-full w-[50px] h-[50px] z-10;
+        @apply cursor-pointer absolute rounded-full w-[50px] h-[50px] z-[2];
         @apply bg-green-600 right-[15px] bottom-[15px] hover:bg-green-400 p-[10px];
         @apply hover:scale-110;
 

@@ -7,20 +7,19 @@
 </template>
 
 <script setup>
-    import {defineAsyncComponent, ref, computed } from 'vue';
+    import {ref, computed } from 'vue';
     import { useRoute } from 'vue-router';
-    const { materialIcon, sizeIcon, label , pageUrl  }  = defineProps([
-        'materialIcon',
+    const { sizeIcon, label , pageUrl  }  = defineProps([        
         'sizeIcon',
         'label',
         'pageUrl'
     ])
     const route = useRoute() 
-    const path = computed (() => route.fullPath )    
-    const IconOutlineName = materialIcon+'Outline'
-    const IconName = materialIcon   
-    const Icon = defineAsyncComponent(()=> import(/* @vite-ignore */ `./materialIcons/${IconName}.vue`))
-    const IconOutline = defineAsyncComponent(()=> import(/* @vite-ignore */ `./materialIcons/${IconOutlineName}.vue`))
+    const path = computed (() => route.fullPath )  
+    import Icon from 'vue-material-design-icons/ChartBox.vue';
+    import IconOutline from 'vue-material-design-icons/ChartBoxOutline.vue';
+ 
+
     const isActive = computed (() => path.value == pageUrl)
     const hover = ref(false)   
     const color = () =>{

@@ -1,6 +1,6 @@
 <template>
-     <div class="topbar" :style=" nameView == 'album' ? 'background-color: transparent' : 'background-color: #101010'  ">
-        <div class="flex">
+     <div class="topbar" :style=" transparent ? 'background-color: transparent' : 'background-color: #101010'  ">
+        <div class="flex items-center">
             <div class="nav-buttons">
                 <button type="button" >
                     <ChevronLeft @click="goBack()" fillColor="#FFFFFF" :size="30" />
@@ -20,13 +20,13 @@
                 <ChevronUp v-else fillColor="#FFFFFF" :size="25" />
             </div>
         </button>
-        <div v-if="openMenu"
+        <!-- <div v-if="openMenu"
             class="fixed w-[190px] bg-[#282828] shadow-2xl z-50 rounded-sm top-[52px] right-[35px] p-1 cursor-pointer">
             <ul class="text-gray-200 font-semibold text-[14px]">
                 <li @click="goProfile()" class="px-3 py-2.5 hover:bg-[#3E3D3D] border-b border-b-gray-600">Profile</li>
                 <li @click="logOut()" class="px-3 py-2.5 hover:bg-[#3E3D3D]">Log out</li>
             </ul>
-        </div>        
+        </div>         -->
     </div>
    
 </template>
@@ -39,19 +39,24 @@
   import SearchBox from '../components/SearchBox.vue'
   import { ref, computed} from 'vue'
   import { useRouter, useRoute } from 'vue-router';
+
   const router = useRouter()
-
   const route = useRoute()
-
   const nameView = computed(() => route.name)
 
+  const transparent = computed(() =>{
+        if (nameView.value == 'album' || nameView.value == 'dashboard'){
+            return true
+        }
+        else{
+            return false
+        }}
+     )
 
-  
-  
-  
+
+
 
   const openMenu = ref(false)
-
   const goBack = () =>{ router.back() }
   const goFoward = () =>{ router.forward()}
   const goProfile = () =>{  }
@@ -62,12 +67,13 @@
 
 
 .topbar{
-    @apply w-[calc(100%-195px)] h-[60px] fixed left-[175px] z-10 flex items-center justify-between  bg-[#101010] bg-opacity-80 ;
+    @apply flex items-center w-[calc(100%-195px)] h-full justify-between ;
+    /*w-[calc(100%-195px)] h-[60px] fixed left-[175px] z-10  bg-[#101010] bg-opacity-80*/
          
 }
 
 .nav-buttons{
-    @apply flex items-center ml-2;
+    @apply flex items-center h-full ml-2;
 }
 
 .nav-buttons button{

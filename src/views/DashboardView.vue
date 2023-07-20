@@ -1,6 +1,5 @@
-<template>
-    <div class="w-full h-[60px] bg-gray-900"></div>
-    <div  ref="c" class=" text-white w-full h-full bg-gradient-to-b from-slate-600 via-sky-900 to-green-950">
+<template> 
+    <div  ref="c" class=" text-white pt-[60px] w-full h-full bg-gradient-to-b from-slate-600 via-sky-900 to-green-950">
         <iframe :width="w" :height="h" src="http://192.168.100.14:8050" ></iframe> 
       
     </div>
