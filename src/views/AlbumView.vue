@@ -1,5 +1,5 @@
 <template>
-    <div v-if="album">
+    <div class="w-full pb-5" v-if="album">
         <div class="album-header-container" :style="bgColor">
             <div class="album-header" :style="bgGradient">
                 <div class="album-cover">
@@ -376,13 +376,13 @@
 
 <style scoped>
 .tracks-full-container{
-    @apply  bg-[#121212] mx-6 text-white my-4;
+    @apply  bg-transparent mx-6 text-white my-4;
 }
 .tracks-header-row{
     @apply flex h-[25px] justify-between text-[13px] text-gray-400 pb-2 mb-4 border-b-[1px] border-[#2C2C2C];
 }
 .tracks-row{
-    @apply flex h-[50px] justify-between hover:bg-[#2C2C2C] hover:rounded-sm ;
+    @apply flex h-[50px] justify-between hover:bg-zinc-800 hover:rounded-sm ;
 }
 .tracks-left-slot{
     @apply flex w-[600px] min-w-[600px]

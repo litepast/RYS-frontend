@@ -1,70 +1,100 @@
 <template>
-
-
-  <div class="app flex flex-row flex-wrap w-screen h-screen">
-
-    <div class="firstbody flex flex-col flex-wrap w-full h-[calc(100%-70px)]">
-
-      <div class="flex items-stretch sidebar h-full w-[160px]">
+  <div class="app-body">
+    <div class="data-container">
+      <div class="sidebar-container"  :class="sidebarWidth">
         <SideBar/>
       </div>
-
-      <div class="flex flex-row flex-wrap h-full w-[calc(100%-160px)]">
-
-        <div class="fixed top-0 left-[160x] h-[60px] w-full z-10">
+      <div class="view-container">
+        <div class="topbar-container" :class="topbarWidth">
           <TopBar/>
         </div>
-
-
-        <div class="h-full w-full overflow-auto bg-gradient-to-b from-[#1F1F1F] to-black">
-          <RouterView/>
-        </div>
-
-
-      </div>      
+        <RouterView/>
+      </div>
+    </div> 
+    <div class="webplayer text-white">
+      {{stateHistory}}
     </div>
-    <div class="webplayer bg-violet-700 w-full h-[70px]"></div>
   </div>
-
-
-
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue';
-  import { RouterLink, RouterView } from 'vue-router';
+  import { ref, computed,  watch } from 'vue';
+  import { RouterLink, RouterView, useRouter, useRoute } from 'vue-router';
   import TopBar from './components/TopBar.vue';
   import SideBar from './components/SideBar.vue';
-  const sidebarWidth = ref(160)
+  import { useSideBarStore } from './stores/sidebar.js'
+  const sideBarStore = useSideBarStore()  
+  const sidebarWidth = computed(() => sideBarStore.expandedBar ? 'w-[220px]' : 'w-[52px]')
+  const topbarWidth = computed(() => sideBarStore.expandedBar ? 'w-[calc(100%-235px)]' : 'w-[calc(100%-67px)]')   
+  
+  const router = useRouter()
+  const route = useRoute()
+  const nameView = computed(() => route.name)
+  const stateHistory = ref(router.options.history.state)
 
+  watch(nameView, () => {
+    stateHistory.value = router.options.history.state
+  })
+
+
+ 
 </script>
 
 <style scoped>
 
-  ::-webkit-scrollbar {
-    width: 20px;
-    z-index: 20;    
-  }
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: #232121;
-  }
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #9c9999;
-  }´
+.app-body{
+  @apply flex flex-wrap w-screen h-screen overflow-hidden;
+}
 
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #ede6e6;
-  }
+.sidebar-container{
+  @apply flex h-full;
+}
 
-  /* .view-container{
-    @apply fixed right-0 top-0 w-[calc(100%-175px)] h-full bg-gradient-to-b from-[#1F1F1F] to-black;
-  }
- */
+.data-container{
+  @apply relative flex w-full h-[calc(100%-70px)];
+}
+
+.view-container{
+  @apply bg-gradient-to-b from-black via-gray-950 to-zinc-800 flex w-full h-full overflow-auto;
+}
+
+.topbar-container{
+  @apply flex h-[60px] absolute top-0 z-[10];
+  /*w-[calc(100%-195px)]*/
+}
+
+.webplayer{
+  @apply  bg-violet-500 flex w-full h-[70px]
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+  z-index: 20;    
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #232121;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #9c9999;
+}´
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #ede6e6;
+}
 
 </style>
+
+
+
+
+
+
+
+
+
 
 
 

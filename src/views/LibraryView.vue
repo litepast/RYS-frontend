@@ -1,45 +1,50 @@
 <template>
-    
-    <div class="filters-container">
-        <button class="bg-slate-800 text-sm text-white rounded-full pl-3 pr-3 pt-2 pb-2 mr-3"
-        @click="LibraryViewStore.clear()">
-                Clear Filters
-        </button>
-        <button class="bg-slate-800 text-sm text-white rounded-full pl-3 pr-3 pt-2 pb-2 mr-3" @click="getAlbums">
-                Update Search
-        </button>
-        <div class="filter-name"> 
-            <button @click=" LibraryViewStore.typeSearch=true" :class="!typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
-            >Artist Name</button>          
-            <button @click=" LibraryViewStore.typeSearch=false" :class="typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
-            >Album Name</button>
-            
+    <div class="flex w-full h-full">
+            <div class="filters-container">
+            <button class="bg-slate-800 text-sm text-white rounded-full pl-3 pr-3 pt-2 pb-2 mr-3"
+            @click="LibraryViewStore.clear()">
+                    Clear Filters
+            </button>
+            <button class="bg-slate-800 text-sm text-white rounded-full pl-3 pr-3 pt-2 pb-2 mr-3" @click="getAlbums">
+                    Update Search
+            </button>
+            <div class="filter-name"> 
+                <button @click=" LibraryViewStore.typeSearch=true" :class="!typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
+                >Artist Name</button>          
+                <button @click=" LibraryViewStore.typeSearch=false" :class="typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
+                >Album Name</button>
+                
+            </div>
+            <FilterType/>
+            <FilterYear/>
+            <FilterRating/>
+            <FilterGenre/>
+            <FilterStyle/>
         </div>
-        <FilterType/>
-        <FilterYear/>
-        <FilterRating/>
-        <FilterGenre/>
-        <FilterStyle/>
-    </div>
-    <div v-if="!loading">
-        <div class="query-container text-white mx-5 mt-2">
-            {{ LibraryViewStore.resultFor }}
-        </div>        
-        <div class="results-container">             
-            <CardAlbumLibrary v-for="album in albums" :id="album.album_id" :cover="album.cover_url" :name="album.name" :year="album.release_date.substring(0,4)" :artist="album.artist"
-            :rating="Number(album.rating)" @deleteAlbum="deleteAlbumLibrary"/>
-        </div>
-    </div>
-    <div v-else class="h-7 w-7">
-        <img class="object-contain" src="../components/img/loading.gif" alt="">
-    </div>
 
-    <Teleport to="Body">
-        <div v-if="showModal">
-            <PopUp @closeModal="showModal=false" @closewithDelete=" refreshfromDelete" :id="dataToDelete.id" :name="dataToDelete.name"/>
-        </div>    
-    </Teleport>
-  
+        <div v-if="!loading">
+            <div class="query-container text-white mx-5 mt-2">
+                {{ LibraryViewStore.resultFor }}
+            </div>        
+            <div class="results-container">             
+                <CardAlbumLibrary v-for="album in albums" :id="album.album_id" :cover="album.cover_url" :name="album.name" :year="album.release_date.substring(0,4)" :artist="album.artist"
+                :rating="Number(album.rating)" @deleteAlbum="deleteAlbumLibrary"/>
+            </div>
+        </div>
+        <div v-else class="h-7 w-7">
+            <img class="object-contain" src="../components/img/loading.gif" alt="">
+        </div>
+
+        <Teleport to="Body">
+            <div v-if="showModal">
+                <PopUp @closeModal="showModal=false" @closewithDelete=" refreshfromDelete" :id="dataToDelete.id" :name="dataToDelete.name"/>
+            </div>    
+        </Teleport>
+    
+
+
+    </div>
+    
  </template>
  
  <script setup>

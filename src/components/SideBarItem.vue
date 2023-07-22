@@ -1,9 +1,15 @@
 <template>
-    <div class="item" @mouseenter="hover=true" @mouseleave="hover=false">  
-        <Icon v-show="isActive" :size="sizeIcon" :fillColor="color()"/>
-        <IconOutline v-show="!isActive" :size="sizeIcon" :fillColor="color()"/>
-        <span :style="{color : color() }">{{label}}</span>
-    </div> 
+    <div class="px-2">
+        <div class="item" @mouseenter="hover=true" @mouseleave="hover=false" :class="bgColor()">
+            <div class="icon-container">
+                <Icon v-show="isActive" :size="sizeIcon" :fillColor="fillColor()"/>
+                <IconOutline v-show="!isActive" :size="sizeIcon" :fillColor="fillColor()"/>
+            </div>          
+                <span :class="textColor()">{{label}}</span>
+        </div> 
+
+    </div>
+  
 </template>
 
 <script setup>
@@ -22,8 +28,9 @@
     const Icon = defineAsyncComponent(()=> import(/* @vite-ignore */ `./materialIcons/${IconName}.vue`))
     const IconOutline = defineAsyncComponent(()=> import(/* @vite-ignore */ `./materialIcons/${IconOutlineName}.vue`))
     const isActive = computed (() => path.value == pageUrl)
-    const hover = ref(false)   
-    const color = () =>{
+    const hover = ref(false) 
+
+    const fillColor = () =>{
         if (isActive.value){
             return "#FFFFFF"
         }
@@ -31,19 +38,49 @@
             return "#FFFFFF"
         }
         else{
-            return "#A0A0A0"
+            return "#9CA3AF"
         }
     }
+
+    const bgColor = () =>{
+        if (isActive.value){
+            return "bg-gradient-to-r from-violet-600 via-emerald-400 to-amber-500"
+        }
+        if(hover.value){
+            return "bg-gray-600"
+        }
+        else{
+            return "bg-transparent"
+        }
+    }
+
+
+    const textColor = () =>{
+        if (isActive.value){
+            return "text-white"
+        }
+        if(hover.value){
+            return "text-white"
+        }
+        else{
+            return "text-gray-400"
+        }
+    }
+
 
 </script>
 
 <style scoped>
 
 .item{
-    @apply flex items-center my-2 
+    @apply flex justify-start items-center mb-1 rounded-lg
+}
+
+.icon-container{
+    @apply flex justify-center items-center w-9 h-9 pr-2 
 }
 
 .item span{
-    @apply text-left pl-2 text-lg; 
+    @apply text-left text-[13px] ml-2 transition-all duration-300 ease-in-out; 
 }
 </style>
