@@ -11,30 +11,33 @@
         <RouterView/>
       </div>
     </div> 
-    <div class="webplayer text-white">
-      {{stateHistory}}
+    <div class="webplayer text-white">      
     </div>
   </div>
 </template>
 
 <script setup>
-  import { ref, computed,  watch } from 'vue';
+  import { ref, computed,  watch, onBeforeMount } from 'vue';
   import { RouterLink, RouterView, useRouter, useRoute } from 'vue-router';
   import TopBar from './components/TopBar.vue';
   import SideBar from './components/SideBar.vue';
-  import { useSideBarStore } from './stores/sidebar.js'
-  const sideBarStore = useSideBarStore()  
-  const sidebarWidth = computed(() => sideBarStore.expandedBar ? 'w-[220px]' : 'w-[52px]')
-  const topbarWidth = computed(() => sideBarStore.expandedBar ? 'w-[calc(100%-235px)]' : 'w-[calc(100%-67px)]')   
-  
+  import { useAppStore } from './stores/app-store.js'
+  const appStore = useAppStore() 
+  const sidebarWidth = computed(() => appStore.expandedBar ? 'w-[220px]' : 'w-[52px]')
+  const topbarWidth = computed(() => appStore.expandedBar ? 'w-[calc(100%-235px)]' : 'w-[calc(100%-67px)]')
   const router = useRouter()
   const route = useRoute()
   const nameView = computed(() => route.name)
-  const stateHistory = ref(router.options.history.state)
 
   watch(nameView, () => {
-    stateHistory.value = router.options.history.state
+    appStore.stateHistory.value = router.options.history.state
   })
+
+  onBeforeMount(() => {
+    appStore.stateHistory.value = router.options.history.state
+  })
+
+
 
 
  

@@ -1,7 +1,7 @@
 <template>
     <div class="item" @mouseenter="hover=true" @mouseleave="hover=false">
         <div class="icon-container" title="Expand Menu list">
-            <Icon :size="sizeIcon" fillColor="#FFFFFF" @click="sideBarStore.expand()"/>            
+            <Icon :size="sizeIcon" fillColor="#FFFFFF" @click="appStore.changeSideBar()"/>            
         </div> 
         <div class="ml-2 w-full h-full flex justify-between items-center">
             <div class="bg-gradient-to-r from-violet-600 via-emerald-400 to-amber-500 rounded-full w-[35px] h-[35px]">
@@ -17,8 +17,8 @@
 
 <script setup>
     import  Icon from './materialIcons/Menu.vue'
-    import { useSideBarStore } from '../stores/sidebar.js'
-    const sideBarStore = useSideBarStore()
+    import { useAppStore } from '../stores/app-store.js'
+    const appStore = useAppStore()
     const sizeIcon = 35
 </script>
 
