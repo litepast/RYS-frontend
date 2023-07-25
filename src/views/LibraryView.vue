@@ -37,7 +37,7 @@
 
         <Teleport to="Body">
             <div v-if="showModal">
-                <PopUp @closeModal="showModal=false" @closewithDelete=" refreshfromDelete" :id="dataToDelete.id" :name="dataToDelete.name"/>
+                <PopUp @closeModal="showModal=false" @closewithDelete="refreshfromDelete" :id="dataToDelete.id" :name="dataToDelete.name"/>
             </div>    
         </Teleport>
     
@@ -100,8 +100,7 @@
     function deleteAlbumLibrary(a_id,a_name){
         dataToDelete.id = a_id
         dataToDelete.name = a_name
-        showModal.value = true
-        
+        showModal.value = true        
  
     }
 

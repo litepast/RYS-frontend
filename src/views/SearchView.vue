@@ -28,9 +28,8 @@
             </div>
         </div>
         <Teleport to="Body">
-            <div v-if="loading" class="loading"></div>
             <div v-if="showModal">
-                <PopUp @closeModal="showModal=false" :header="popUp.header" :message="popUp.message"/>
+                <Modal @closeModal="showModal=false" :id="albumToAdd.id" :name="albumToAdd.name"/>
             </div>    
         </Teleport>
     </div>
@@ -42,8 +41,8 @@
     import axios from 'axios'
     import { useSearchStore } from '../stores/search.js'
     import { useSearchViewStore } from '../stores/search-view.js'
-    import CardAlbum from '../components/CardAlbum.vue'
-    import PopUp from '../components/Popup.vue'
+    import CardAlbum from '../components/CardAlbumSearch.vue'
+    import Modal from '../components/AddAlbumModal.vue'
     import Spinner from '../components/SpinnerLoaderBlack.vue'
     import SomethingWrong from '../components/SomethingWrong.vue'
 
@@ -57,10 +56,7 @@
     const result = computed(() => storeSearchView.input)
     const loadingSearch = ref(false)
     const loading = ref(false)
-    const popUp = {
-        header : '',
-        message : ''
-    }
+    const albumToAdd = { id:'', name:''}
 
     watch([enter,typeSearch], () =>{
         searchAlbumSpotify()
@@ -87,25 +83,9 @@
     }
     
     function addAlbumLibrary(a_id,a_name){
-        loading.value = true;
-        let url = 'http://192.168.100.14:5000/api/v1/insert-album-catalog/'+a_id
-        popUp.header = a_name        
-        axios.put(url)
-            .then((response) => {      
-                    if (response.status === 200){
-                        popUp.message = response.data.msg
-                    }else{
-                        popUp.message = 'Error in request, try again later!'
-                    }                            
-               
-            })
-            .catch((error) => {                    
-                popUp.message = 'Error in request, try again later!'
-            })
-            .finally(() => {
-                loading.value = false
-                showModal.value=true
-            })
+        albumToAdd.id = a_id
+        albumToAdd.name = a_name
+        showModal.value = true   
     }
 </script>
 

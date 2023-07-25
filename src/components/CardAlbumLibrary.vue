@@ -34,8 +34,7 @@
         ]) 
 
     const goToAlbumView = () => {       
-            router.push(`/library/${id}`)
-            
+            router.push(`/library/${id}`)            
         }
 
     const emit = defineEmits(["deleteAlbum"])

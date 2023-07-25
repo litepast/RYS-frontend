@@ -36,7 +36,7 @@
   content: '';
 }
 .loader:after {
-  background: #000000;
+  background: #FFFFFF;
   width: 70%;
   height: 70%;
   border-radius: 50%;

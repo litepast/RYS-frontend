@@ -2,14 +2,14 @@
     <div class="px-2">
         <div class="item" @mouseenter="hover=true" @mouseleave="hover=false" :class="bgColor()">
             <div class="icon-container">
-                <Icon class="transition-all duration-300 ease-in-out" v-show="isActive" :size="sizeIcon" :fillColor="fillColor()"/>
-                <IconOutline class="transition-all duration-300 ease-in-out" v-show="!isActive" :size="sizeIcon" :fillColor="fillColor()"/>
+                <Icon :class="textColor()" class="transition-all duration-500 ease-in-out" v-show="isActive" :size="sizeIcon"/>
+                <IconOutline  :class="textColor()" class="transition-all duration-500 ease-in-out" v-show="!isActive" :size="sizeIcon" />
             </div>          
                 <span :class="textColor()">{{label}}</span>
         </div> 
 
     </div>
-  
+    <!-- :class="bgColor()" -->
 </template>
 
 <script setup>
@@ -30,17 +30,17 @@
     const isActive = computed (() => path.value == pageUrl)
     const hover = ref(false) 
 
-    const fillColor = () =>{
-        if (isActive.value){
-            return "#FFFFFF"
-        }
-        if(hover.value){
-            return "#FFFFFF"
-        }
-        else{
-            return "#9CA3AF"
-        }
-    }
+    // const fillColor = () =>{
+    //     if (isActive.value){
+    //         return "#FFFFFF"
+    //     }
+    //     if(hover.value){
+    //         return "#FFFFFF"
+    //     }
+    //     else{
+    //         return "#9CA3AF"
+    //     }
+    // }
 
     const bgColor = () =>{
         if (isActive.value){
@@ -81,6 +81,6 @@
 }
 
 .item span{
-    @apply text-left text-[13px] ml-2 transition-all duration-300 ease-in-out; 
+    @apply text-left text-[13px] ml-2 transition-all duration-500 ease-in-out; 
 }
 </style>
