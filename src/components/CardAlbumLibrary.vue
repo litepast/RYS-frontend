@@ -56,6 +56,7 @@
         @apply cursor-pointer absolute rounded-full w-[50px] h-[50px] z-10;
         @apply bg-green-600 right-[5px] top-[5px]  p-[10px] opacity-30;
         @apply hover:scale-110 hover:bg-green-400 hover:opacity-100;
+       
     }
 
     .cover-container{

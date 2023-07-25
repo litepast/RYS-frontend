@@ -29,7 +29,8 @@
 }
 
 .icon-container{
-    @apply flex justify-center items-center w-9 h-9 pr-2 rounded-lg hover:bg-gray-600 cursor-pointer
+    @apply flex justify-center items-center w-9 h-9 pr-2 rounded-lg hover:bg-gray-600 cursor-pointer;
+    @apply transition-all duration-300 ease-in-out; 
 }
 
 .item span{

@@ -2,8 +2,8 @@
     <div class="px-2">
         <div class="item" @mouseenter="hover=true" @mouseleave="hover=false" :class="bgColor()">
             <div class="icon-container">
-                <Icon v-show="isActive" :size="sizeIcon" :fillColor="fillColor()"/>
-                <IconOutline v-show="!isActive" :size="sizeIcon" :fillColor="fillColor()"/>
+                <Icon class="transition-all duration-300 ease-in-out" v-show="isActive" :size="sizeIcon" :fillColor="fillColor()"/>
+                <IconOutline class="transition-all duration-300 ease-in-out" v-show="!isActive" :size="sizeIcon" :fillColor="fillColor()"/>
             </div>          
                 <span :class="textColor()">{{label}}</span>
         </div> 
@@ -73,7 +73,7 @@
 <style scoped>
 
 .item{
-    @apply flex justify-start items-center mb-1 rounded-lg
+    @apply flex justify-start items-center mb-1 rounded-lg transition-all duration-300 ease-in-out;
 }
 
 .icon-container{

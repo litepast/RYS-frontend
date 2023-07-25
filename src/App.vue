@@ -24,7 +24,8 @@
   import { useAppStore } from './stores/app-store.js'
   const appStore = useAppStore() 
   const sidebarWidth = computed(() => appStore.expandedBar ? 'w-[220px]' : 'w-[52px]')
-  const topbarWidth = computed(() => appStore.expandedBar ? 'w-[calc(100%-235px)]' : 'w-[calc(100%-67px)]')
+  
+  const topbarWidth = computed(() => appStore.expandedBar ? 'w-[calc(100%-220px)]' : 'w-[calc(100%-67px)]')
   const router = useRouter()
   const route = useRoute()
   const nameView = computed(() => route.name)
@@ -58,12 +59,12 @@
 }
 
 .view-container{
-  @apply bg-gradient-to-b from-black via-gray-950 to-zinc-800 flex w-full h-full overflow-auto;
+  @apply flex bg-gradient-to-l from-cyan-950 via-gray-950 to-teal-950 w-full h-full overflow-auto;
+  /*bg-gradient-to-l from-black via-gray-950 to-zinc-800 */
 }
 
 .topbar-container{
-  @apply flex h-[60px] absolute top-0 z-[10];
-  /*w-[calc(100%-195px)]*/
+  @apply flex h-[60px] absolute top-0 z-[10]; 
 }
 
 .webplayer{
