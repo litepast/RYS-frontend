@@ -1,12 +1,12 @@
 <template>
     <div class="h-full w-full pt-[70px]">
-        <div class="filter-container">
-            <button class="bg-green-400 text-sm text-black" @click="searchAlbumSpotify">
+        <div class="filters-container">
+            <button class="bg-green-400 text-sm text-black active:bg-green-600" @click="searchAlbumSpotify">
                 Update Search
             </button>
-            <button @click="storeSearchView.typeSearch=true" :class="!typeSearch ? 'bg-slate-600 text-sm text-white' : 'bg-slate-50 text-sm text-black' ">
+            <button @click="storeSearchView.typeSearch=true" :class="!typeSearch ? 'bg-slate-600 text-sm text-white  hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
             Artist Name</button>
-            <button @click="storeSearchView.typeSearch=false" :class="typeSearch ? 'bg-slate-600 text-sm text-white' : 'bg-slate-50 text-sm text-black' ">
+            <button @click="storeSearchView.typeSearch=false" :class="typeSearch ? 'bg-slate-600 text-sm text-white  hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
             Album Name</button>            
             <div v-if="result && goodResponse">        
                 <div v-if="albums.length" class="text-white">Showing {{ albums.length }} results for {{ result }}</div>
@@ -90,17 +90,12 @@
 </script>
 
 <style scope>
-    .loading{
-        @apply absolute top-0 left-0 w-full h-full flex justify-center items-center z-20;
-        background-color: rgba(0, 0, 0, 0.4);
-    }    
-
-    .filter-container{
+    .filters-container{
         @apply flex items-center h-auto w-full mb-5 px-5;
     }
 
-    .filter-container button{
-        @apply rounded-full pl-3 pr-3 pt-2 pb-2 mr-3;
+    .filters-container button{
+        @apply rounded-full pl-3 pr-3 pt-2 pb-2 mr-3 transition-all duration-300 ease-in-out;
     }
 
     .results-container{

@@ -59,7 +59,7 @@
 }
 
 .view-container{
-  @apply flex bg-gradient-to-l from-cyan-950 via-gray-950 to-teal-950 w-full h-full overflow-auto;
+  @apply flex bg-gradient-to-l  from-violet-950 via-emerald-950 to-amber-950  w-full h-full overflow-auto;
   /*bg-gradient-to-l from-black via-gray-950 to-zinc-800 */
 }
 

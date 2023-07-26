@@ -1,31 +1,29 @@
 <template>
-    <div class="flex w-full h-full">
-            <div class="filters-container">
-            <button class="bg-slate-800 text-sm text-white rounded-full pl-3 pr-3 pt-2 pb-2 mr-3"
-            @click="LibraryViewStore.clear()">
-                    Clear Filters
+    <div class="w-full h-full pt-[70px]">
+        <div class="filters-container">            
+            <button class="bg-green-400 text-sm text-black active:bg-green-600" @click="getAlbums">
+                Update Search
             </button>
-            <button class="bg-slate-800 text-sm text-white rounded-full pl-3 pr-3 pt-2 pb-2 mr-3" @click="getAlbums">
-                    Update Search
+            <button class="bg-green-400 text-sm text-black  active:bg-green-600" @click="LibraryViewStore.clear()">
+                Clear Filters
+            </button>        
+            <button @click=" LibraryViewStore.typeSearch=true" :class="!typeSearch ? 'bg-slate-600 text-sm text-white hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
+                Artist Name
+            </button>          
+            <button @click=" LibraryViewStore.typeSearch=false" :class="typeSearch ? 'bg-slate-600 text-sm text-white hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
+                Album Name
             </button>
-            <div class="filter-name"> 
-                <button @click=" LibraryViewStore.typeSearch=true" :class="!typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
-                >Artist Name</button>          
-                <button @click=" LibraryViewStore.typeSearch=false" :class="typeSearch ? 'bg-slate-800 text-sm text-white' : 'bg-slate-50 text-sm text-black' "
-                >Album Name</button>
-                
-            </div>
             <FilterType/>
-            <FilterYear/>
+            <FilterYear/>            
             <FilterRating/>
-            <FilterGenre/>
-            <FilterStyle/>
+            <FilterGenre/>            
+            <FilterStyle/> 
         </div>
+        <div class="query-container">
+            {{ LibraryViewStore.resultFor }}
+        </div> 
 
-        <div v-if="!loading">
-            <div class="query-container text-white mx-5 mt-2">
-                {{ LibraryViewStore.resultFor }}
-            </div>        
+        <div v-if="!loading" class="flex w-full">                
             <div class="results-container">             
                 <CardAlbumLibrary v-for="album in albums" :id="album.album_id" :cover="album.cover_url" :name="album.name" :year="album.release_date.substring(0,4)" :artist="album.artist"
                 :rating="Number(album.rating)" @deleteAlbum="deleteAlbumLibrary"/>
@@ -227,18 +225,16 @@
  </script>
 
 <style scoped>
-
-.filter-name button{
-        @apply rounded-full pl-3 pr-3 pt-2 pb-2 mr-3;
+    .filters-container{
+        @apply flex items-center h-auto w-full mb-5 px-5;
     }
 
+    .filters-container button{
+        @apply rounded-full pl-3 pr-3 pt-2 pb-2 mr-3 transition-all duration-300 ease-in-out;
+    }
 
-
-
-.filters-container{
-    @apply flex flex-wrap mx-5 mt-[75px]
-}
-
-
+    .query-container{
+    @apply flex text-white w-full text-sm px-5
+    }
 
 </style>

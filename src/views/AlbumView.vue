@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full pb-5" v-if="album">
+    <div class="w-full" v-if="album">
         <div class="album-header-container" :style="bgColor">
             <div class="album-header" :style="bgGradient">
                 <div class="album-cover">
@@ -136,6 +136,7 @@
                 </div>
             </ul>
         </div>
+        <div class="w-full h-4"></div>
     </div>
     <div v-else class="text-white">
         <div v-if="!loading">
