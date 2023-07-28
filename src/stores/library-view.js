@@ -5,7 +5,7 @@ import genres from '../data/genres.json'
 import styles from '../data/styles.json'
 
 export const useLibraryViewStore = defineStore('LibraryView', () => {
-
+  const loading = ref(false)
   const typeSearch = ref(true)  
   const allTypes = ref(all)  
   const optionsTypes = ref(oTypes)
@@ -18,6 +18,7 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
   const allStyles = ref(all)
   const optionsStyles = ref(styles)
   const resultfor = ref('')
+
 
   const query = ref({
     album_name: '',
@@ -56,5 +57,5 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
     })
   }
   
-  return { typeSearch, query, allTypes, optionsTypes, allYears, optionsYears, allRatings, optionsRatings, allGenres, optionsGenres, allStyles, optionsStyles, clear, resultfor }
+  return { loading, typeSearch, query, allTypes, optionsTypes, allYears, optionsYears, allRatings, optionsRatings, allGenres, optionsGenres, allStyles, optionsStyles, clear, resultfor }
 })

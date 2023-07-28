@@ -1,13 +1,13 @@
 <template>
     <div class="card" @mouseenter="hoverCard=true" @mouseleave="hoverCard=false" :key="id">
         <div class="cover-container">
-                <div class="img-container">
-                    <div v-show="hoverCard" class="button-add"
-                        @click="addAlbum(id,name)">
-                        <Plus :size="30"/>
-                    </div>
-                    <img  :src="cover" />
-                </div> 
+            <div class="img-container">
+                <div v-show="hoverCard" class="button-add"
+                    @click="addAlbum(id,name)">
+                    <Plus :size="30"/>
+                </div>
+                <img  :src="cover" />
+            </div> 
         </div>      
         <div class="name" :title="name">{{name}} </div>
         <div class="artist" :title="artist">{{year}} - {{artist}}</div>            

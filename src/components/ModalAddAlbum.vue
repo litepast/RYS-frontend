@@ -12,7 +12,7 @@
                     <div class="modal-message">
                         {{message}}
                     </div>            
-                    <div class="buttons-container">
+                    <div class="modal-buttons">
                         <button @click="closePopUp">Continue</button>
                         <button @click="goToAlbumView">Go to Album Page</button>
                     </div>
@@ -24,7 +24,7 @@
                     <div class="modal-message">
                         Something went wrong, please try again later.
                     </div>            
-                    <div class="buttons-container">
+                    <div class="modal-buttons">
                         <button @click="closePopUp">OK</button>                        
                     </div>
                 </div>
@@ -110,7 +110,7 @@
         @apply text-sm mb-3 text-black;
     }
 
-    .buttons-container{
+    .modal-buttons{
         @apply flex w-full h-[45px] justify-end items-center;
     }
 

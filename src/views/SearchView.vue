@@ -12,7 +12,7 @@
                 <div v-if="albums.length" class="text-white">Showing {{ albums.length }} results for {{ result }}</div>
                 <div v-else class="text-white"> No results for {{ result }}</div>         
             </div>                                 
-        </div>   
+        </div>    
         <div class="flex w-full h-[calc(100%-70px)]">
             <div v-if="loadingSearch" class="flex w-full h-full justify-center items-center">
                 <Spinner/>                  
@@ -42,7 +42,7 @@
     import { useSearchStore } from '../stores/search.js'
     import { useSearchViewStore } from '../stores/search-view.js'
     import CardAlbum from '../components/CardAlbumSearch.vue'
-    import Modal from '../components/AddAlbumModal.vue'
+    import Modal from '../components/ModalAddAlbum.vue'
     import Spinner from '../components/SpinnerLoaderBlack.vue'
     import SomethingWrong from '../components/SomethingWrong.vue'
 

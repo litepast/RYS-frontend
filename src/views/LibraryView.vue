@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full h-full pt-[70px]">
+    <div  class="w-full h-full pt-[70px]" >
         <div class="filters-container">            
             <button class="bg-green-400 text-sm text-black active:bg-green-600" @click="getAlbums">
                 Update Search
@@ -20,27 +20,27 @@
             <FilterStyle/> 
         </div>
         <div class="query-container">
-            {{ LibraryViewStore.resultFor }}
+            {{ LibraryViewStore.resultFor }} 
         </div> 
-
-        <div v-if="!loading" class="flex w-full">                
-            <div class="results-container">             
-                <CardAlbumLibrary v-for="album in albums" :id="album.album_id" :cover="album.cover_url" :name="album.name" :year="album.release_date.substring(0,4)" :artist="album.artist"
-                :rating="Number(album.rating)" @deleteAlbum="deleteAlbumLibrary"/>
+        <div class="flex w-full h-[calc(100%-76px)]" >
+            <div v-if="loading" class="flex w-full h-full justify-center items-center">
+                <Spinner/>                  
+            </div>
+            <div v-else class="results-container" >
+                <div v-if="goodResponse" class="results-container">
+                    <CardAlbumLibrary v-for="album in albums" :id="album.album_id" :cover="album.cover_url" :name="album.name" :year="album.release_date.substring(0,4)" :artist="album.artist"
+                    :rating="Number(album.rating)" @deleteAlbum="deleteAlbumLibrary"/>
+                </div>
+                <div v-else class="results-container" >                    
+                        <SomethingWrong/>                  
+                </div>
             </div>
         </div>
-        <div v-else class="h-7 w-7">
-            <img class="object-contain" src="../components/img/loading.gif" alt="">
-        </div>
-
         <Teleport to="Body">
             <div v-if="showModal">
-                <PopUp @closeModal="showModal=false" @closewithDelete="refreshfromDelete" :id="dataToDelete.id" :name="dataToDelete.name"/>
+                <Modal @closeModal="showModal=false" @closewithDelete="refreshfromDelete" :id="dataToDelete.id" :name="dataToDelete.name"/>
             </div>    
         </Teleport>
-    
-
-
     </div>
     
  </template>
@@ -50,13 +50,17 @@
     import FilterYear from '../components/FilterYear.vue'
     import FilterRating from '../components/FilterRating.vue'
     import FilterGenre from '../components/FilterGenre.vue'
-    import FilterStyle from '../components/FilterStyle.vue'
-    import PopUp from '../components/PopUpDelete.vue'
+    import FilterStyle from '../components/FilterStyle.vue'   
     import { computed, ref, watch, onBeforeMount} from 'vue'
     import { useSearchStore } from '../stores/search.js'
     import { useLibraryViewStore } from '../stores/library-view.js'
-    import axios from 'axios'   
+    import axios from 'axios' 
+    
     import CardAlbumLibrary from '../components/CardAlbumLibrary.vue'
+    import Spinner from '../components/SpinnerLoaderBlack.vue'
+    import SomethingWrong from '../components/SomethingWrong.vue'
+    import Modal from '../components/ModalDeleteAlbum.vue'
+    
 
     const storeSearch = useSearchStore()   
     const LibraryViewStore =  useLibraryViewStore()
@@ -67,6 +71,10 @@
     const loading = ref(false)
     const showModal = ref(false)
     const dataToDelete = { id:'', name:''}
+    const goodResponse = ref(true)
+
+
+  
     
     watch ([typeSearch,input], () => {
         updateNameinQuery()    
@@ -102,23 +110,24 @@
  
     }
 
-
-
-
     async function getAlbums() {
         loading.value = true
+        LibraryViewStore.loading = true
         axios.get('http://192.168.100.14:5000/api/v1/search-album-catalog', { params: LibraryViewStore.query })
         .then(async response => {  
-            await delay(300);          
+            //await delay(300);
+            goodResponse.value = true
             albums.value = await response.data.albums
             LibraryViewStore.resultFor = resultsLabel()            
         })
         .catch((error) => {
+                goodResponse.value = false
                 console.error(error);
             })
         .finally(async () => {
-            await delay(300);
+            await delay(500);
             loading.value = false
+            LibraryViewStore.loading = false
         })
 
     }
@@ -235,6 +244,10 @@
 
     .query-container{
     @apply flex text-white w-full text-sm px-5
+    }
+
+    .results-container{
+        @apply flex flex-wrap h-full w-full p-2 ;
     }
 
 </style>

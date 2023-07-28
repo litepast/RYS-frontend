@@ -4,39 +4,77 @@
       <div class="sidebar-container"  :class="sidebarWidth">
         <SideBar/>
       </div>
-      <div class="view-container">
+      <div class="view-container" ref="view">
         <div class="topbar-container" :class="topbarWidth">
           <TopBar/>
         </div>
         <RouterView/>
       </div>
     </div> 
-    <div class="webplayer text-white">      
+    <div class="webplayer text-white"> 
+       {{  y }} {{ appStore.scrollSearch }} {{ appStore.scrollLibrary }}    {{ libLoading  }} {{ scroll }}
     </div>
   </div>
 </template>
 
 <script setup>
   import { ref, computed,  watch, onBeforeMount } from 'vue';
-  import { RouterLink, RouterView, useRouter, useRoute } from 'vue-router';
+  import { RouterView, useRouter, useRoute } from 'vue-router';  
+  import { useAppStore } from './stores/app-store.js'
+  import { useLibraryViewStore } from './stores/library-view.js';
+  import { useScroll } from '@vueuse/core'
   import TopBar from './components/TopBar.vue';
   import SideBar from './components/SideBar.vue';
-  import { useAppStore } from './stores/app-store.js'
-  const appStore = useAppStore() 
-  const sidebarWidth = computed(() => appStore.expandedBar ? 'w-[220px]' : 'w-[52px]')
+
+  const LibraryViewStore =  useLibraryViewStore()
+  const view = ref(null)
+  const scroll = useScroll(view)
+  const y = computed(() => scroll.y.value) 
   
+
+  const appStore = useAppStore() 
+  const sidebarWidth = computed(() => appStore.expandedBar ? 'w-[220px]' : 'w-[52px]')  
   const topbarWidth = computed(() => appStore.expandedBar ? 'w-[calc(100%-220px)]' : 'w-[calc(100%-67px)]')
   const router = useRouter()
   const route = useRoute()
   const nameView = computed(() => route.name)
+  const libLoading = computed(() => LibraryViewStore.loading)
+  
+  function delay(milliseconds){
+        return new Promise(resolve => {
+            setTimeout(resolve, milliseconds);
+        });
+    }
+
+  watch([y], () => {
+    if(nameView.value == 'search' && y.value > 0){
+      appStore.scrollSearch = y.value
+    }
+    if(nameView.value == 'library' && libLoading.value==false){
+      appStore.scrollLibrary = y.value
+    }      
+  })
+  
 
   watch(nameView, () => {
     appStore.stateHistory.value = router.options.history.state
+    if(nameView.value == 'search'){
+       scroll.y.value = appStore.scrollSearch
+    }
   })
+
+  watch([libLoading], () => {
+    if(nameView.value == 'library' && libLoading.value==false){   
+      scroll.y.value = appStore.scrollLibrary
+    }    
+  })
+
 
   onBeforeMount(() => {
     appStore.stateHistory.value = router.options.history.state
   })
+
+  
 
 
 
@@ -77,7 +115,7 @@
 }
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #232121;
+  background: #232121;  
 }
 /* Handle */
 ::-webkit-scrollbar-thumb {
