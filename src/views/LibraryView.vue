@@ -1,7 +1,7 @@
 <template>
     <div  class="w-full h-full pt-[70px]" > 
         <div class="filters-container">                        
-            <button class="bg-green-400 text-sm text-black active:bg-green-600" @click="getAlbums">
+            <button class="bg-green-400 text-sm text-black active:bg-green-600" @click="storeSearch.enter()">
                 Update Search
             </button>
             <button class="bg-green-400 text-sm text-black  active:bg-green-600" @click="LibraryViewStore.clear()">
@@ -25,23 +25,24 @@
         <div class="pagination-container">               
             <div class="results-label">
                 {{ albums.length ? albums.length +' Total Results'  : 'No results'}}
-            </div>
+            </div>           
             <div class="pag-settings">
                 <label for="itemsQty">Items per page:</label>                           
-                <select v-model="itemsPerPage" class="w-14" id="itemsQty">
-                    <option class="">25</option>
-                    <option class="">50</option>
-                    <option class="">100</option>
+                <select v-model="LibraryViewStore.itemsPerPage" class="w-14" id="itemsQty">
+                    <option :value="10">10</option>
+                    <option :value="25">25</option>
+                    <option :value="50">50</option>
+                    <option :value="100">100</option>
                 </select>
                  <label for="Order">Order by:</label>
-                <select v-model="orderPage"  class="w-20" id="Order">
+                <select v-model="LibraryViewStore.orderPage"  class="w-20" id="Order">
                     <option value="1">Artist</option>
                     <option value="4">Album</option>
                     <option value="2">Year</option>
                     <option value="3">Rating</option>
                 </select>
                 <Paginate 
-                    v-model="currentPage"
+                    v-model="LibraryViewStore.currentPage"
                     :page-count="numberPages"
                     :page-range="2"
                     :margin-pages="2"
@@ -83,7 +84,7 @@
     import FilterRating from '../components/FilterRating.vue'
     import FilterGenre from '../components/FilterGenre.vue'
     import FilterStyle from '../components/FilterStyle.vue'   
-    import { computed, ref, watch, onBeforeMount} from 'vue'
+    import { computed, ref, watch, onBeforeMount, toRef} from 'vue'
     import { useSearchStore } from '../stores/search.js'
     import { useLibraryViewStore } from '../stores/library-view.js'
     import axios from 'axios'     
@@ -95,9 +96,6 @@
     import { useRouter } from 'vue-router'
 
     const router = useRouter()
-    const currentPage = ref(1);
-    const itemsPerPage = ref(25);
-    const orderPage = ref(1);
     const storeSearch = useSearchStore()   
     const LibraryViewStore =  useLibraryViewStore()
     const enter = computed(() => storeSearch.enterCount) 
@@ -108,19 +106,19 @@
     const showModal = ref(false)
     const dataToDelete = { id:'', name:''}
     const goodResponse = ref(true)
-    const query = computed(() => LibraryViewStore.query)
+    const ordPage = toRef(LibraryViewStore, 'orderPage')
+    const itemsPage = toRef(LibraryViewStore, 'itemsPerPage')
 
-  
+    
       
-    watch ([typeSearch,input,query], () => {        
-        updateNameinQuery()
-        LibraryViewStore.resultFor = resultsLabel()     
+    watch ([typeSearch,input], () => {        
+        updateNameinQuery()            
     })
 
-    watch(enter, () => {       
+    watch(enter, () => {
+        LibraryViewStore.currentPage = 1       
         getAlbums()
     })
-
 
     function delay(milliseconds){
         return new Promise(resolve => {
@@ -148,30 +146,30 @@
         router.push(`/library/${a_id}`)
     }
  
-    const filteredAlbums = computed( () => {    
-        loading.value = true           
-        const start = (currentPage.value - 1) * itemsPerPage.value;
-        const end = start + itemsPerPage.value       
-        loading.value = false      
+    const filteredAlbums = computed( () => {
+        const start = (LibraryViewStore.currentPage - 1) * itemsPage.value 
+        const end = start + Number(LibraryViewStore.itemsPerPage)                     
         return albums.value.slice(start, end)
     });
 
-    watch(itemsPerPage, () => {
-        currentPage.value = 1;
+    
+
+    watch(itemsPage , () => {
+        LibraryViewStore.currentPage = 1;
     });
 
-    watch(orderPage, () => {
-        currentPage.value = 1;
+    watch(ordPage, () => {
+        LibraryViewStore.currentPage = 1;
         orderAlbums()
     })
 
     const numberPages = computed(() => {
-        return Math.ceil(albums.value.length / itemsPerPage.value);
+        return Math.ceil(albums.value.length / Number(LibraryViewStore.itemsPerPage));
     });    
     
     
     const orderAlbums = ()  => {
-        if(orderPage.value == 1){
+        if(LibraryViewStore.orderPage == 1){
             albums.value.sort((a, b) => {
                 if (a.artist < b.artist) return -1;
                 if (a.artist > b.artist) return 1;
@@ -184,7 +182,7 @@
                 return 0;
             });
         }
-        if(orderPage.value == 2){
+        if(LibraryViewStore.orderPage == 2){
             albums.value.sort((a, b) => {
                 if (a.release_date < b.release_date) return -1;
                 if (a.release_date > b.release_date) return 1;
@@ -197,7 +195,7 @@
                 return 0;
             });
         }
-        if(orderPage.value == 3){
+        if(LibraryViewStore.orderPage == 3){
             albums.value.sort((a, b) => {
                 if (a.rating > b.rating) return -1;
                 if (a.rating < b.rating) return 1;
@@ -210,7 +208,7 @@
                 return 0;
             });
         }
-        if(orderPage.value==4){
+        if(LibraryViewStore.orderPage == 4){
             albums.value.sort((a, b) => {
                 if (a.name < b.name) return -1;
                 if (a.name > b.name) return 1;
@@ -227,28 +225,25 @@
 
     async function getAlbums() {
         loading.value = true
-        LibraryViewStore.loading = true
         axios.get('http://192.168.100.14:5000/api/v1/search-album-catalog', { params: LibraryViewStore.query })
         .then(async response => {  
             goodResponse.value = true
             albums.value = await response.data.albums
-            currentPage.value = 1
+            
             if (albums.value.length){                
                 orderAlbums() 
             }else{
-                numberPages.value = 1
+                LibraryViewStore.numberPages = 1
             }                       
         })
-        .catch((error) => {
-                currentPage.value = 1
-                numberPages.value = 1
-                goodResponse.value = false
+        .catch((error) => {                
+                LibraryViewStore.numberPages = 1
+                LibraryViewStore.goodResponse = false
                 console.error(error);
             })
         .finally(async () => {
-            await delay(500);
+            await delay(10);
             loading.value = false
-            LibraryViewStore.loading = false
         })
     }
 

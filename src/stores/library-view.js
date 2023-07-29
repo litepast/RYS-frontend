@@ -18,6 +18,13 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
   const allStyles = ref(all)
   const optionsStyles = ref(styles) 
 
+
+  const currentPage = ref(1);
+  const itemsPerPage = ref(25);
+  const orderPage = ref(1);
+
+  currentPage , itemsPerPage, orderPage
+ 
   const query = ref({
     album_name: '',
     artist_name: '',
@@ -148,5 +155,5 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
     })
   }
   
-  return { filtersText, loading, typeSearch, query, allTypes, optionsTypes, allYears, optionsYears, allRatings, optionsRatings, allGenres, optionsGenres, allStyles, optionsStyles, clear}
+  return { currentPage , itemsPerPage, orderPage,  filtersText, loading, typeSearch, query, allTypes, optionsTypes, allYears, optionsYears, allRatings, optionsRatings, allGenres, optionsGenres, allStyles, optionsStyles, clear}
 })
