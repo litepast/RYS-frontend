@@ -35,7 +35,7 @@
     const showOptions = ref(false)   
     const filter = ref(null)
     
-    const optionsSelected = computed(()=> LibraryViewStore.optionsTypes.filter(type => type.selected ).map(type => type.name ))
+    const optionsSelected = computed(()=> LibraryViewStore.optionsTypes.filter(type => type.selected ).map(type => type.id ))
 
     watch(optionsSelected, () => {
         LibraryViewStore.query.types = optionsSelected.value 
