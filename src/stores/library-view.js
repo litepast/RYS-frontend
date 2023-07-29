@@ -16,8 +16,7 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
   const allGenres = ref(all)
   const optionsGenres = ref(genres)
   const allStyles = ref(all)
-  const optionsStyles = ref(styles)
-  const resultfor = ref('')
+  const optionsStyles = ref(styles) 
 
   const query = ref({
     album_name: '',
@@ -39,6 +38,12 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
     let resultsRatings = ''
     let resultsGenres = ''
     let resultsStyles = ''
+    let types = {
+      1: 'Album',
+      2: 'Single',
+      3: 'EP',
+      4: 'Compilation',
+    }
 
     if(query.value.album_name != ''){
       resultsAlbum = 'Album Name: ' + query.value.album_name
@@ -53,7 +58,9 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
     }
 
     if(query.value.types.length){
-      resultsTypes = 'Types: ' + query.value.types.join(', ')
+      resultsTypes = 'Types: ' + query.value.types.map((item) => {
+        return types[item]
+      }).join(', ')
     }else{
         resultsTypes = 'All Types'
     }
@@ -141,5 +148,5 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
     })
   }
   
-  return { filtersText, loading, typeSearch, query, allTypes, optionsTypes, allYears, optionsYears, allRatings, optionsRatings, allGenres, optionsGenres, allStyles, optionsStyles, clear, resultfor }
+  return { filtersText, loading, typeSearch, query, allTypes, optionsTypes, allYears, optionsYears, allRatings, optionsRatings, allGenres, optionsGenres, allStyles, optionsStyles, clear}
 })

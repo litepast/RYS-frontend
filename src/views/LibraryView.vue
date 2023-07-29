@@ -1,44 +1,40 @@
 <template>
-    <div  class="w-full h-full pt-[70px]" >
-  
-        <div class="flex flex-wrap w-full">
-            <div class="filters-container">                        
-                <button class="bg-green-400 text-sm text-black active:bg-green-600" @click="getAlbums">
-                    Update Search
-                </button>
-                <button class="bg-green-400 text-sm text-black  active:bg-green-600" @click="LibraryViewStore.clear()">
-                    Clear Filters
-                </button>        
-                <button @click=" LibraryViewStore.typeSearch=true" :class="!typeSearch ? 'bg-slate-600 text-sm text-white hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
-                    Artist Name
-                </button>          
-                <button @click=" LibraryViewStore.typeSearch=false" :class="typeSearch ? 'bg-slate-600 text-sm text-white hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
-                    Album Name
-                </button>
-                <FilterType/>
-                <FilterYear/>            
-                <FilterRating/>
-                <FilterGenre/>            
-                <FilterStyle/> 
-            </div>
-            <div class="query-container">
-                {{ LibraryViewStore.filtersText }}
-            </div> 
+    <div  class="w-full h-full pt-[70px]" > 
+        <div class="filters-container">                        
+            <button class="bg-green-400 text-sm text-black active:bg-green-600" @click="getAlbums">
+                Update Search
+            </button>
+            <button class="bg-green-400 text-sm text-black  active:bg-green-600" @click="LibraryViewStore.clear()">
+                Clear Filters
+            </button>        
+            <button @click=" LibraryViewStore.typeSearch=true" :class="!typeSearch ? 'bg-slate-600 text-sm text-white hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
+                Artist Name
+            </button>          
+            <button @click=" LibraryViewStore.typeSearch=false" :class="typeSearch ? 'bg-slate-600 text-sm text-white hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
+                Album Name
+            </button>
+            <FilterType/>
+            <FilterYear/>            
+            <FilterRating/>
+            <FilterGenre/>            
+            <FilterStyle/> 
         </div>
-
-        <div class="pagination-container w-full flex items-center justify-end pl-5 pr-10">               
-            <div class="text-white flex items-center mr-5">
+        <div class="query-container">
+            {{ LibraryViewStore.filtersText }}
+        </div>
+        <div class="pagination-container">               
+            <div class="results-label">
                 {{ albums.length ? albums.length +' Total Results'  : 'No results'}}
             </div>
-            <div class="flex div">
-                <label for="itemsQty" class="text-white flex items-center justify-center mr-2">Items per page:</label>                           
-                <select v-model="itemsPerPage" class="bg-slate-600 hover:bg-slate-500 text-white rounded-sm w-14 mr-4" id="itemsQty">
+            <div class="pag-settings">
+                <label for="itemsQty">Items per page:</label>                           
+                <select v-model="itemsPerPage" class="w-14" id="itemsQty">
                     <option class="">25</option>
                     <option class="">50</option>
                     <option class="">100</option>
                 </select>
-                 <label for="Order" class="text-white flex items-center justify-center mr-2">Order by:</label>
-                <select v-model="orderPage"  class=" bg-slate-600 hover:bg-slate-500 text-white rounded-sm w-20 " id="Order">
+                 <label for="Order">Order by:</label>
+                <select v-model="orderPage"  class="w-20" id="Order">
                     <option value="1">Artist</option>
                     <option value="4">Album</option>
                     <option value="2">Year</option>
@@ -52,24 +48,21 @@
                     :container-class="'flex'"                             
                     :prev-text="' ⇤ Prev'"
                     :next-text="'Next ⇥ '"
-                    :prev-class="'text-gray-400 hover:text-white w-24 h-8 flex justify-center items-center  cursor-pointer mx-2 transition-all duration-300 ease-in-out'"
-                    :next-class="'text-gray-400 hover:text-white w-24 h-8 flex justify-center items-center  cursor-pointer mx-2 transition-all duration-300 ease-in-out'"              
+                    :prev-class="'text-gray-400 hover:text-white w-24 h-8 flex justify-center items-center  cursor-pointer transition-all duration-300 ease-in-out'"
+                    :next-class="'text-gray-400 hover:text-white w-24 h-8 flex justify-center items-center  cursor-pointer transition-all duration-300 ease-in-out'"              
                     :page-class="' text-gray-400 hover:text-white w-8 h-8 flex justify-center items-center  cursor-pointer mx-2 transition-all duration-300 ease-in-out'"                
                     :active-class="'bg-green-500 hover:bg-green-400 !text-black rounded-full transition-all duration-300 ease-in-out'">              
                 </Paginate> 
-            </div>
-           
-                     
+            </div> 
         </div>
-
-        <div class="flex w-full h-[calc(100%-76px)]" >
-            <div v-if="loading" class="flex w-full h-full justify-center items-center">
+        <div class="data-container" >
+            <div v-if="loading" class="spinner-container">
                 <Spinner/>                  
             </div>
             <div v-else class="results-container" >
                 <div v-if="goodResponse" class="results-container">
                     <CardAlbumLibrary v-for="album in filteredAlbums" :id="album.album_id" :cover="album.cover_url" :name="album.name" :year="album.release_date" :artist="album.artist"
-                    :rating="Number(album.rating)" @deleteAlbum="deleteAlbumLibrary"/>
+                    :rating="Number(album.rating)" @deleteAlbum="deleteAlbumLibrary" @goToAlbumView="goToAlbumView"/>
                 </div>
                 <div v-else class="results-container" >                    
                         <SomethingWrong/>                  
@@ -82,9 +75,8 @@
             </div>    
         </Teleport>
     </div>
-    
  </template>
- 
+
  <script setup>
     import FilterType from '../components/FilterType.vue'
     import FilterYear from '../components/FilterYear.vue'
@@ -100,7 +92,9 @@
     import SomethingWrong from '../components/SomethingWrong.vue'
     import Modal from '../components/ModalDeleteAlbum.vue'
     import Paginate from 'vuejs-paginate-next';
+    import { useRouter } from 'vue-router'
 
+    const router = useRouter()
     const currentPage = ref(1);
     const itemsPerPage = ref(25);
     const orderPage = ref(1);
@@ -125,8 +119,7 @@
 
     watch(enter, () => {       
         getAlbums()
-    } 
-    )
+    })
 
 
     function delay(milliseconds){
@@ -148,15 +141,19 @@
     function deleteAlbumLibrary(a_id,a_name){
         dataToDelete.id = a_id
         dataToDelete.name = a_name
-        showModal.value = true        
- 
+        showModal.value = true
     }
 
+    function goToAlbumView(a_id) { 
+        router.push(`/library/${a_id}`)
+    }
  
-    const filteredAlbums = computed(() => {               
+    const filteredAlbums = computed( () => {    
+        loading.value = true           
         const start = (currentPage.value - 1) * itemsPerPage.value;
-        const end = start + itemsPerPage.value;        
-        return albums.value.slice(start, end);
+        const end = start + itemsPerPage.value       
+        loading.value = false      
+        return albums.value.slice(start, end)
     });
 
     watch(itemsPerPage, () => {
@@ -253,14 +250,12 @@
             loading.value = false
             LibraryViewStore.loading = false
         })
-
     }
 
     async function refreshfromDelete(){
         showModal.value = false
         getAlbums()
     }  
-
 
     onBeforeMount(async () => {
         getAlbums()
@@ -270,9 +265,37 @@
 
  </script>
 
+
 <style scoped>
+
+    .pagination-container{
+        @apply w-full flex items-center justify-between pl-5 pr-10;
+    }
+    .results-label{
+        @apply text-white flex items-center
+    }
+    
+    .pag-settings{
+        @apply flex items-center
+    }
+    .pag-settings label{
+        @apply text-white flex items-center justify-center mr-2
+    }
+
+    .pag-settings select{
+        @apply bg-slate-600 hover:bg-slate-500 text-white rounded-md mr-2 h-8;
+    }
+
+    .spinner-container {
+        @apply flex w-full h-full justify-center items-center
+    }
+
+    .data-container{
+        @apply flex w-full h-[calc(100%-76px)]
+    }
+   
     .filters-container{
-        @apply flex items-center h-auto w-full mb-2;
+        @apply flex items-center justify-start h-auto w-full mb-2;
     }
 
     .filters-container button{
@@ -280,7 +303,7 @@
     }
 
     .query-container{
-    @apply flex text-white w-full text-[13px] px-5 mb-2
+    @apply flex text-white w-full text-[13px] px-5 pt-2 mb-1
     }
 
     .results-container{
@@ -288,3 +311,4 @@
     }
 
 </style>
+ 

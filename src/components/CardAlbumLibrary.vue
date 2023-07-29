@@ -1,6 +1,7 @@
 <template>
-    <div class="card" @click="clickEvent(id,name)" @mouseenter="hoverCard=true" @mouseleave="hoverCard=false" :key="id">
-        <div class="cover-container">
+    <div class="card" :class=" rating == 5 ? 'bg-gradient-to-tr from-yellow-700 to-amber-400 hover:to-amber-600' : 'bg-zinc-900 hover:bg-zinc-700'"
+     @click="clickEvent(id,name)" @mouseenter="hoverCard=true" @mouseleave="hoverCard=false" :key="id">
+        <div class="cover-container ">
             <div class="img-container">
                 <img  :src="cover" />  
                 <div v-show="hoverCard" @mouseenter="hoverDelete=true" @mouseleave="hoverDelete=false"  class="button-delete" :title="`Delete ${name}  from Library`" >
@@ -11,21 +12,17 @@
         <div class="rating-container w-full px-2">
             <StarRating :title=" rating ? rating + ' Stars' : 'Unrated'" :rating="rating" :star-size="16" :read-only="true" :increment="0.5"  :show-rating="false"
             inactive-color="#332A2B" active-color="#1ED760" :border-width="1"/>            
-        </div>
-     
-
+        </div>   
         <div class="name" @click="goToAlbumView" :title="name">{{name}} </div>
-        <div class="artist" :title="artist">{{year}} - {{artist}}</div>            
+        <div class="artist"  :class="rating == 5 ? 'text-white' : 'text-gray-400'" :title="artist">{{year}} - {{artist}}</div>            
     </div>
   
 </template>
 
 <script setup>
-    import{ref} from 'vue'
-    import { useRouter } from 'vue-router';
+    import{ref} from 'vue'    
     import StarRating from 'vue-star-rating'
-    import Delete from 'vue-material-design-icons/Delete.vue'
-    const router = useRouter()
+    import Delete from 'vue-material-design-icons/Delete.vue'    
     const hoverCard = ref(false)
     const hoverDelete = ref(false)
     
@@ -38,14 +35,16 @@
             'rating'
         ]) 
 
-    function goToAlbumView() {       
-            router.push(`/library/${id}`)            
-        }
-
-    const emit = defineEmits(["deleteAlbum"])
+  
+    const emit = defineEmits(["deleteAlbum","goToAlbumView"])
+    
 
     function deleteAlbum(a_id,a_name){              
-            emit("deleteAlbum",a_id,a_name)
+        emit("deleteAlbum",a_id,a_name)
+    }
+
+    function goToAlbumView(a_id) { 
+        emit("goToAlbumView",a_id)
     }
 
     function clickEvent(a_id,a_name){
@@ -53,19 +52,15 @@
             deleteAlbum(a_id,a_name)
             return            
         }        
-        goToAlbumView()
+        goToAlbumView(a_id)
     }
-
-    
-
-
 </script>
 
 
 <style scoped>
 
     .card{
-        @apply rounded-xl bg-zinc-900 hover:bg-zinc-700;
+        @apply rounded-xl;
         @apply flex flex-col mb-3 mr-3 cursor-pointer;
         @apply w-[220px] h-[305px];
         @apply transition-all duration-300 ease-in-out;
@@ -93,7 +88,7 @@
         @apply truncate font-semibold my-1 w-full text-white px-2 hover:underline cursor-pointer;
     }
     .artist{
-        @apply truncate font-medium w-full px-2 text-gray-400;
+        @apply truncate font-medium w-full px-2;
     }
 
 
