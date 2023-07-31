@@ -7,14 +7,19 @@
             <button class="h-[36px] w-[110px]" @click="storeSearchView.typeSearch=true" :class="!typeSearch ? 'bg-slate-600 text-sm text-white  hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
             Artist Name</button>
             <button class="h-[36px] w-[115px]" @click="storeSearchView.typeSearch=false" :class="typeSearch ? 'bg-slate-600 text-sm text-white  hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
-            Album Name</button>            
-            <div v-if="result && goodResponse">        
-                <div v-if="albums.length" class="text-white">Showing {{ albums.length }} results for {{ result }}</div>
-                <div v-else class="text-white"> No results for {{ result }}</div>         
-            </div>                                 
+            Album Name</button> 
+            <div v-if="welcomeMsg && goodResponse" class="text-white">
+                Welcome Back! Search some releases get started! Below there are some new releases from Spotify
+            </div>
+            <div v-else>
+                <div v-if="result && goodResponse">        
+                    <div v-if="albums.length" class="text-white">Showing {{ albums.length }} results for {{ result }}</div>
+                    <div v-else class="text-white"> No results for {{ result }}</div>         
+                </div>                
+            </div>
         </div>    
         <div class="w-full h-[calc(100%-70px)]">
-            <div v-if="loadingSearch" class="flex w-full h-full justify-center items-center">
+            <div v-if="loading" class="flex w-full h-full justify-center items-center">
                 <Spinner/>                  
             </div>
             <div v-else class="results-container">
@@ -37,7 +42,7 @@
  
  
 <script setup>
-    import{ computed, watch, ref} from 'vue'
+    import{ computed, watch, ref, onBeforeMount} from 'vue'
     import axios from 'axios'
     import { useSearchStore } from '../stores/search.js'
     import { useSearchViewStore } from '../stores/search-view.js'
@@ -54,9 +59,10 @@
     const albums = computed(() => storeSearchView.albums)
     const typeSearch = computed(() => storeSearchView.typeSearch)
     const result = computed(() => storeSearchView.input)
-    const loadingSearch = ref(false)
     const loading = ref(false)
     const albumToAdd = { id:'', name:''}
+    const firstLoad = computed(() => storeSearchView.firstLoad)
+    const welcomeMsg = computed(() => storeSearchView.welcomeMsg)
 
     watch([enter,typeSearch], () =>{
         searchAlbumSpotify()
@@ -65,7 +71,7 @@
     function searchAlbumSpotify(){
         if (!storeSearch.input.length)
             {return}
-        loadingSearch.value = true;              
+        loading.value = true;              
         let url = 'http://192.168.100.14:5000/api/v1/search-spotify?p1='+String(Number(typeSearch.value))+'&p2='+storeSearch.input        
         axios.get(url)
             .then((response) => {    
@@ -78,9 +84,35 @@
                 console.error(error);
             })
             .finally(() => {
-                loadingSearch.value = false                  
+                storeSearchView.welcomeMsg = false
+                loading.value = false                  
             })
     }
+
+
+    function newSearch(){        
+        loading.value = true;              
+        let url = 'http://192.168.100.14:5000/api/v1/search-spotify?p1=0&p2=tag:new'     
+        axios.get(url)
+            .then((response) => {    
+                goodResponse.value = true
+                storeSearchView.albums = response.data.albums                 
+            })
+            .catch((error) => {
+                goodResponse.value = false
+                console.error(error);
+            })
+            .finally(() => {
+                loading.value = false                  
+            })
+    }
+
+    onBeforeMount(() => {
+        if (firstLoad.value){
+            newSearch()
+            storeSearchView.firstLoad = false
+        }
+    })
     
     function addAlbumLibrary(a_id,a_name){
         albumToAdd.id = a_id
@@ -103,10 +135,6 @@
     }
 
     .results-cnt{
-        @apply flex flex-wrap justify-start content-start;
-        /* @apply grid justify-evenly content-start ;
-        grid-template-columns: repeat(auto-fit, 220px);
-        gap: 1rem; */
-        
+        @apply flex flex-wrap justify-start p-2;
     }
 </style>

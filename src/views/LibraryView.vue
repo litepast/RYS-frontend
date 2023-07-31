@@ -88,12 +88,12 @@
     import { useSearchStore } from '../stores/search.js'
     import { useLibraryViewStore } from '../stores/library-view.js'
     import axios from 'axios'     
-    import CardAlbumLibrary from '../components/CardAlbumLibrary.vue'
-    import Spinner from '../components/SpinnerLoaderBlack.vue'
+    import CardAlbumLibrary from '../components/CardAlbumLibrary.vue'   
     import SomethingWrong from '../components/SomethingWrong.vue'
     import Modal from '../components/ModalDeleteAlbum.vue'
     import Paginate from 'vuejs-paginate-next';
     import { useRouter } from 'vue-router'
+    import Spinner from '../components/SpinnerLoaderBlack.vue'
 
     const router = useRouter()
     const storeSearch = useSearchStore()   
@@ -238,7 +238,7 @@
         })
         .catch((error) => {                
                 LibraryViewStore.numberPages = 1
-                LibraryViewStore.goodResponse = false
+                goodResponse.value = false
                 console.error(error);
             })
         .finally(async () => {
@@ -295,12 +295,11 @@
     }
 
     .data-container{
-        @apply w-full h-[calc(100%-70x)]
+        @apply flex w-full h-[calc(100%-110px)]
     }
-   
 
     .spinner-container {
-        @apply flex w-full h-full justify-center items-center
+        @apply flex w-full justify-center items-center;
     }
  
     .results-container{
@@ -308,7 +307,7 @@
     }
 
     .results-container-cards{
-        @apply flex flex-wrap justify-start content-start;
+        @apply flex flex-wrap justify-start p-2;
     }
 
 </style>
