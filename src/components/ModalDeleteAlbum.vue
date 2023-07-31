@@ -149,7 +149,7 @@
         @apply text-left text-xl mb-3 truncate ;
     }
     .modal-message{
-        @apply text-sm mb-3 text-black;
+        @apply text-sm mb-3 text-black truncate;
     }
 
     .modal-buttons{

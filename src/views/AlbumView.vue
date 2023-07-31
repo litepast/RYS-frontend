@@ -84,7 +84,7 @@
             </div>                    
             <div class="tracks-right-slot">
                 <div class="tracks-rating pl-[60px]" title="Your Track Rating">
-                    Rating {{ y }}
+                    Rating 
                 </div>
                 <div class= "column" title="is this track goated? &#10;The track is so good, it is beyond 5 stars&#10;It will bost the album's suggested rating">
                     🐐 

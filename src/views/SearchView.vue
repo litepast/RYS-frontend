@@ -1,24 +1,24 @@
 <template>
     <div class="h-full w-full pt-[70px]">
         <div class="filters-container">
-            <button class="bg-green-400 text-sm text-black active:bg-green-600" @click="searchAlbumSpotify">
+            <button class="h-[36px] w-[130px] bg-green-400 text-sm text-black active:bg-green-600" @click="searchAlbumSpotify">
                 Update Search
             </button>
-            <button @click="storeSearchView.typeSearch=true" :class="!typeSearch ? 'bg-slate-600 text-sm text-white  hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
+            <button class="h-[36px] w-[110px]" @click="storeSearchView.typeSearch=true" :class="!typeSearch ? 'bg-slate-600 text-sm text-white  hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
             Artist Name</button>
-            <button @click="storeSearchView.typeSearch=false" :class="typeSearch ? 'bg-slate-600 text-sm text-white  hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
+            <button class="h-[36px] w-[115px]" @click="storeSearchView.typeSearch=false" :class="typeSearch ? 'bg-slate-600 text-sm text-white  hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
             Album Name</button>            
             <div v-if="result && goodResponse">        
                 <div v-if="albums.length" class="text-white">Showing {{ albums.length }} results for {{ result }}</div>
                 <div v-else class="text-white"> No results for {{ result }}</div>         
             </div>                                 
         </div>    
-        <div class="flex w-full h-[calc(100%-70px)]">
+        <div class="w-full h-[calc(100%-70px)]">
             <div v-if="loadingSearch" class="flex w-full h-full justify-center items-center">
                 <Spinner/>                  
             </div>
             <div v-else class="results-container">
-                <div v-if="goodResponse" class="results-container">
+                <div v-if="goodResponse" class="results-cnt">
                     <CardAlbum v-for="album in albums" :id="album.album_id" :cover="album.cover_url" :name="album.name" :year="album.release_date.substring(0,4)" :artist="album.artist"
                     @addAlbum="addAlbumLibrary" />
                 </div>
@@ -99,6 +99,14 @@
     }
 
     .results-container{
-        @apply flex flex-wrap h-full w-full p-2 ;
+        @apply h-full w-full;
+    }
+
+    .results-cnt{
+        @apply flex flex-wrap justify-start content-start;
+        /* @apply grid justify-evenly content-start ;
+        grid-template-columns: repeat(auto-fit, 220px);
+        gap: 1rem; */
+        
     }
 </style>

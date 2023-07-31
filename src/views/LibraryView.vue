@@ -1,16 +1,16 @@
 <template>
     <div  class="w-full h-full pt-[70px]" > 
         <div class="filters-container">                        
-            <button class="bg-green-400 text-sm text-black active:bg-green-600" @click="storeSearch.enter()">
+            <button class="h-[36px] w-[130px] bg-green-400 text-sm text-black active:bg-green-600" @click="storeSearch.enter()">
                 Update Search
             </button>
-            <button class="bg-green-400 text-sm text-black  active:bg-green-600" @click="LibraryViewStore.clear()">
+            <button class="h-[36px] w-[110px] bg-green-400 text-sm text-black  active:bg-green-600" @click="LibraryViewStore.clear()">
                 Clear Filters
             </button>        
-            <button @click=" LibraryViewStore.typeSearch=true" :class="!typeSearch ? 'bg-slate-600 text-sm text-white hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
+            <button class="h-[36px] w-[110px]" @click=" LibraryViewStore.typeSearch=true" :class="!typeSearch ? 'bg-slate-600 text-sm text-white hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
                 Artist Name
             </button>          
-            <button @click=" LibraryViewStore.typeSearch=false" :class="typeSearch ? 'bg-slate-600 text-sm text-white hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
+            <button class="h-[36px] w-[115px]" @click=" LibraryViewStore.typeSearch=false" :class="typeSearch ? 'bg-slate-600 text-sm text-white hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
                 Album Name
             </button>
             <FilterType/>
@@ -61,7 +61,7 @@
                 <Spinner/>                  
             </div>
             <div v-else class="results-container" >
-                <div v-if="goodResponse" class="results-container">
+                <div v-if="goodResponse" class="results-container-cards">
                     <CardAlbumLibrary v-for="album in filteredAlbums" :id="album.album_id" :cover="album.cover_url" :name="album.name" :year="album.release_date" :artist="album.artist"
                     :rating="Number(album.rating)" @deleteAlbum="deleteAlbumLibrary" @goToAlbumView="goToAlbumView"/>
                 </div>
@@ -281,14 +281,7 @@
         @apply bg-slate-600 hover:bg-slate-500 text-white rounded-md mr-2 h-8;
     }
 
-    .spinner-container {
-        @apply flex w-full h-full justify-center items-center
-    }
-
-    .data-container{
-        @apply flex w-full h-[calc(100%-76px)]
-    }
-   
+ 
     .filters-container{
         @apply flex items-center justify-start h-auto w-full mb-2;
     }
@@ -301,8 +294,21 @@
     @apply flex text-white w-full text-[13px] px-5 pt-2 mb-1
     }
 
+    .data-container{
+        @apply w-full h-[calc(100%-70x)]
+    }
+   
+
+    .spinner-container {
+        @apply flex w-full h-full justify-center items-center
+    }
+ 
     .results-container{
-        @apply flex flex-wrap h-full w-full p-2 ;
+        @apply flex h-full w-full;
+    }
+
+    .results-container-cards{
+        @apply flex flex-wrap justify-start content-start;
     }
 
 </style>
