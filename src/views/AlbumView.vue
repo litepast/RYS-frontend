@@ -1,10 +1,11 @@
-<template>
-    <div class="w-full" v-if="album">
-        <div class="album-header-container" :style="bgColor">
-            <div class="album-header" :style="bgGradient">
-                <div class="album-cover">
-                    <img :src="album.cover_image">
-                </div>        
+<template >
+    <div v-if="!loading" class="w-full" >
+        <div v-if="goodResponse">
+            <div class="album-header-container" :style="bgColor">
+                <div class="album-header" :style="bgGradient">
+                    <div class="album-cover">
+                        <img :src="album.cover_image">
+                    </div>        
                 <div class="album-data">
                     <div class="album-type">
                         {{ album.release_type}}
@@ -17,6 +18,8 @@
                         <div class="circle"></div>
                         <div> {{ album.release_date.substring(0,4) }}</div>
                         <div class="circle"></div>                    
+                        <div> {{ album.total_discs }} {{ album.total_discs > 1 ? " discs" :"disc" }}</div>
+                        <div class="circle"></div>                    
                         <div> {{ album.total_tracks }} {{ album.total_tracks > 1 ? " songs" :"song" }}</div>
                         <div class="circle"></div>                    
                         <div class="text-gray-200"> {{ totalDuration()}} </div>
@@ -24,11 +27,17 @@
                     <div class="styles-container">
                         <div class="flex">
                             <div class="styles-label"> Genres: </div>
-                            <div class="styles-value"> {{ genres }} </div>
+                            <div class="styles-value" :class="noGenres ? ' text-yellow-400' : 'text-white'"
+                            :title="noGenres ? 'Click to Assign Genres': 'Click to Edit Genres'">
+                                {{ noGenres ? 'Without Genre Assigned' : genres }} 
+                            </div>
                         </div>
                         <div class="flex">
                             <div class="styles-label"> Styles: </div>
-                            <div class="styles-value"> {{ styles }} </div>
+                            <div class="styles-value" :class="noStyles ? 'text-yellow-400' : 'text-white'"
+                            :title="noStyles ? 'Click to Assign Styles': 'Click to Edit Styles'">
+                                {{ noStyles ? 'Without Genre Assigned' : styles }}
+                            </div>
                         </div>
                     </div>
                     <div class="rating-container">
@@ -45,14 +54,11 @@
                         inactive-color="#332A2B" active-color="#1ED760" :border-width="1" :read-only="true"/>
                     </div> 
                 </div>
-
                 <div class="actions-container h-[55px] w-full flex flex-row items-center justify-between mx-3 mt-1">
-                    <button class=" w-[155px] shadow-md flex items-center cursor-pointer bg-[#1ED760] rounded-lg disabled:bg-slate-400 disabled:cursor-not-allowed"
-                    @click="savedAlbumRatings" :disabled="!hasAlbumChanged" :title=" hasAlbumChanged ? 'Save Ratings' : 'Ratings Syncronized'  ">
-                        <Unsaved :size="40" fillColor="#00000"/>
+                    <button class=" w-[125px] h-[35px] flex justify-center items-center cursor-pointer bg-green-400 active:bg-green-600 rounded-full disabled:bg-slate-400 disabled:cursor-not-allowed"
+                    @click="savedAlbumRatings" :disabled="!hasAlbumChanged" :title=" hasAlbumChanged ? 'Save Ratings' : 'Ratings Syncronized'  ">                        
                         Save Ratings
                     </button>
-
                     <div v-if="!connectionError">
                         <div class="text-white flex items-center mr-5">                        
                             <Check v-if="!hasAlbumChanged" :size="20" fillColor="#1ED760"  />
@@ -69,42 +75,49 @@
                         </div>                        
                     </div>
                 </div>
-
             </div>    
-        </div>  
+        </div>
+        <li class="tracks-header-row ">
+            <div class="tracks-left-slot">
+                <div class="tracks-number"> # </div>
+                <div class="tracks-title"> Title </div>
+            </div>                    
+            <div class="tracks-right-slot">
+                <div class="tracks-rating pl-[60px]" title="Your Track Rating">
+                    Rating {{ y }}
+                </div>
+                <div class= "column" title="is this track goated? &#10;The track is so good, it is beyond 5 stars&#10;It will bost the album's suggested rating">
+                    🐐 
+                </div>                        
+                <div @click="includeAllTracks()" class="column cursor-pointer" title="Include this track on your suggested rating calculation&#10;Click to change all shown tracks 'Included' Status">
+                    Included
+                </div>                        
+                <div class="column" title="Duration">
+                    <ClockTimeFourOutline :size="22" fillColor="#9CA3AF"/>
+                </div>
+            </div>
+        </li>
 
         <div class="tracks-full-container">
             <ul>
-                <li class="tracks-header-row">
-                    <div class="tracks-left-slot">
-                        <div class="tracks-number"> # </div>
-                        <div class="tracks-title"> Title </div>
-                    </div>                    
-                    <div class="tracks-right-slot">
-                        <div class="tracks-rating pl-[60px]" title="Your Track Rating">
-                            Rating
-                        </div>
-                        <div class= "column" title="is this track goated? &#10;The track is so good, it is beyond 5 stars&#10;It will bost the album's suggested rating">
-                            🐐 
-                        </div>                        
-                        <div class="column" title="Include this track on your suggested rating calculation">
-                            Included
-                        </div>                        
-                        <div class="column" title="Duration">
-                            <ClockTimeFourOutline :size="22" fillColor="#9CA3AF"/>
-                        </div>
-                    </div>
-                </li>
                 <div class="tracks-by-discs-container" v-for="i in album.total_discs">
                     <li class="discs-row" v-if="album.total_discs > 1">
-                        <div class="tracks-number">
-                            <Disc :size="22" fillColor="#9CA3AF"/>
-                        </div>
-                        <div class="tracks-title  text-gray-400">
-                            Disc {{ i }}                                                 
+                        <div class="flex justify-center items-center ">
+                            <div class="tracks-number">
+                                <Disc :size="22" fillColor="#9CA3AF"/>
+                            </div>
+                            <div class="tracks-title  text-gray-400">
+                                Disc {{ i }}                                                 
+                            </div>
+                        </div> 
+                        <div class="column">
+                            <button class="rounded-full" @click="showDiscs[i-1] = !showDiscs[i-1]" title="Show/Hide Tracks">
+                                <ChevronDown v-if="showDiscs[i-1]" :size="22" fillColor="#FFFFFF"/>
+                                <ChevronUp v-else :size="22" fillColor="#FFFFFF"/>
+                            </button>
                         </div>
                     </li>
-                    <li class="tracks-row" v-for="(track, index) in album.tracks[i-1]" :key="track.track_id">
+                    <li v-show="showDiscs[i-1]" class="tracks-row" v-for="(track, index) in album.tracks[i-1]" :key="track.track_id">
                         <div class="tracks-left-slot">
                             <div class="tracks-number">
                                 {{ track.track_number_on_disc }}
@@ -137,17 +150,20 @@
             </ul>
         </div>
         <div class="w-full h-4"></div>
+        </div>
+        <div v-else class="flex w-full h-full justify-center items-center">
+            <SomethingWrong/>
+        </div>       
     </div>
-    <div v-else class="text-white">
-        <div v-if="!loading">
-            <NotFound/>
-        </div>        
+    <div v-else class="flex w-full h-full justify-center items-center">
+        <Spinner/>   
     </div>       
 </template>
 
 <script setup>
+    import ChevronUp from 'vue-material-design-icons/ChevronUp.vue';
+    import ChevronDown from 'vue-material-design-icons/ChevronDown.vue';
     import ClockTimeFourOutline from 'vue-material-design-icons/ClockTimeFourOutline.vue'
-    import Unsaved from 'vue-material-design-icons/ContentSaveOutline.vue'  
     import Disc from 'vue-material-design-icons/Disc.vue'
     import Check from 'vue-material-design-icons/CheckBold.vue'
     import Alert from 'vue-material-design-icons/AlertCircle.vue'
@@ -155,16 +171,20 @@
     import StarRating from 'vue-star-rating'
     import { ref, computed, onBeforeMount, watch } from 'vue'
     import axios from 'axios'
-    import {useRoute} from "vue-router"
-    import NotFound from '../components/NotFound.vue'
+    import {useRoute} from "vue-router"    
+    import Spinner from '../components/SpinnerLoaderBlack.vue'
+    import SomethingWrong from '../components/SomethingWrong.vue'
 
-    
+    const goodResponse = ref(true)
+    const showDiscs = ref([])
     const connectionError = ref(false)    
     const loading = ref(true)    
     const album = ref(false) 
     const hasAlbumChanged = ref(false)
     const genres = computed(() => album.value.genres.join(', '))
     const styles = computed(() => album.value.styles.join(', '))
+    const noGenres = computed(() => genres.value == 'NOT_FOUND' ? true : false)
+    const noStyles = computed(() => styles.value == 'NOT_FOUND' ? true : false)
     const bgColor = computed(() =>  `background-color: ${album.value.cover_color}` )
     const bgGradient = 'background : linear-gradient(to bottom, transparent, rgba(0,0,0,0.75) )'
     const route = useRoute()
@@ -190,11 +210,9 @@
             }else{
                 hasAlbumChanged.value = true
             }
-
             tracksRatingsParams.value = album.value.tracks.flat().map(track => {
                 return { track_id: track.track_id, track_rating: track.track_rating, goated: track.goated, included: track.included }
-            })
-                
+            })                
             albumRatingsParams.value = {  
                 album_id: album.value.album_id,          
                 simple_average_rating: simple_average_rating.value,
@@ -211,6 +229,17 @@
     },
     { deep: true }
     )
+
+    //function that changes the included property of all tracks where the showDiscs is true
+    const includeAllTracks = () => {
+        for (let i = 0; i < album.value.total_discs; i++) {
+            if (showDiscs.value[i]) {
+                for (let j = 0; j < album.value.tracks[i].length; j++) {
+                    album.value.tracks[i][j].included = !album.value.tracks[i][j].included
+                }
+            }
+        }
+    }
 
     const canAlbumBeRated = computed(() => {
         let rated = true
@@ -364,26 +393,35 @@
                 album.value = response.data.album
                 albumSaved = JSON.stringify(album.value)
                 hasAlbumChanged.value = false
+                showDiscs.value = Array(album.value.total_discs).fill(true)
+                album.value ? goodResponse.value = true : goodResponse.value = false
             })
             .catch((error) => {
                 console.error(error);
+                goodResponse.value = false
             })
             .finally(() => {
                 loading.value = false
             })
     })
+ 
+
 
 </script>
 
 <style scoped>
 .tracks-full-container{
-    @apply  bg-transparent mx-6 text-white my-4;
+    @apply  bg-transparent px-6 text-white my-4;
 }
 .tracks-header-row{
-    @apply flex h-[25px] justify-between text-[13px] text-gray-400 pb-2 mb-4 border-b-[1px] border-[#2C2C2C];
+    @apply flex h-[65px] justify-between text-[13px] text-white border-b-[1px] border-gray-600 px-6;
+    @apply bg-gradient-to-l  from-violet-950 via-emerald-950 to-amber-950;
+    @apply sticky top-0 z-[11];
+       
 }
+
 .tracks-row{
-    @apply flex h-[50px] justify-between hover:bg-zinc-800 hover:rounded-sm ;
+    @apply flex h-[50px] justify-between hover:bg-gradient-to-t hover:from-zinc-700 hover:to-zinc-500 hover:rounded-sm ;
 }
 .tracks-left-slot{
     @apply flex w-[600px] min-w-[600px]
@@ -404,7 +442,11 @@
     @apply flex flex-col;
 }
 .discs-row{
-    @apply flex justify-start w-auto min-w-[600px] h-[50px];
+    @apply flex justify-between items-center w-full min-w-[600px] h-[45px];
+}
+
+.discs-row > .column{
+    @apply flex justify-center items-center w-[75px];
 }
 .button-clear{
     @apply text-[13px] rounded-full text-black bg-[#1ED760] font-semibold w-[55px] h-[22px];
@@ -428,7 +470,7 @@
     @apply font-semibold w-[50px];
 }
 .styles-value{
-    @apply ml-2;
+    @apply ml-2 hover:underline hover:cursor-pointer ;
 }
 .album-header-container{
     @apply flex w-full min-w-[600px] h-[345px] rounded-t-sm overflow-hidden pt-[35px];
@@ -444,7 +486,7 @@
 }
 .album-data{
     @apply w-[calc(100%-250px)] h-[225px] flex flex-col ;
-    /* @apply w-full min-w-[500px] flex flex-col ; */
+    
 }
 .album-type{
     @apply text-zinc-50 text-[13x] w-full font-semibold mb-1;
@@ -453,7 +495,7 @@
     @apply text-white h-[70px] w-full font-semibold text-6xl mb-1 truncate pr-9 ;
 }
 .album-artist{
-    @apply text-white text-[13px] w-full flex items-center;
+    @apply text-white text-[13px] w-full flex items-center min-w-[500px];
 }
 .circle {
     @apply mx-1 w-1 h-1 bg-white rounded-full;   
