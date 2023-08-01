@@ -11,6 +11,7 @@ node_modules
 .DS_Store
 dist
 dist-ssr
+dev-dis
 coverage
 *.local
 
@@ -29,3 +30,6 @@ coverage
 src/data/test.js
 public/favicon3.png
 public/favicon1.ico
+dev-dist/registerSW.js
+dev-dist/sw.js
+dev-dist/workbox-5357ef54.js
