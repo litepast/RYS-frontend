@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-  import { ref, computed,  watch, onBeforeMount } from 'vue';
+  import { computed,  watch, onBeforeMount } from 'vue';
   import { RouterView, useRouter, useRoute } from 'vue-router';  
   import { useAppStore } from './stores/app-store.js'
 
@@ -33,45 +33,9 @@
   const route = useRoute()
   const nameView = computed(() => route.name)
 
-  // import { useLibraryViewStore } from './stores/library-view.js';
-  // import { useScroll } from '@vueuse/core'
-  // const LibraryViewStore =  useLibraryViewStore()
-  // const view = ref(null)
-  // const scroll = useScroll(view)
-  // const y = computed(() => scroll.y.value)  
-  // const libLoading = computed(() => LibraryViewStore.loading)
-  
-  // function delay(milliseconds){
-  //       return new Promise(resolve => {
-  //           setTimeout(resolve, milliseconds);
-  //       });
-  //   }
-
-  // watch([y], () => {
-  //   if(nameView.value == 'search' && y.value > 0){
-  //     appStore.scrollSearch = y.value
-  //   }
-  //   if(nameView.value == 'library' && libLoading.value==false){
-  //     appStore.scrollLibrary = y.value
-  //   }      
-  // })
-  //
-  // watch([libLoading], () => {
-  //   if(nameView.value == 'library' && libLoading.value==false){   
-  //     scroll.y.value = appStore.scrollLibrary
-  //   }    
-  // })
-  
-
   watch(nameView, () => {
     appStore.stateHistory.value = router.options.history.state
-    // if(nameView.value == 'search'){
-    //    scroll.y.value = appStore.scrollSearch
-    // }
   })
-
-
-
 
   onBeforeMount(() => {
     appStore.stateHistory.value = router.options.history.state
@@ -82,8 +46,9 @@
 <style scoped>
 
 .app-body{
-  @apply flex flex-wrap w-screen h-screen overflow-hidden;
+  @apply flex flex-wrap w-screen h-screen overflow-hidden min-w-[720px];
 }
+
 
 .sidebar-container{
   @apply flex h-full;

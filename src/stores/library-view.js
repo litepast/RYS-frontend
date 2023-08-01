@@ -74,7 +74,7 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
 
     //
     if(query.value.years.length){
-      if(query.value.years.length < 15){
+      if(query.value.years.length < 6){
           resultsYears = 'Years: ' + query.value.years.join(', ')
       }else{
           resultsYears =  'Multiple Years'
@@ -84,7 +84,7 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
     }
   
     if(query.value.ratings.length){
-        if(query.value.length < 15){
+        if(query.value.ratings.length < 6){
             resultsRatings = 'Ratings: ' + query.value.ratings.join(', ')
         }else{
             resultsRatings =  'Multiple Ratings'
@@ -94,7 +94,7 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
       }
 
     if(query.value.genres.length){
-        if(query.value.genres.length < 15){
+        if(query.value.genres.length < 5){
             resultsGenres = 'Genres: ' + query.value.genres.join(', ')
         }else{
             resultsGenres =  'Multiple Genres'
@@ -104,7 +104,7 @@ export const useLibraryViewStore = defineStore('LibraryView', () => {
     }
   
     if(query.value.styles.length){
-        if(query.value.styles.length < 15){
+        if(query.value.styles.length < 6){
             resultsStyles = 'Styles: ' + query.value.styles.join(', ')
         }else{
             resultsStyles =  'Multiple Styles'

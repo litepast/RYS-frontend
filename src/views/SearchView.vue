@@ -9,7 +9,7 @@
             <button class="h-[36px] w-[115px]" @click="storeSearchView.typeSearch=false" :class="typeSearch ? 'bg-slate-600 text-sm text-white  hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
             Album Name</button> 
             <div v-if="welcomeMsg && goodResponse" class="text-white">
-                Welcome Back! Search some releases get started! Below there are some new releases from Spotify
+                Welcome Back! Here you have the newest releases from Spotify
             </div>
             <div v-else>
                 <div v-if="result && goodResponse">        
@@ -127,7 +127,7 @@
     }
 
     .filters-container button{
-        @apply rounded-full pl-3 pr-3 pt-2 pb-2 mr-3 transition-all duration-300 ease-in-out;
+        @apply rounded-full flex items-center justify-center  mr-3 transition-all duration-300 ease-in-out;
     }
 
     .results-container{

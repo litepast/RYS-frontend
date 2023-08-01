@@ -175,8 +175,7 @@
     import {useRoute} from "vue-router"    
     import Spinner from '../components/SpinnerLoaderBlack.vue'
     import SomethingWrong from '../components/SomethingWrong.vue'
-    import { computedEager } from '@vueuse/core';
-
+    
     const unratedAlbum = computed(() => canAlbumBeRated.value && !album.value.rating ? true : false)
     const goodResponse = ref(true)
     const showDiscs = ref([])

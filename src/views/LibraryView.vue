@@ -287,7 +287,7 @@
     }
 
     .filters-container button{
-        @apply rounded-full pl-3 pr-3 pt-2 pb-2 mr-3 transition-all duration-300 ease-in-out;
+        @apply rounded-full flex items-center justify-center mr-3 transition-all duration-300 ease-in-out;
     }
 
     .query-container{

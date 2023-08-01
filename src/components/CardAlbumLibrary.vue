@@ -11,7 +11,7 @@
         </div> 
         <div class="rating-container w-full px-2">
             <StarRating :title=" rating ? rating + ' Stars' : 'Unrated'" :rating="rating" :star-size="16" :read-only="true" :increment="0.5"  :show-rating="false"
-            inactive-color="#332A2B" active-color="#1ED760" :border-width="1"/>            
+            inactive-color="#ACACAC" border-color="#000000" active-color="#4ADE80" :border-width="1" />            
         </div>   
         <div class="name" :title="name">{{name}} </div>
         <div class="artist"  :class="rating == 5 ? 'text-white' : 'text-gray-400'" :title="artist">{{year}} - {{artist}}</div>            

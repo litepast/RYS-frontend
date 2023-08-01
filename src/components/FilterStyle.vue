@@ -40,18 +40,12 @@
     import { onClickOutside } from '@vueuse/core'
     import ChevronUp from 'vue-material-design-icons/ChevronUp.vue';
     import ChevronDown from 'vue-material-design-icons/ChevronDown.vue';
-    import styles from '../data/styles.json'
     import { useLibraryViewStore } from '../stores/library-view.js'
     const LibraryViewStore =  useLibraryViewStore()
     const filterInput = ref('')
     const filterLabel = ref("Styles")
     const showOptions = ref(false)
     const filter = ref(null)
-    // const all = ref({
-    //     selected: true,
-    //     hover: false
-    // })
-    // const options= ref(styles)
     const optionsSelected = computed(()=>LibraryViewStore.optionsStyles.filter(type => type.selected ).map(type => type.name ))
     const filteredOptions = ref([])   
 
@@ -213,35 +207,4 @@
         @apply transition-all duration-300 ease-in-out;
         @apply max-h-9;         
     }
-
-
-
-/* 
-    .filter-header{
-        @apply text-white flex relative w-[150px] h-[30px] bg-black justify-between items-center;
-        @apply rounded-3xl hover:bg-slate-600 ;
-    }
-
-    .header-label{
-        @apply ml-3;
-    }
-
-    .show-button{
-        @apply bg-gray-900 rounded-full mr-1 cursor-pointer;
-    }
-
-    .options-container{
-        @apply absolute top-[60px] flex flex-wrap w-[150px] px-1  rounded-bl-xl rounded-br-xl py-1 z-[1];
-        @apply bg-black ;
-        @apply overflow-auto h-[350px];
-    }
- 
-    .option{
-        @apply flex text-sm;
-        @apply w-full;
-        @apply h-auto;
-        @apply pl-1 py-1 rounded-md;
-        @apply cursor-pointer border-[1px] border-black;
-        @apply mt-[2px] text-left;
-    } */
 </style>

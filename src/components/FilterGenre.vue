@@ -111,30 +111,4 @@
         @apply cursor-pointer text-left mt-[2px];
         @apply transition-all duration-300 ease-in-out;         
     }
-
-    /* .filter-header{
-        @apply text-white flex relative w-[150px] h-[45px] bg-slate-600 justify-between items-center;
-        @apply rounded-3xl hover:bg-slate-500 ;
-        @apply transition-all duration-300 ease-in-out;
-    }
-    .header-label{
-        @apply ml-3;
-    }
-    .show-button{
-        @apply bg-gray-900 rounded-full mr-1 cursor-pointer;
-    }
-    .options-container{
-        @apply absolute top-[32px] flex flex-wrap w-[150px] px-1 h-auto rounded-xl py-1 z-[1];
-        @apply bg-black ;
-        @apply overflow-auto;
-    }
-    .actions{
-        @apply flex w-full h-[16px] text-xs justify-between items-center my-1 cursor-pointer;
-    }
-    .option{
-        @apply flex text-sm;
-        @apply w-full h-auto pl-1 py-1 rounded-md;
-        @apply cursor-pointer border-[1px] border-black;
-        @apply mt-[2px] text-left;
-    } */
 </style>

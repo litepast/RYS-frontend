@@ -17,7 +17,7 @@
             @mouseenter="isHover(index,true)" @mouseleave="isHover(index,false)"
             :class="classSelected(index)">
                 <StarRating v-if="option.name!='Unrated'" :title=" `${option.name} stars`" :rating="option.name" :star-size="16" :read-only="true" :increment="0.5"  :show-rating="false"
-                inactive-color="#332A2B" active-color="#1ED760"/>
+                inactive-color="#ACACAC" border-color="#000000" active-color="#4ADE80" :border-width="1" />
                 <div v-else :title="`${option.name}`" >{{option.name}}</div>
             </div>            
         </div>
@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-    import { ref, computed, onBeforeMount, watch, onMounted } from 'vue';
+    import { ref, computed, watch } from 'vue';
     import { onClickOutside } from '@vueuse/core'
     import ChevronUp from 'vue-material-design-icons/ChevronUp.vue';
     import ChevronDown from 'vue-material-design-icons/ChevronDown.vue';
@@ -110,7 +110,7 @@
   
     .option{
         @apply flex justify-center items-center w-full h-7 rounded-md;
-        @apply cursor-pointer text-left mt-[2px];  
+        @apply cursor-pointer;  
         @apply transition-all duration-300 ease-in-out;       
     }
 
