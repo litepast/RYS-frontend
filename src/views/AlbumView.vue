@@ -40,18 +40,18 @@
                             </div>
                         </div>
                     </div>
-                    <div class="rating-container">
-                        <div class ="rating-label" :title=" album.rating ? album.rating + ' Stars' : 'Unrated'" > Your Rating: </div>
-                        <StarRating 
-                        v-model:rating="album.rating" :star-size="22" :increment="0.5"  :show-rating="false" inactive-color="#332A2B"
-                        active-color="#1ED760" :border-width="1"/>
-                        <button class="button-clear ml-2 mt-1" @click="album.rating = 0">Clear</button>
+                    <div class="rating-container" >
+                        <div class ="rating-label" :title="ratingTitle()" > Your Rating: </div>
+                        <StarRating :class=" unratedAlbum ? 'animate-bounce' : null " :title="ratingTitle()"
+                        v-model:rating="album.rating" :star-size="22" :increment="0.5"  :show-rating="false" 
+                        inactive-color="#ACACAC" border-color="#000000" active-color="#4ADE80" :border-width="1" />
+                        <button class="button-clear ml-2 mt-1" @click="album.rating = null">Clear</button>
                     </div>
                     <div class="rating-container">
                         <div class="rating-label" title="Suggested rating based on your track ratings&#10;Rate all the included tracks to get one!">
-                        Suggest Rating: </div>
+                        Suggested Rating: </div>
                         <StarRating :title=" suggested_rating_final ? Math.ceil(suggested_rating_final*2)/2 + ' Stars' : 'Unrated'" :rating="suggested_rating_final" :star-size="22" :increment="0.5"  :show-rating="false"
-                        inactive-color="#332A2B" active-color="#1ED760" :border-width="1" :read-only="true"/>
+                        inactive-color="#ACACAC" border-color="#000000" active-color="#4ADE80" :border-width="1" :read-only="true"/>
                     </div> 
                 </div>
                 <div class="actions-container h-[55px] w-full flex flex-row items-center justify-between mx-3 mt-1">
@@ -60,16 +60,16 @@
                         Save Ratings
                     </button>
                     <div v-if="!connectionError">
-                        <div class="text-white flex items-center mr-5">                        
-                            <Check v-if="!hasAlbumChanged" :size="20" fillColor="#1ED760"  />
-                            <Alert v-else :size="20" fillColor="#FAFAA0" />
+                        <div class="text-white flex items-center mr-5" :class=" hasAlbumChanged ? 'animate-pulse' : null">                        
+                            <Check v-if="!hasAlbumChanged" :size="20" class="text-green-400"  />
+                            <Alert v-else :size="20" class="text-amber-400" />
                             <div class="mx-1"></div>
                             {{ hasAlbumChanged ? "Ratings modified and unsaved" : "Ratings Syncronized" }}
                         </div>
                     </div>
                     <div v-else>
                         <div class="text-white flex items-center mr-5">                        
-                            <Error :size="20" fillColor="#FAA0A0"  />                            
+                            <Error :size="20" class="text-red-600"  />                            
                             <div class="mx-1"></div>
                             Error Syncing Ratings, Try again
                         </div>                        
@@ -93,7 +93,7 @@
                     Included
                 </div>                        
                 <div class="column" title="Duration">
-                    <ClockTimeFourOutline :size="22" fillColor="#9CA3AF"/>
+                    <ClockTimeFourOutline :size="22"  class="text-gray-400"/>
                 </div>
             </div>
         </li>
@@ -104,7 +104,7 @@
                     <li class="discs-row" v-if="album.total_discs > 1">
                         <div class="flex justify-center items-center ">
                             <div class="tracks-number">
-                                <Disc :size="22" fillColor="#9CA3AF"/>
+                                <Disc :size="22" class="text-gray-400"/>
                             </div>
                             <div class="tracks-title  text-gray-400">
                                 Disc {{ i }}                                                 
@@ -112,8 +112,8 @@
                         </div> 
                         <div class="column">
                             <button class="rounded-full" @click="showDiscs[i-1] = !showDiscs[i-1]" title="Show/Hide Tracks">
-                                <ChevronDown v-if="showDiscs[i-1]" :size="22" fillColor="#FFFFFF"/>
-                                <ChevronUp v-else :size="22" fillColor="#FFFFFF"/>
+                                <ChevronDown v-if="showDiscs[i-1]" :size="22"  class="text-white"/>
+                                <ChevronUp v-else :size="22" class="text-white"/>
                             </button>
                         </div>
                     </li>
@@ -129,10 +129,11 @@
                         </div>
                         <div class="tracks-right-slot">
                             <div class="tracks-rating pr-1">
-                                <button class="button-clear ml-1" @click="album.tracks[i-1][index].track_rating = 0 ; album.tracks[i-1][index].goated = false">Clear</button>
+                                <button class="button-clear ml-1" @click="album.tracks[i-1][index].track_rating = null ; album.tracks[i-1][index].goated = false">Clear</button>
                                 <div class="mb-[6px]">
                                     <StarRating @click="updateRatingGoated2(i-1,index)" v-model:rating="album.tracks[i-1][index].track_rating" 
-                                    :star-size="22" :increment="0.5"  :show-rating="false" inactive-color="#332A2B" active-color="#1ED760" :border-width="1" />
+                                    :star-size="22" :increment="0.5"  :show-rating="false" 
+                                    inactive-color="#ACACAC" border-color="#000000" active-color="#4ADE80"  :border-width="1"/>
                                 </div>                                
                             </div> 
                             <div class="column">
@@ -174,7 +175,9 @@
     import {useRoute} from "vue-router"    
     import Spinner from '../components/SpinnerLoaderBlack.vue'
     import SomethingWrong from '../components/SomethingWrong.vue'
+    import { computedEager } from '@vueuse/core';
 
+    const unratedAlbum = computed(() => canAlbumBeRated.value && !album.value.rating ? true : false)
     const goodResponse = ref(true)
     const showDiscs = ref([])
     const connectionError = ref(false)    
@@ -201,6 +204,7 @@
         second: '2-digit',
     };
   
+
 
 
     watch( album, () => {
@@ -230,12 +234,21 @@
     { deep: true }
     )
 
-    //function that changes the included property of all tracks where the showDiscs is true
+    function ratingTitle(){
+        if (unratedAlbum.value){
+            return "Don't forget to rate this album! You have a suggested rating based on your track ratings!"
+        }
+        if(album.value.rating){
+            return album.value.rating ? album.value.rating + ' Stars' : 'Unrated'
+        }
+        return "Rate all the included tracks to get a suggested rating or give the album a rating yourself!"
+    }
+
     const includeAllTracks = () => {
         for (let i = 0; i < album.value.total_discs; i++) {
             if (showDiscs.value[i]) {
-                for (let j = 0; j < album.value.tracks[i].length; j++) {
-                    album.value.tracks[i][j].included = !album.value.tracks[i][j].included
+                for (let j = 0; j < album.value.tracks[i].length; j++) {                 
+                    album.value.tracks[i][j].included = !album.value.tracks[i][j].included                  
                 }
             }
         }
@@ -261,7 +274,7 @@
     
     const simple_average_rating = computed(() => {        
         if (!canAlbumBeRated.value || !album.value){ 
-            return 0
+            return null
         }  
         let ratings = album.value.tracks.flat().filter(track => track.included && track.track_rating > 0).map(track => track.track_rating)        
         if (ratings.length == 0){
@@ -274,7 +287,7 @@
 
     const weighted_average_rating = computed(() => {
         if (!canAlbumBeRated.value || !album.value){ 
-            return 0
+            return null
         } 
         let ratings = album.value.tracks.flat().filter(track => track.included && track.track_rating > 0).map(track => track.goated ? 5.5 : track.track_rating)        
         if (ratings.length == 0){
@@ -287,20 +300,20 @@
 
     const greatness_rating = computed(() => {
         if (!canAlbumBeRated.value || !album.value){ 
-            return 0
+            return null
         } 
-        let ratings = album.value.tracks.flat().filter(track => track.included && track.track_rating > 0).map(track => track.track_rating >= 4.5 ? 1 : 0)        
+        let ratings = album.value.tracks.flat().filter(track => track.included && track.track_rating).map(track => track.track_rating >= 4.5 ? 1 : 0)        
         if (ratings.length == 0){
             return 0
         }        
         let sum = ratings.reduce((previous, current) => current += previous)
-        let rating = sum / ratings.length
+        let rating = sum / ratings.length        
         return rating * 5
     })
 
     const consistency_rating = computed(() => {
         if (!canAlbumBeRated.value || !album.value){ 
-            return 0
+            return null
         } 
         let ratings = album.value.tracks.flat().filter(track => track.included && track.track_rating > 0).map(track => track.track_rating < 4 ? 1 : 0)        
         if (ratings.length == 0){
@@ -381,6 +394,7 @@
         .catch(error => {
             hasAlbumChanged.value = true
             connectionError.value = true
+            console.error(error)
         });
     }
 
@@ -461,7 +475,7 @@
     @apply flex items-center;
 }
 .rating-label{
-    @apply text-white text-[13px]  w-[115px] font-semibold pt-1;
+    @apply text-white text-[13px]  w-[125px] font-semibold pt-1;
 }
 .styles-container{
     @apply text-white w-full text-[13px];
@@ -482,7 +496,7 @@
 @apply mx-3 w-[225px] min-w-[225px] h-[225px];
 }
 .album-cover img{
-    @apply object-contain h-[225px] w-[225px] shadow-md shadow-black;
+    @apply object-cover h-[225px] w-[225px] shadow-md shadow-black;
 }
 .album-data{
     @apply w-[calc(100%-250px)] h-[225px] flex flex-col ;

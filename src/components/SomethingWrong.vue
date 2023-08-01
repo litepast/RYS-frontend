@@ -1,6 +1,6 @@
 <template>
  <div class="flex flex-col text-white justify-center items-center w-full h-full"> 
-        <Alert :size="100" class="text-red-500"/>                   
+        <Alert :size="100" class="text-red-600"/>                   
         <div class="text-2xl">Oops!</div>
         <div class="text-xl">Something went wrong, please try again later</div>                   
 </div>>
