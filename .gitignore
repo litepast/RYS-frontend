@@ -27,3 +27,5 @@ coverage
 *.sln
 *.sw?
 src/data/test.js
+public/favicon3.png
+public/favicon1.ico

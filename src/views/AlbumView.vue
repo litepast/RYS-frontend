@@ -97,7 +97,6 @@
                 </div>
             </div>
         </li>
-
         <div class="tracks-full-container">
             <ul>
                 <div class="tracks-by-discs-container" v-for="i in album.total_discs">
@@ -176,7 +175,7 @@
     import Spinner from '../components/SpinnerLoaderBlack.vue'
     import SomethingWrong from '../components/SomethingWrong.vue'
     
-    const unratedAlbum = computed(() => canAlbumBeRated.value && !album.value.rating ? true : false)
+    const unratedAlbum = computed(() => canAlbumBeRated.value && suggested_rating_final.value)
     const goodResponse = ref(true)
     const showDiscs = ref([])
     const connectionError = ref(false)    
@@ -203,9 +202,6 @@
         second: '2-digit',
     };
   
-
-
-
     watch( album, () => {
         if (album.value) {                    
             if(albumSaved == JSON.stringify(album.value)){
@@ -254,7 +250,7 @@
     }
 
     const canAlbumBeRated = computed(() => {
-        let rated = true
+        let rated = false
         for (const disc of album.value.tracks) {
             for (const track of disc) {
                 if (track.included){                    
