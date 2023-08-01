@@ -3,16 +3,17 @@
         <div class="filters-container">                        
             <button class="h-[36px] w-[130px] bg-green-400 text-sm text-black active:bg-green-600" @click="storeSearch.enter()">
                 Update Search
-            </button>
-            <button class="h-[36px] w-[110px] bg-green-400 text-sm text-black  active:bg-green-600" @click="LibraryViewStore.clear()">
-                Clear Filters
-            </button>        
+            </button>                   
             <button class="h-[36px] w-[110px]" @click=" LibraryViewStore.typeSearch=true" :class="!typeSearch ? 'bg-slate-600 text-sm text-white hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
                 Artist Name
-            </button>          
+            </button>
+                   
             <button class="h-[36px] w-[115px]" @click=" LibraryViewStore.typeSearch=false" :class="typeSearch ? 'bg-slate-600 text-sm text-white hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
                 Album Name
             </button>
+            <button class="h-[36px] w-[110px] bg-green-400 text-sm text-black  active:bg-green-600" @click="LibraryViewStore.clear()">
+                Clear Filters
+            </button>   
             <FilterType/>
             <FilterYear/>            
             <FilterRating/>
@@ -22,8 +23,8 @@
         <div class="query-container">
             {{ LibraryViewStore.filtersText }}
         </div>
-        <div class="pagination-container">               
-            <div class="results-label">
+        <div v-if="goodResponse" class="pagination-container" >               
+            <div  class="results-label">
                 {{ albums.length ? albums.length +' Total Results'  : 'No results'}}
             </div>           
             <div class="pag-settings">
@@ -105,7 +106,7 @@
     const loading = ref(false)
     const showModal = ref(false)
     const dataToDelete = { id:'', name:''}
-    const goodResponse = ref(true)
+    const goodResponse = ref(false)
     const ordPage = toRef(LibraryViewStore, 'orderPage')
     const itemsPage = toRef(LibraryViewStore, 'itemsPerPage')
 
@@ -115,7 +116,7 @@
         updateNameinQuery()            
     })
 
-    watch(enter, () => {
+    watch([enter,typeSearch], () => {
         LibraryViewStore.currentPage = 1       
         getAlbums()
     })
@@ -253,6 +254,7 @@
     }  
 
     onBeforeMount(async () => {
+        updateNameinQuery()
         getAlbums()
     })
 

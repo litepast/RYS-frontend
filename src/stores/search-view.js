@@ -6,5 +6,6 @@ export const useSearchViewStore = defineStore('SearchView', () => {
   const typeSearch = ref(true)
   const firstLoad = ref(true)
   const welcomeMsg = ref(true)
-  return { albums, typeSearch, firstLoad, welcomeMsg }
+  const goodResponse = ref(false)
+  return { albums, typeSearch, firstLoad, welcomeMsg, goodResponse }
 })

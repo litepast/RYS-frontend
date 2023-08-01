@@ -51,7 +51,7 @@
     import Spinner from '../components/SpinnerLoaderBlack.vue'
     import SomethingWrong from '../components/SomethingWrong.vue'
 
-    const goodResponse = ref(true)
+    const goodResponse = computed(() => storeSearchView.goodResponse)
     const showModal = ref(false)
     const storeSearch = useSearchStore()  
     const storeSearchView =  useSearchViewStore()
@@ -75,12 +75,12 @@
         let url = 'http://192.168.100.14:5000/api/v1/search-spotify?p1='+String(Number(typeSearch.value))+'&p2='+storeSearch.input        
         axios.get(url)
             .then((response) => {    
-                goodResponse.value = true
+                storeSearchView.goodResponse = true
                 storeSearchView.albums = response.data.albums 
                 storeSearchView.input = storeSearch.input
             })
             .catch((error) => {
-                goodResponse.value = false
+                storeSearchView.goodResponse = false
                 console.error(error);
             })
             .finally(() => {
@@ -95,11 +95,12 @@
         let url = 'http://192.168.100.14:5000/api/v1/search-spotify?p1=0&p2=tag:new'     
         axios.get(url)
             .then((response) => {    
-                goodResponse.value = true
+                storeSearchView.goodResponse = true
+                storeSearchView.firstLoad = false
                 storeSearchView.albums = response.data.albums                 
             })
             .catch((error) => {
-                goodResponse.value = false
+                storeSearchView.goodResponse = false
                 console.error(error);
             })
             .finally(() => {
@@ -108,10 +109,15 @@
     }
 
     onBeforeMount(() => {
-        if (firstLoad.value){
-            newSearch()
-            storeSearchView.firstLoad = false
+        if(!storeSearchView.goodResponse){
+            if (firstLoad.value){
+                newSearch()            
+            }else{
+                searchAlbumSpotify()
+            }
         }
+
+     
     })
     
     function addAlbumLibrary(a_id,a_name){
