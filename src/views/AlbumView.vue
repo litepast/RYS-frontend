@@ -12,7 +12,7 @@
                     </div>        
                 <div class="album-data">
                     <div class="album-type" @click="showModal=true" title="Click to Edit Release Type">
-                        {{ album.release_type}}
+                        {{ album.release_type}} 
                     </div>
                     <div class="album-name" :title="album.album_name">
                         {{ album.album_name}}
@@ -164,7 +164,7 @@
     </div>   
     <Teleport to="Body">
         <div v-if="showModal">
-            <Modal @closeModal="showModal=false" :release="album.release_type" :genres="album.genres" :styles="album.styles"/>
+            <Modal @closeModal="showModal=false" @closeModalSucess="refreshfromModal" :id_album="album.album_id" :release="album.release_type" :genres="album.genres" :styles="album.styles"/>
         </div>    
     </Teleport>    
 </template>
@@ -188,7 +188,7 @@
 
     const hoverCover= ref(false)
     const showModal = ref(false)
-    const unratedAlbum = computed(() => canAlbumBeRated.value && suggested_rating_final.value && !album.value.rating)
+    const unratedAlbum = computed(() => suggested_rating_final.value && !album.value.rating)
     const goodResponse = ref(true)
     const showDiscs = ref([])
     const connectionError = ref(false)    
@@ -408,7 +408,12 @@
         });
     }
 
-    onBeforeMount(async () => {
+    function refreshfromModal() {        
+        showModal.value = false
+        loadAlbum()
+    }
+
+   function loadAlbum() {
         loading.value = true
         const id_album = route.params.id
         let url = `http://192.168.100.14:5000/api/v1/get-album-data/${id_album}`
@@ -427,8 +432,13 @@
             .finally(() => {
                 loading.value = false
             })
+   }
+
+
+
+    onBeforeMount(() => {
+        loadAlbum()
     })
- 
 
 
 </script>
