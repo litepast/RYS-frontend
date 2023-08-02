@@ -1,0 +1,17 @@
+[
+    {"id": 1, "name": "Blues", "selected": false, "hover": false}, 
+    {"id": 2, "name": "Brass & Military", "selected": false, "hover": false}, 
+    {"id": 3, "name": "Children\u2019s", "selected": false, "hover": false},
+    {"id": 4, "name": "Classical", "selected": false, "hover": false},
+    {"id": 5, "name": "Electronic", "selected": false, "hover": false}, 
+    {"id": 6, "name": "Folk, World, & Country", "selected": false, "hover": false},
+    {"id": 7, "name": "Funk / Soul", "selected": false, "hover": false}, 
+    {"id": 8, "name": "Hip Hop", "selected": false, "hover": false}, 
+    {"id": 9, "name": "Jazz", "selected": false, "hover": false},
+    {"id": 10, "name": "Latin", "selected": false, "hover": false}, 
+    {"id": 11, "name": "Non-Music", "selected": false, "hover": false}, 
+    {"id": 12, "name": "Pop", "selected": false, "hover": false}, 
+    {"id": 13, "name": "Reggae", "selected": false, "hover": false},
+    {"id": 14, "name": "Rock", "selected": false, "hover": false},
+    {"id": 15, "name": "Stage & Screen", "selected": false, "hover": false}
+]

@@ -3,11 +3,15 @@
         <div v-if="goodResponse">
             <div class="album-header-container" :style="bgColor">
                 <div class="album-header" :style="bgGradient">
-                    <div class="album-cover">
+                    <div class="album-cover relative"  @mouseenter="hoverCover=true" @mouseleave="hoverCover=false">
                         <img :src="album.cover_image">
+                        <button v-show="hoverCover" @click="showModal=true" title="Click to Album info"
+                        class="opacity-70 hover:opacity-100 right-[5px] top-[5px] absolute rounded-full w-10 h-10 bg-green-600 hover:bg-green-400 flex items-center justify-center hover:scale-110 transition-all duration-300 ease-in-out">
+                            <Pen :size="24" class="text-black"/>
+                        </button>
                     </div>        
                 <div class="album-data">
-                    <div class="album-type">
+                    <div class="album-type" @click="showModal=true" title="Click to Edit Release Type">
                         {{ album.release_type}}
                     </div>
                     <div class="album-name" :title="album.album_name">
@@ -27,14 +31,14 @@
                     <div class="styles-container">
                         <div class="flex">
                             <div class="styles-label"> Genres: </div>
-                            <div class="styles-value" :class="noGenres ? ' text-yellow-400' : 'text-white'"
+                            <div @click="showModal=true" class="styles-value" :class="noGenres ? ' text-yellow-400' : 'text-white'"
                             :title="noGenres ? 'Click to Assign Genres': 'Click to Edit Genres'">
                                 {{ noGenres ? 'Without Genre Assigned' : genres }} 
                             </div>
                         </div>
                         <div class="flex">
                             <div class="styles-label"> Styles: </div>
-                            <div class="styles-value" :class="noStyles ? 'text-yellow-400' : 'text-white'"
+                            <div @click="showModal=true" class="styles-value" :class="noStyles ? 'text-yellow-400' : 'text-white'"
                             :title="noStyles ? 'Click to Assign Styles': 'Click to Edit Styles'">
                                 {{ noStyles ? 'Without Genre Assigned' : styles }}
                             </div>
@@ -157,7 +161,12 @@
     </div>
     <div v-else class="flex w-full h-full justify-center items-center">
         <Spinner/>   
-    </div>       
+    </div>   
+    <Teleport to="Body">
+        <div v-if="showModal">
+            <Modal @closeModal="showModal=false" :release="album.release_type" :genres="album.genres" :styles="album.styles"/>
+        </div>    
+    </Teleport>    
 </template>
 
 <script setup>
@@ -174,8 +183,12 @@
     import {useRoute} from "vue-router"    
     import Spinner from '../components/SpinnerLoaderBlack.vue'
     import SomethingWrong from '../components/SomethingWrong.vue'
-    
-    const unratedAlbum = computed(() => canAlbumBeRated.value && suggested_rating_final.value)
+    import Modal from '../components/ModalEditAlbum.vue'
+    import Pen from 'vue-material-design-icons/Pen.vue'
+
+    const hoverCover= ref(false)
+    const showModal = ref(false)
+    const unratedAlbum = computed(() => canAlbumBeRated.value && suggested_rating_final.value && !album.value.rating)
     const goodResponse = ref(true)
     const showDiscs = ref([])
     const connectionError = ref(false)    
@@ -191,6 +204,8 @@
     const route = useRoute()
     const albumRatingsParams = ref({})
     const tracksRatingsParams = ref([])
+    
+
     let albumSaved = false
     const dateOptions = {
         timeZone: 'America/Mexico_City',
@@ -498,7 +513,7 @@
     
 }
 .album-type{
-    @apply text-zinc-50 text-[13x] w-full font-semibold mb-1;
+    @apply text-zinc-50 text-[13x] w-full font-semibold mb-1 hover:underline cursor-pointer;
 }
 .album-name{
     @apply text-white h-[70px] w-full font-semibold text-6xl mb-1 truncate pr-9 ;

@@ -95,47 +95,10 @@
         
     }
 
-    function delay(milliseconds){
-        return new Promise(resolve => {
-            setTimeout(resolve, milliseconds);
-        });
-    }
-
 </script>
 
 
 <style scoped>
-    /* .modal-background{
-        @apply absolute top-0 left-0 w-full h-full flex justify-center items-center z-20 p-3;
-        background-color: rgba(0, 0, 0, 0.4);
-    }
-    .modal-body{
-        @apply bg-white rounded-lg flex flex-col p-6;
-        @apply w-[450px] h-[185px];
-
-    }
-    .modal-header{
-        @apply text-xl mb-3 w-full text-left;
-    }
-    .modal-message{
-        @apply w-full h-[60px] text-sm mb-1 overflow-ellipsis overflow-hidden whitespace-pre-wrap;
-    }
-
-    .modal-message span{
-        @apply font-semibold;
-    }
-
-    .modal-buttons{
-        @apply w-full flex items-center;
-    }
-
-
-
-    .modal-buttons button{
-        @apply w-[75px] h-[35px] text-[13px];
-
-    } */
-
     .modal-background{
         @apply absolute top-0 left-0 w-full h-full flex justify-center items-center z-20;
         background-color: rgba(0, 0, 0, 0.4);
