@@ -120,8 +120,8 @@
                             </button>
                         </div>
                     </li>
-                    <li v-show="showDiscs[i-1]" class="tracks-row" v-for="(track, index) in album.tracks[i-1]" :key="track.track_id">
-                        <div class="tracks-left-slot">
+                    <li  v-show="showDiscs[i-1]" class="tracks-row" v-for="(track, index) in album.tracks[i-1]" :key="track.track_id">
+                        <div class="tracks-left-slot cursor-pointer" @click="playIt(track.track_id)">
                             <div class="tracks-number">
                                 {{ track.track_number_on_disc }}
                             </div>
@@ -204,7 +204,13 @@
     const route = useRoute()
     const albumRatingsParams = ref({})
     const tracksRatingsParams = ref([])
+
+    import {getPlayer,playSong, getCurrentSong} from '../spotify/player';
     
+    function playIt(id){
+        playSong(id)
+
+    }
 
     let albumSaved = false
     const dateOptions = {
@@ -450,7 +456,7 @@
 .tracks-header-row{
     @apply flex h-[65px] justify-between text-[13px] text-white border-b-[1px] border-gray-600 px-6;
     @apply bg-gradient-to-l  from-violet-950 via-emerald-950 to-amber-950;
-    @apply sticky top-0 z-[11];
+    @apply sticky top-[0px] z-[11];
        
 }
 

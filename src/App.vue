@@ -11,8 +11,8 @@
         <RouterView/>
       </div>
     </div> 
-    <div class="webplayer text-white"> 
-       
+    <div class="webplayer-container">
+      <WebPlayer/>       
     </div>
   </div>
 </template>
@@ -21,9 +21,12 @@
   import { computed,  watch, onBeforeMount } from 'vue';
   import { RouterView, useRouter, useRoute } from 'vue-router';  
   import { useAppStore } from './stores/app-store.js'
-
   import TopBar from './components/TopBar.vue';
   import SideBar from './components/SideBar.vue';
+  import WebPlayer from './components/WebPlayer.vue';
+  import { userLogin } from './spotify/auth'
+  import { generateToken } from './spotify/auth_token'
+
 
   
   const appStore = useAppStore() 
@@ -37,8 +40,20 @@
     appStore.stateHistory.value = router.options.history.state
   })
 
-  onBeforeMount(() => {
+  onBeforeMount( async() => {
     appStore.stateHistory.value = router.options.history.state
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const code = urlParams.get('code');
+    localStorage.setItem('code',code);
+    console.log(code+"------------------------------");
+    if (localStorage.getItem('code') === 'null') {
+      userLogin();
+    }
+    if (localStorage.getItem('access_token') === 'null') {
+      console.log('running...');
+      await generateToken();
+    }
   })
  
 </script>
@@ -67,8 +82,8 @@
   @apply flex h-[60px] absolute top-0 z-[10]; 
 }
 
-.webplayer{
-  @apply  bg-violet-500 flex w-full h-[70px]
+.webplayer-container{
+  @apply flex w-full h-[70px] overflow-hidden
 }
 
 ::-webkit-scrollbar {
