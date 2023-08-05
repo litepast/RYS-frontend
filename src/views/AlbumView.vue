@@ -121,9 +121,16 @@
                         </div>
                     </li>
                     <li  v-show="showDiscs[i-1]" class="tracks-row" v-for="(track, index) in album.tracks[i-1]" :key="track.track_id">
-                        <div class="tracks-left-slot cursor-pointer" @click="playIt(track.track_id)">
-                            <div class="tracks-number">
-                                {{ track.track_number_on_disc }}
+                        <div class="tracks-left-slot cursor-pointer" >
+                            <div class="tracks-number" @click="playTrack(track.track_overall_number)" @mouseenter="showPlayIcon(index,true)" @mouseleave="showPlayIcon(index,false)">
+                                <div v-if="showPIcon && indexH == index " class="">
+                                    <Play :size="22" class="text-gray-400"/>
+                                    
+                                </div>
+                                <div v-else class="">
+                                    {{ track.track_number_on_disc }}
+                                    
+                                </div>
                             </div>
                             <div class="tracks-title" :title="track.track_name">
                                 <div class="text-[16px] truncate"> {{ track.track_name }} </div>
@@ -153,7 +160,9 @@
                 </div>
             </ul>
         </div>
-        <div class="w-full h-4"></div>
+        <div class="w-full h-4 text-white">
+            
+        </div>
         </div>
         <div v-else class="flex w-full h-full justify-center items-center">
             <SomethingWrong/>
@@ -177,6 +186,7 @@
     import Check from 'vue-material-design-icons/CheckBold.vue'
     import Alert from 'vue-material-design-icons/AlertCircle.vue'
     import Error from 'vue-material-design-icons/CloseCircle.vue'
+    import Play from 'vue-material-design-icons/Play.vue'
     import StarRating from 'vue-star-rating'
     import { ref, computed, onBeforeMount, watch } from 'vue'
     import axios from 'axios'
@@ -186,6 +196,7 @@
     import Modal from '../components/ModalEditAlbum.vue'
     import Pen from 'vue-material-design-icons/Pen.vue'
 
+    const showPIcon = ref(false)
     const hoverCover= ref(false)
     const showModal = ref(false)
     const unratedAlbum = computed(() => suggested_rating_final.value && !album.value.rating)
@@ -204,12 +215,52 @@
     const route = useRoute()
     const albumRatingsParams = ref({})
     const tracksRatingsParams = ref([])
+    const indexH = ref(0)
+    import {usePlayerStore} from '../stores/player-store'
+    const PlayerStore = usePlayerStore()
 
-    import {getPlayer,playSong, getCurrentSong} from '../spotify/player';
+    import {getPlayer,playSong } from '../spotify/player';
+
+
+
+    const paramId = computed(() => route.params.id)
+
+    watch(paramId, () => {
+        loadAlbum()
+    }
+    )
+    //change tracksQueue to only include artist, track name, duration, id, overral track, insert the album.cover_image value to all items in the array
+    function buildQueue(){
+        let queue = []
+        for (const disc of album.value.tracks) {
+            for (const track of disc) {
+                queue.push({
+                    id: track.track_id,
+                    artist: track.track_artist,
+                    name: track.track_name,
+                    duration: track.track_duration_ms,                    
+                    album: album.value.album_name,
+                    cover: album.value.cover_image,
+                    album_id: album.value.album_id,
+                })
+            }
+        }
+        return queue
+    }
     
-    function playIt(id){
-        playSong(id)
 
+    //
+    
+    function playTrack(index){
+        PlayerStore.queue = buildQueue()
+        PlayerStore.currentIndex = index-1
+        playSong()
+
+    }
+
+    function showPlayIcon(index,value){
+        showPIcon.value = value
+        indexH.value = index
     }
 
     let albumSaved = false
