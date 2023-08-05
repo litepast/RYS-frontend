@@ -10,6 +10,7 @@ let deviceId = null;
 export const getPlayer = () => {
   return player;
 }
+//Al the player controls functions
 export const playerPause = () => {
   const PlayerStore = usePlayerStore();
   console.log('pause');
@@ -26,11 +27,17 @@ export const playerPlay = () => {
 export const jumptoprevious=()=>{
   const PlayerStore = usePlayerStore();  
   index=PlayerStore.currentIndex;
+  console.log('INDEXX',index);
   if(index!=0){
-    PlayerStore.currentIndex=index-1;
-    PlayerStore.songPlaying=false;
-    playerPause();
-    playSong();
+    
+      PlayerStore.currentIndex=index-1;
+      PlayerStore.songPlaying=false;
+      playerPause();
+      playSong();
+      
+      
+    
+
   }
 }
 export const jumptonext=()=>{
@@ -56,7 +63,12 @@ export const seekPlayerSong = async value => {
   await player.seek(seekValue).then(() => {
     console.log('Changed position!');
   });
-};
+}
+export const setVolume = async value => {
+  await player.setVolume(value).then(() => {
+    console.log('Changed volume!');
+  });
+}
 
 
 
@@ -65,20 +77,15 @@ export const seekPlayerSong = async value => {
 function terminateUpdatetime() {
   timeoutIds.forEach(id => clearTimeout(id));
 }
-let retry=0;
 
-//playing song
-//export const playSong = async (data, via, inde) => {
+let retry=0;
+//Function to play the song
 export const playSong = async () => {
   terminateUpdatetime();
   const PlayerStore = usePlayerStore();
   const currentTrack = PlayerStore.currentTrack;
+  console.log('id EN PLAYSONG',PlayerStore.currentIndex);
   const uri = `spotify:track:${currentTrack.id}`
-  //const uri = data['uri'];
-  console.log('URIIII', uri);
-
-
-
   player.activateElement();
   if (player) {
     console.log('playing');
@@ -103,10 +110,8 @@ export const playSong = async () => {
         )
           .then(response => {
             retry=0;
-            if (response.ok) {
-              
+            if (response.ok) {              
               PlayerStore.songPlaying = true;
-              console.log(PlayerStore.songPlaying)
               console.log('Song played successfully');
             } else {
               throw new Error('Failed to play song');
@@ -135,15 +140,13 @@ export const playSong = async () => {
     //Listener for updating song progress
     player.addListener(
       'player_state_changed',
-      ({ position, duration, track_window: { current_track } }) => {
-        
+      ({ position, duration, track_window: { current_track } }) => {        
         if (position === 0) {
-          usePlayerStore.songPlaying = true;
+          //usePlayerStore.songPlaying = true;
           updateTime();
         }
       }
     );
-
 
   } else {
     console.error('Player is not available.');
@@ -167,9 +170,9 @@ const updateTime = async () => {
         const progressPercentage = (currentPosition / duration) * 100;
         progressBar.value = progressPercentage;
         progressBar.style.background =
-          'linear-gradient(to right, green, ' +
+          'linear-gradient(to right, rgb(74,222,128), ' +
           (currentPosition / duration) * 100 +
-          '%, grey ' +
+          '%, rgb(156, 163, 175) ' +
           (currentPosition / duration) * 100 +
           '%)';
 

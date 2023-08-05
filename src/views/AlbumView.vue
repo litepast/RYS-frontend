@@ -120,19 +120,29 @@
                             </button>
                         </div>
                     </li>
-                    <li  v-show="showDiscs[i-1]" class="tracks-row" v-for="(track, index) in album.tracks[i-1]" :key="track.track_id">
+                    <li  v-show="showDiscs[i-1]" class="tracks-row" v-for="(track, index) in album.tracks[i-1]" :key="track.track_id"
+                    @mouseenter="isHover(true,track.track_overall_number)" @mouseleave="isHover(false,track.track_overall_number)">
                         <div class="tracks-left-slot cursor-pointer" >
-                            <div class="tracks-number" @click="playTrack(track.track_overall_number)" @mouseenter="showPlayIcon(index,true)" @mouseleave="showPlayIcon(index,false)">
-                                <div v-if="showPIcon && indexH == index " class="">
-                                    <Play :size="22" class="text-gray-400"/>
-                                    
+                            <div class="tracks-number" >
+                                <div v-if="isHovered && track.track_overall_number == trackHovered">
+                                    <div v-if="track.track_id == currentTrackId && PlayerStore.songPlaying" class="" @click="playerPause()">
+                                        <Pause :size="22" class="text-white hover:text-gray-200 transition-colors duration-300 ease-in-out" />                                  
+                                    </div>
+                                    <div v-else class="">                                        
+                                        <Play :size="22" class="text-white hover:text-gray-200 transition-colors duration-300 ease-in-out" 
+                                        @click="playTrack(track.track_overall_number,track.track_id)"/> 
+                                    </div>
                                 </div>
                                 <div v-else class="">
-                                    {{ track.track_number_on_disc }}
-                                    
+                                    <div v-if="track.track_id == currentTrackId && PlayerStore.songPlaying" class="div">
+                                        <AudioAnimation/>
+                                    </div>
+                                    <div v-else :class="track.track_id == currentTrackId ? 'text-green-400' : 'text-white'">
+                                        {{ track.track_overall_number }}
+                                    </div>
                                 </div>
                             </div>
-                            <div class="tracks-title" :title="track.track_name">
+                            <div class="tracks-title" :title="track.track_name" :class="track.track_id == currentTrackId ? 'text-green-400' : 'text-white'">
                                 <div class="text-[16px] truncate"> {{ track.track_name }} </div>
                                 <div class="text-[13px] truncate" :title="track.track_artist">{{ track.track_artist }}</div>                      
                             </div>
@@ -187,6 +197,8 @@
     import Alert from 'vue-material-design-icons/AlertCircle.vue'
     import Error from 'vue-material-design-icons/CloseCircle.vue'
     import Play from 'vue-material-design-icons/Play.vue'
+    import Pause from 'vue-material-design-icons/Pause.vue'
+    import AudioAnimation from '../components/AudioAnimation.vue';
     import StarRating from 'vue-star-rating'
     import { ref, computed, onBeforeMount, watch } from 'vue'
     import axios from 'axios'
@@ -195,8 +207,35 @@
     import SomethingWrong from '../components/SomethingWrong.vue'
     import Modal from '../components/ModalEditAlbum.vue'
     import Pen from 'vue-material-design-icons/Pen.vue'
+    import {usePlayerStore} from '../stores/player-store'
+    import { playSong, playerPause, playerPlay } from '../spotify/player';
+    const PlayerStore = usePlayerStore()
 
-    const showPIcon = ref(false)
+    const showPlayIcon = ref(false)
+    const showPauseIcon = ref(false)
+    const showAudioAnimation = ref(false)
+    const showTrackNumber = ref(true)
+
+    const trackHovered = ref(0)
+    const isHovered = ref(false)
+    const currentTrackId = computed(() =>{
+        if(PlayerStore.queue.length > 0){
+            return PlayerStore.currentTrack.id
+        }else{
+            return false
+        }
+    })
+
+
+    function isHover(value,number){        
+        isHovered.value = value
+        trackHovered.value = number
+    }
+
+
+
+
+
     const hoverCover= ref(false)
     const showModal = ref(false)
     const unratedAlbum = computed(() => suggested_rating_final.value && !album.value.rating)
@@ -213,23 +252,21 @@
     const bgColor = computed(() =>  `background-color: ${album.value.cover_color}` )
     const bgGradient = 'background : linear-gradient(to bottom, transparent, rgba(0,0,0,0.75) )'
     const route = useRoute()
-    const albumRatingsParams = ref({})
-    const tracksRatingsParams = ref([])
-    const indexH = ref(0)
-    import {usePlayerStore} from '../stores/player-store'
-    const PlayerStore = usePlayerStore()
-
-    import {getPlayer,playSong } from '../spotify/player';
-
-
-
     const paramId = computed(() => route.params.id)
+    const albumRatingsParams = ref({})
+    const tracksRatingsParams = ref([]) 
+    let albumSaved = false
+
+
+   
+
+   
 
     watch(paramId, () => {
         loadAlbum()
     }
     )
-    //change tracksQueue to only include artist, track name, duration, id, overral track, insert the album.cover_image value to all items in the array
+
     function buildQueue(){
         let queue = []
         for (const disc of album.value.tracks) {
@@ -248,22 +285,19 @@
         return queue
     }
     
+   
+    function playTrack(index, id){
+        if(currentTrackId.value == id){
+            playerPlay()
+        }else{
+            PlayerStore.queue = buildQueue()
+            PlayerStore.currentIndex = index-1
+            playSong()
+        }
+    }
 
-    //
+   
     
-    function playTrack(index){
-        PlayerStore.queue = buildQueue()
-        PlayerStore.currentIndex = index-1
-        playSong()
-
-    }
-
-    function showPlayIcon(index,value){
-        showPIcon.value = value
-        indexH.value = index
-    }
-
-    let albumSaved = false
     const dateOptions = {
         timeZone: 'America/Mexico_City',
         year: 'numeric',
@@ -491,8 +525,6 @@
             })
    }
 
-
-
     onBeforeMount(() => {
         loadAlbum()
     })
@@ -507,12 +539,11 @@
 .tracks-header-row{
     @apply flex h-[65px] justify-between text-[13px] text-white border-b-[1px] border-gray-600 px-6;
     @apply bg-gradient-to-l  from-violet-950 via-emerald-950 to-amber-950;
-    @apply sticky top-[0px] z-[11];
-       
+    @apply sticky top-[0px] z-[11];       
 }
-
 .tracks-row{
-    @apply flex h-[50px] justify-between hover:bg-gradient-to-t hover:from-zinc-700 hover:to-zinc-500 hover:rounded-sm ;
+    @apply flex h-[50px] justify-between  hover:rounded-sm ;
+    @apply hover:bg-gradient-to-t hover:from-zinc-700 hover:to-zinc-500;
 }
 .tracks-left-slot{
     @apply flex w-[600px] min-w-[600px]
@@ -535,7 +566,6 @@
 .discs-row{
     @apply flex justify-between items-center w-full min-w-[600px] h-[45px];
 }
-
 .discs-row > .column{
     @apply flex justify-center items-center w-[75px];
 }
@@ -576,8 +606,7 @@
     @apply object-cover h-[225px] w-[225px] shadow-md shadow-black;
 }
 .album-data{
-    @apply w-[calc(100%-250px)] h-[225px] flex flex-col ;
-    
+    @apply w-[calc(100%-250px)] h-[225px] flex flex-col ;    
 }
 .album-type{
     @apply text-zinc-50 text-[13x] w-full font-semibold mb-1 hover:underline cursor-pointer;
