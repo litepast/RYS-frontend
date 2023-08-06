@@ -621,14 +621,3 @@
     @apply mx-1 w-1 h-1 bg-white rounded-full;   
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-

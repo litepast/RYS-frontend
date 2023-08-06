@@ -237,15 +237,14 @@ function runSpotifyInstallation() {
 
       player.addListener('authentication_error', ({ message }) => {
         
-        //Re-run the Spotify installation code
+        // Re-run the Spotify installation code
         // if(retry===3){
         //   retry=0;
-         console.error(message + " authentication");
+          console.error(message + " authentication");
         // }else{
         //   retry++;
         //   runSpotifyInstallation();
         // }
-
       });
 
       player.addListener('account_error', ({ message }) => {
@@ -255,9 +254,7 @@ function runSpotifyInstallation() {
       // Called when connected to the player created beforehand successfully
       player.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
-        const PlayerStore = usePlayerStore();
-        PlayerStore.deviceId = device_id;
-        
+        deviceId = device_id;
       });
 
       player.connect();
@@ -271,4 +268,3 @@ export default {
     runSpotifyInstallation();
   }
 };
-

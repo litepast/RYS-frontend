@@ -40,12 +40,9 @@
             <div v-if="!PlayerStore.queue.length" class="absolute z-10 w-full h-full bg-transparent"></div>            
         </div>
         <div class="volume-container relative">
-            <VolumeOff 
-            title="Unmute" v-show="volume=50" :size="30" class="prevNext"/>
-            <VolumenMedium 
-            title="Mute" v-show="volume > 0 && volume < 50" :size="30" class="prevNext"/>
-            <VolumeUp  
-            :size="30" title="Mute" v-show="volume >= 50" class="prevNext"/>
+            <VolumeOff title="Unmute" v-show="volume==0" :size="30" class="prevNext"/>
+            <VolumenMedium title="Mute" v-show="volume > 0 && volume < 50" :size="30" class="prevNext"/>
+            <VolumeUp :size="30" title="Mute" v-show="volume >= 50" class="prevNext"/>
             <input
                 v-model="volume"
                 type="range"                
@@ -54,7 +51,7 @@
                 :style="volumeColor"                             
             />
             <div class="w-6"></div>
-            <div v-if="!PlayerStore.queue.length" class="bg-red-500 absolute z-10 w-full h-full bg-transparent"></div>
+            <div v-if="!PlayerStore.queue.length" class="absolute z-10 w-full h-full bg-transparent"></div>
         </div>
     </div>
 </template>
@@ -73,7 +70,7 @@
     import { useRouter } from 'vue-router'
     const router = useRouter()
     const PlayerStore = usePlayerStore() 
-    const volume = ref(100)    
+    const volume = ref(100)
     const songPlaying = computed(() => PlayerStore.songPlaying)
     const currentTrack = computed(() => PlayerStore.currentTrack)
     const volumeColor = computed(() => `background: linear-gradient(to right, rgb(74,222,128), ${volume.value}%, rgb(156, 163, 175)   ${100-volume.value}%`)
@@ -107,11 +104,7 @@
     }
 
     watch(volume, () => {
-        if(PlayerStore.deviceId != null){
-            setVolume(volume.value/100)
-        }
-        
-        
+        setVolume(volume.value/100)
     })
 
     
