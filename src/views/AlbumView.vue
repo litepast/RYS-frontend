@@ -58,11 +58,23 @@
                         inactive-color="#ACACAC" border-color="#000000" active-color="#4ADE80" :border-width="1" :read-only="true"/>
                     </div> 
                 </div>
-                <div class="actions-container h-[55px] w-full flex flex-row items-center justify-between mx-3 mt-1">
-                    <button class=" w-[125px] h-[35px] flex justify-center items-center cursor-pointer bg-green-400 active:bg-green-600 rounded-full disabled:bg-slate-400 disabled:cursor-not-allowed"
-                    @click="savedAlbumRatings" :disabled="!hasAlbumChanged" :title=" hasAlbumChanged ? 'Save Ratings' : 'Ratings Syncronized'  ">                        
-                        Save Ratings
-                    </button>
+                <div class="actions-container h-16 w-full flex flex-row items-center justify-between mx-3 mt-3">
+                    <div class="flex items-center w-auto">
+                       
+                        <div class="flex w-auto mr-2">
+                            <button v-if="showPlayAlbumButton" class="player-album-button" @click="playAlbum()">
+                                <Play  :size="40" class="text-black" />
+                            </button>
+                            <button v-else class="player-album-button">
+                                <Pause :size="40" class="text-black" @click="playerPause()" />
+                            </button>                            
+                        </div>
+
+                        <button class=" w-[125px] h-[36px] flex justify-center items-center cursor-pointer bg-green-400 active:bg-green-600 rounded-full disabled:bg-slate-400 disabled:cursor-not-allowed"
+                        @click="savedAlbumRatings" :disabled="!hasAlbumChanged" :title=" hasAlbumChanged ? 'Save Ratings' : 'Ratings Syncronized'  ">                        
+                            Save Ratings
+                        </button>
+                    </div>
                     <div v-if="!connectionError">
                         <div class="text-white flex items-center mr-5" :class=" hasAlbumChanged ? 'animate-pulse' : null">                        
                             <Check v-if="!hasAlbumChanged" :size="20" class="text-green-400"  />
@@ -171,7 +183,16 @@
             </ul>
         </div>
         <div class="w-full h-4 text-white">
-            
+            Current Index:{{ PlayerStore.currentIndex }} 
+            <button class="button-clear" @click="PlayerStore.shuffleQueue">shuff</button>
+            <div class="flex flex-row" v-if="PlayerStore.queue.length" v-for="(trax, index) in PlayerStore.queue"> 
+                <span :class=" index == PlayerStore.currentIndex ? 'text-green-400':'text-white'">
+                {{ index }}</span> - {{ trax.name}}
+            </div>
+            <div class="flex flex-row" v-if="PlayerStore.shuffledQueue.length" v-for="(trax, index) in PlayerStore.shuffledQueue"> 
+                <span :class=" index == 0 ? 'text-green-400':'text-white'">
+                {{ index }}</span> - {{ trax.name}}
+            </div>             
         </div>
         </div>
         <div v-else class="flex w-full h-full justify-center items-center">
@@ -209,33 +230,11 @@
     import Pen from 'vue-material-design-icons/Pen.vue'
     import {usePlayerStore} from '../stores/player-store'
     import { playSong, playerPause, playerPlay } from '../spotify/player';
-    const PlayerStore = usePlayerStore()
 
-    const showPlayIcon = ref(false)
-    const showPauseIcon = ref(false)
-    const showAudioAnimation = ref(false)
-    const showTrackNumber = ref(true)
-
+    
+    const PlayerStore = usePlayerStore() 
     const trackHovered = ref(0)
     const isHovered = ref(false)
-    const currentTrackId = computed(() =>{
-        if(PlayerStore.queue.length > 0){
-            return PlayerStore.currentTrack.id
-        }else{
-            return false
-        }
-    })
-
-
-    function isHover(value,number){        
-        isHovered.value = value
-        trackHovered.value = number
-    }
-
-
-
-
-
     const hoverCover= ref(false)
     const showModal = ref(false)
     const unratedAlbum = computed(() => suggested_rating_final.value && !album.value.rating)
@@ -256,11 +255,32 @@
     const albumRatingsParams = ref({})
     const tracksRatingsParams = ref([]) 
     let albumSaved = false
+    const currentTrackId = computed(() =>{
+        if(PlayerStore.queue.length > 0){
+            return PlayerStore.currentTrack.id
+        }else{
+            return false
+        }
+    })
+    const currentTrackAlbumId = computed(() =>{
+        if(PlayerStore.queue.length > 0){
+            return PlayerStore.currentTrack.album_id
+        }else{
+            return false
+        }
+    })
+    const showPlayAlbumButton = computed(() => {
+        if (currentTrackAlbumId.value == album.value.album_id && PlayerStore.songPlaying) {
+            return false
+        }else{
+            return true
+        }
+    })
 
-
-   
-
-   
+    function isHover(value,number){        
+        isHovered.value = value
+        trackHovered.value = number
+    }
 
     watch(paramId, () => {
         loadAlbum()
@@ -284,6 +304,27 @@
         }
         return queue
     }
+
+    function buildShuffleQueue(queue){
+        
+    }
+
+
+
+    function playAlbum(){
+       if(currentTrackAlbumId.value == album.value.album_id){
+            playerPlay()
+       }else{
+
+            PlayerStore.queue = buildQueue()
+            PlayerStore.currentIndex = 0
+            playSong()
+
+
+
+       }    
+    }
+
     
    
     function playTrack(index, id){
@@ -293,6 +334,14 @@
             PlayerStore.queue = buildQueue()
             PlayerStore.currentIndex = index-1
             playSong()
+        }
+    }
+
+    function playTrackShuffle(index, id){
+        if(currentTrackId.value == id){
+            playerPlay()
+        }else{
+            ///
         }
     }
 
@@ -541,6 +590,10 @@
     @apply bg-gradient-to-l  from-violet-950 via-emerald-950 to-amber-950;
     @apply sticky top-[0px] z-[11];       
 }
+ .player-album-button{
+    @apply flex justify-center items-center bg-green-400 rounded-full h-14 w-14 hover:scale-105 active:bg-green-600;
+ }
+
 .tracks-row{
     @apply flex h-[50px] justify-between  hover:rounded-sm ;
     @apply hover:bg-gradient-to-t hover:from-zinc-700 hover:to-zinc-500;
@@ -594,7 +647,7 @@
     @apply ml-2 hover:underline hover:cursor-pointer ;
 }
 .album-header-container{
-    @apply flex w-full min-w-[600px] h-[345px] rounded-t-sm overflow-hidden pt-[35px];
+    @apply flex w-full min-w-[600px] h-[365px] rounded-t-sm overflow-hidden pt-[35px];
 }
 .album-header{
     @apply w-full h-full flex flex-wrap rounded-t-sm py-5;    

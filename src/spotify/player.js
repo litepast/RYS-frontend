@@ -1,8 +1,8 @@
 import { usePlayerStore } from '../stores/player-store.js'
 
 
-let songPlaying = false;
-let index = 0;
+//let songPlaying = false;
+//let index = 0;
 const timeoutIds = [];
 let player = null;
 let deviceId = null;
@@ -26,7 +26,7 @@ export const playerPlay = () => {
 }
 export const jumptoprevious=()=>{
   const PlayerStore = usePlayerStore();  
-  index=PlayerStore.currentIndex;
+  const index=PlayerStore.currentIndex;
   console.log('INDEXX',index);
   if(index!=0){
     
@@ -40,15 +40,95 @@ export const jumptoprevious=()=>{
 
   }
 }
-export const jumptonext=()=>{
-    const PlayerStore = usePlayerStore();
-    const index = PlayerStore.currentIndex;
-    if(index!=PlayerStore.totalTracks-1){
-      PlayerStore.currentIndex=index+1;
-      songPlaying=false;
-      playerPause();
-      playSong();
+export const jumptonext= async (via)=>{
+  const PlayerStore = usePlayerStore();
+  const index = PlayerStore.currentIndex;
+  const isLastSong = index == PlayerStore.totalTracks-1 ? true : false
+  if(via==='autoplay'){
+    //repeat off
+    if(PlayerStore.repeat===0){      
+      if(!isLastSong){        
+        PlayerStore.currentIndex=index+1;       
+        playerPause();
+        playSong();
+      }
+      else{
+        PlayerStore.songPlaying=false;
+        playerPause();
+        seekPlayerSong(0);
+        const currentTime = document.getElementById('currentTime');        
+        currentTime.innerHTML = '0:00'
+        
+      }
     }
+  //Repeat All
+    if(PlayerStore.repeat===1){
+      if(isLastSong){
+        PlayerStore.currentIndex=0; 
+        PlayerStore.songPlaying=false;       
+        playerPause();
+        playSong();
+      }else{        
+        PlayerStore.currentIndex=index+1;
+        PlayerStore.songPlaying=false;        
+        playerPause();
+        playSong();
+      }
+    }
+  //Repeat One Song
+    if(PlayerStore.repeat===2){ 
+            
+        playerPause();
+        playSong();
+    }
+  }
+  //clicking next button on player
+  if(via==='web-player'){
+    //repeat off
+    if(PlayerStore.repeat===0){      
+      if(!isLastSong){        
+        PlayerStore.currentIndex=index+1;        
+        playerPause();
+        playSong();
+      }
+    }
+  //Repeat All
+    if(PlayerStore.repeat===1){
+      if(isLastSong){
+        PlayerStore.currentIndex=0;
+        PlayerStore.songPlaying=false;        
+        playerPause();
+        playSong();
+      }else{        
+        PlayerStore.currentIndex=index+1;
+        PlayerStore.songPlaying=false;
+        playerPause();
+        playSong();
+      }
+    }
+  //Repeat One Song
+    if(PlayerStore.repeat===2){
+      if(isLastSong){
+        PlayerStore.currentIndex=0;  
+        PlayerStore.songPlaying=false;      
+        playerPause();
+        playSong();
+      }else{        
+        PlayerStore.currentIndex=index+1;        
+        playerPause();
+        playSong();
+      }
+      PlayerStore.repeat=1
+    }
+  }
+
+
+    // if(index!=PlayerStore.totalTracks-1){
+    //   PlayerStore.currentIndex=index+1;
+    //   songPlaying=false;
+    //   playerPause();
+    //   playSong();
+    // }
 }
 export const forceTimeUpdation = value => {
   const PlayerStore = usePlayerStore();
@@ -192,9 +272,15 @@ const updateTime = async () => {
   if (progressBar.value == 100 && PlayerStore.songPlaying) {
     PlayerStore.songPlaying = false;
     progressBar.value = 0;
+    progressBar.style.background =
+          'linear-gradient(to right, rgb(74,222,128), ' +
+          0 +
+          '%, rgb(156, 163, 175) ' +
+          100 +
+          '%)';
     console.log('playing-next');
     playerPause();    
-    jumptonext();
+    jumptonext('autoplay');
   } else if (PlayerStore.songPlaying) {
     const timeoutId = setTimeout(() => {
       updateTime();
@@ -229,7 +315,7 @@ function runSpotifyInstallation() {
         getOAuthToken: callback => {
           callback(token);
         },
-        volume: 1
+        volume: 0.5
       });
       player.addListener('initialization_error', ({ message }) => {
         console.error(message + " initialization_error");
@@ -255,6 +341,8 @@ function runSpotifyInstallation() {
       player.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
         deviceId = device_id;
+        const PlayerStore = usePlayerStore();
+        PlayerStore.deviceId = device_id;
       });
 
       player.connect();

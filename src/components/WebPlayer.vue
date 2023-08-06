@@ -12,7 +12,11 @@
         </div>
         <div class="controls-container relative" >
             <div class="buttons-container">
-                <div class="prevNext-button" @click="playPrev" title="Previous Track">
+                <div class="">
+                    <Shuffle v-if="PlayerStore.shuffle==0" :size="28"  @click="PlayerStore.shuffle=1" title="Turn on Shuffle" class="prevNext" />
+                    <Shuffle v-if="PlayerStore.shuffle==1" :size="28"  @click="PlayerStore.shuffle=0" title="Turn off Shuffle" class="prevNext !text-green-400 :hover:text-green-600" />
+                </div>
+                <div class="prevNext-button ml-3" @click="playPrev" title="Previous Track">
                     <Prev  :size="30"  class="prevNext" />
                 </div>                
                 <div v-if="!songPlaying" class="play-button" title="Play" @click="playPause" >
@@ -21,9 +25,15 @@
                 <div v-else class="play-button" title="Pause" @click="playPause" >
                     <Pause :size="30" class="text-black"/>
                 </div>
-                <div class="prevNext-button" @click="playNext" title="Next Track" >
+                <div class="prevNext-button mr-3" @click="playNext" title="Next Track" >
                     <Next :size="30"  class="prevNext"/>
-                </div>                
+                </div> 
+                <div class="">
+                    <RepeatOff  v-if="PlayerStore.repeat==0" :size="28"  @click="PlayerStore.repeat=1" title="Turn on Repeat" class="prevNext" />
+                    <Repeat     v-if="PlayerStore.repeat==1" :size="28"  @click="PlayerStore.repeat=2" title="Repeat One Song" class="prevNext !text-green-400 :hover:text-green-600" />
+                    <RepeatOnce v-if="PlayerStore.repeat==2" :size="28"  @click="PlayerStore.repeat=0" title="Repeat Off" class="prevNext !text-green-400 :hover:text-green-600"/> 
+                </div>
+
                 
             </div>
             <div class="progress-container" >
@@ -39,10 +49,13 @@
             </div>
             <div v-if="!PlayerStore.queue.length" class="absolute z-10 w-full h-full bg-transparent"></div>            
         </div>
-        <div class="volume-container relative">
-            <VolumeOff title="Unmute" v-show="volume==0" :size="30" class="prevNext"/>
-            <VolumenMedium title="Mute" v-show="volume > 0 && volume < 50" :size="30" class="prevNext"/>
-            <VolumeUp :size="30" title="Mute" v-show="volume >= 50" class="prevNext"/>
+        <div class="volume-container relative">            
+            <VolumeOff @click="volume=prevVolume"
+            title="Unmute" v-show="volume==0" :size="30" class="prevNext"/>
+            <VolumenMedium @click="volume=0"
+            title="Mute" v-show="volume > 0 && volume < 50" :size="30" class="prevNext"/>
+            <VolumeUp @click="volume=0"
+             :size="30" title="Mute" v-show="volume >= 50" class="prevNext"/>
             <input
                 v-model="volume"
                 type="range"                
@@ -65,16 +78,31 @@
     import VolumeOff from 'vue-material-design-icons/VolumeOff.vue'
     import VolumenMedium from 'vue-material-design-icons/VolumeMedium.vue'
     import VolumeUp from 'vue-material-design-icons/VolumeHigh.vue'
+    import Repeat from 'vue-material-design-icons/Repeat.vue'
+    import RepeatOff from 'vue-material-design-icons/RepeatOff.vue'
+    import RepeatOnce from 'vue-material-design-icons/RepeatOnce.vue'
+    import Shuffle from 'vue-material-design-icons/ShuffleVariant.vue'
     import { playerPlay , playerPause, seekPlayerSong, forceTimeUpdation, jumptoprevious, jumptonext, setVolume} from '../spotify/player.js'
     import { usePlayerStore } from '../stores/player-store.js'
     import { useRouter } from 'vue-router'
     const router = useRouter()
     const PlayerStore = usePlayerStore() 
-    const volume = ref(100)
+    const volume = ref(50)
     const songPlaying = computed(() => PlayerStore.songPlaying)
     const currentTrack = computed(() => PlayerStore.currentTrack)
     const volumeColor = computed(() => `background: linear-gradient(to right, rgb(74,222,128), ${volume.value}%, rgb(156, 163, 175)   ${100-volume.value}%`)
-   
+    
+    const prevVolume = ref(50)
+    watch(volume, (newVal, prevVal) => {
+        if (newVal == 0) {
+            prevVolume.value = prevVal
+        }
+        else {
+            prevVolume.value = newVal
+        }
+    })
+
+
     function goToAlbumView() {         
         router.push(`/library/${currentTrack.value.album_id}`)
     }
@@ -92,7 +120,7 @@
     }
 
     function playNext() {
-        jumptonext()
+        jumptonext('web-player')
     }
     
     function seekSong(){
@@ -143,7 +171,7 @@ img{
     @apply text-gray-200 hover:text-white transition-all duration-300 ease-in-out;
 }
 .play-button{
-    @apply cursor-default w-[36px] h-[36px] mx-6 bg-gray-200 hover:bg-white rounded-full flex items-center justify-center transition-all duration-300 ease-in-out;
+    @apply cursor-default w-[36px] h-[36px] mx-3 bg-gray-200 hover:bg-white rounded-full flex items-center justify-center transition-all duration-300 ease-in-out;
     @apply active:scale-75;
 }
 
