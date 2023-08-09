@@ -150,7 +150,7 @@
                                         <AudioAnimation/>
                                     </div>
                                     <div v-else :class="track.track_id == currentTrackId ? 'text-green-400' : 'text-white'">
-                                        {{ track.track_overall_number }}
+                                        {{ track.track_number_on_disc}}
                                     </div>
                                 </div>
                             </div>
@@ -182,17 +182,15 @@
                 </div>
             </ul>
         </div>
-        <div class="w-full h-4 text-white">
-            Current Index:{{ PlayerStore.currentIndex }} 
-            <button class="button-clear" @click="PlayerStore.shuffleQueue">shuff</button>
+        <div class="w-full h-4 text-white"> 
+
+            <!-- Current Index:{{ PlayerStore.currentIndex }}             
             <div class="flex flex-row" v-if="PlayerStore.queue.length" v-for="(trax, index) in PlayerStore.queue"> 
                 <span :class=" index == PlayerStore.currentIndex ? 'text-green-400':'text-white'">
                 {{ index }}</span> - {{ trax.name}}
-            </div>
-            <div class="flex flex-row" v-if="PlayerStore.shuffledQueue.length" v-for="(trax, index) in PlayerStore.shuffledQueue"> 
-                <span :class=" index == 0 ? 'text-green-400':'text-white'">
-                {{ index }}</span> - {{ trax.name}}
-            </div>             
+            </div> -->
+            
+           
         </div>
         </div>
         <div v-else class="flex w-full h-full justify-center items-center">
@@ -229,9 +227,7 @@
     import Modal from '../components/ModalEditAlbum.vue'
     import Pen from 'vue-material-design-icons/Pen.vue'
     import {usePlayerStore} from '../stores/player-store'
-    import { playSong, playerPause, playerPlay } from '../spotify/player';
-
-    
+    import { playSong, playerPause, playerPlay } from '../spotify/player';    
     const PlayerStore = usePlayerStore() 
     const trackHovered = ref(0)
     const isHovered = ref(false)
@@ -253,8 +249,20 @@
     const route = useRoute()
     const paramId = computed(() => route.params.id)
     const albumRatingsParams = ref({})
-    const tracksRatingsParams = ref([]) 
-    let albumSaved = false
+    const tracksRatingsParams = ref([])     
+    let albumSaved = false        
+    const dateOptions = {
+        timeZone: 'America/Mexico_City',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+    };
+
+    //Playback functions
+
     const currentTrackId = computed(() =>{
         if(PlayerStore.queue.length > 0){
             return PlayerStore.currentTrack.id
@@ -262,13 +270,15 @@
             return false
         }
     })
+
     const currentTrackAlbumId = computed(() =>{
         if(PlayerStore.queue.length > 0){
-            return PlayerStore.currentTrack.album_id
+            return PlayerStore.currentAlbumId
         }else{
             return false
         }
     })
+
     const showPlayAlbumButton = computed(() => {
         if (currentTrackAlbumId.value == album.value.album_id && PlayerStore.songPlaying) {
             return false
@@ -281,11 +291,6 @@
         isHovered.value = value
         trackHovered.value = number
     }
-
-    watch(paramId, () => {
-        loadAlbum()
-    }
-    )
 
     function buildQueue(){
         let queue = []
@@ -305,58 +310,48 @@
         return queue
     }
 
-    function buildShuffleQueue(queue){
-        
-    }
-
-
-
     function playAlbum(){
        if(currentTrackAlbumId.value == album.value.album_id){
             playerPlay()
        }else{
-
-            PlayerStore.queue = buildQueue()
-            PlayerStore.currentIndex = 0
-            playSong()
-
-
-
+            PlayerStore.originalQueue = buildQueue()            
+            PlayerStore.currentAlbumId = album.value.album_id
+            PlayerStore.queue = PlayerStore.originalQueue            
+            if(PlayerStore.shuffle==false){ 
+                PlayerStore.currentIndex = 0
+                PlayerStore.currentTrackId = PlayerStore.queue[PlayerStore.currentIndex].id
+                PlayerStore.setTrack() 
+                playSong()
+            }else{
+                PlayerStore.currentIndex = Math.floor(Math.random() * PlayerStore.queue.length)
+                PlayerStore.currentTrackId = PlayerStore.queue[PlayerStore.currentIndex].id
+                PlayerStore.setTrack()
+                PlayerStore.shuffleQueue()
+                playSong()  
+            }
        }    
     }
-
-    
    
     function playTrack(index, id){
-        if(currentTrackId.value == id){
+        if(currentTrackId.value == id){            
             playerPlay()
         }else{
-            PlayerStore.queue = buildQueue()
-            PlayerStore.currentIndex = index-1
-            playSong()
+            PlayerStore.originalQueue = buildQueue()
+            PlayerStore.currentTrackId = id
+            PlayerStore.currentAlbumId = album.value.album_id
+            PlayerStore.queue = PlayerStore.originalQueue
+            PlayerStore.currentIndex = index - 1
+            PlayerStore.setTrack() 
+            if(PlayerStore.shuffle==false){ 
+                playSong()
+            }else{
+                PlayerStore.shuffleQueue()
+                playSong()  
+            }
         }
     }
-
-    function playTrackShuffle(index, id){
-        if(currentTrackId.value == id){
-            playerPlay()
-        }else{
-            ///
-        }
-    }
-
-   
-    
-    const dateOptions = {
-        timeZone: 'America/Mexico_City',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-    };
   
+    //Ratings functions
     watch( album, () => {
         if (album.value) {                    
             if(albumSaved == JSON.stringify(album.value)){
@@ -548,11 +543,11 @@
         });
     }
 
-    function refreshfromModal() {        
-        showModal.value = false
-        loadAlbum()
-    }
+  
 
+  
+
+   //Load funtions
    function loadAlbum() {
         loading.value = true
         const id_album = route.params.id
@@ -573,6 +568,15 @@
                 loading.value = false
             })
    }
+
+   function refreshfromModal() {        
+        showModal.value = false
+        loadAlbum()
+    }
+
+    watch(paramId, () => {
+        loadAlbum()
+    })
 
     onBeforeMount(() => {
         loadAlbum()

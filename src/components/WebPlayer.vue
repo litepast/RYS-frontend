@@ -1,20 +1,20 @@
 <template>
-    <div   class="player-container">
+    <div class="player-container">
         <div class="info-container" >
-            <div class="cover-container " v-if="PlayerStore.queue.length>0">
+            <div class="cover-container " v-if="PlayerStore.currentTrack">
                 <img  
                 :src="currentTrack.cover" alt="cover" @click="goToAlbumView()">
             </div>
-            <div class="flex flex-col" v-if="PlayerStore.queue.length>0">
-                <div class="text-white text-sm"> {{ currentTrack.name }}</div>
+            <div class="flex flex-col " v-if ="PlayerStore.currentTrack">
+                <div class="w-full text-white text-sm overflow-hidden"> {{ currentTrack.name }}</div>
                 <div class="text-gray-400 text-xs">{{currentTrack.artist }}</div>
             </div>            
         </div>
         <div class="controls-container relative" >
             <div class="buttons-container">
                 <div class="">
-                    <Shuffle v-if="PlayerStore.shuffle==0" :size="28"  @click="PlayerStore.shuffle=1" title="Turn on Shuffle" class="prevNext" />
-                    <Shuffle v-if="PlayerStore.shuffle==1" :size="28"  @click="PlayerStore.shuffle=0" title="Turn off Shuffle" class="prevNext !text-green-400 :hover:text-green-600" />
+                    <Shuffle v-if="!PlayerStore.shuffle" :size="28"  @click="PlayerStore.setShuffle(true)" title="Turn on Shuffle" class="prevNext" />
+                    <Shuffle v-else :size="28"  @click="PlayerStore.setShuffle(false)" title="Turn off Shuffle" class="prevNext !text-green-400 :hover:text-green-600" />
                 </div>
                 <div class="prevNext-button ml-3" @click="playPrev" title="Previous Track">
                     <Prev  :size="30"  class="prevNext" />
@@ -33,21 +33,19 @@
                     <Repeat     v-if="PlayerStore.repeat==1" :size="28"  @click="PlayerStore.repeat=2" title="Repeat One Song" class="prevNext !text-green-400 :hover:text-green-600" />
                     <RepeatOnce v-if="PlayerStore.repeat==2" :size="28"  @click="PlayerStore.repeat=0" title="Repeat Off" class="prevNext !text-green-400 :hover:text-green-600"/> 
                 </div>
-
-                
             </div>
             <div class="progress-container" >
-                <p class="text-gray-400 text-xs mr-2" id="currentTime">00:00</p>
+                <p class="text-gray-400 text-xs mr-2 cursor-default" id="currentTime">00:00</p>
                 <input
+                    :disabled="!PlayerStore.currentTrack"
                     type="range"
                     value="0"
                     ref="progressBar"
                     id="progressBar" min="0" max="100" 
                     @change="seekSong()" @mousedown="forceUpdate(false)" @mouseup="forceUpdate(true)"                   
                 />
-                <p class="text-gray-400 text-xs ml-2" id="finalTime">00:00</p>
+                <p class="text-gray-400 text-xs ml-2 cursor-default" id="finalTime">00:00</p>
             </div>
-            <div v-if="!PlayerStore.queue.length" class="absolute z-10 w-full h-full bg-transparent"></div>            
         </div>
         <div class="volume-container relative">            
             <VolumeOff @click="volume=prevVolume"
@@ -63,8 +61,7 @@
                 id="volumeBar" min="0" max="100"
                 :style="volumeColor"                             
             />
-            <div class="w-6"></div>
-            <div v-if="!PlayerStore.queue.length" class="absolute z-10 w-full h-full bg-transparent"></div>
+            <div class="w-6"></div>            
         </div>
     </div>
 </template>
@@ -82,7 +79,7 @@
     import RepeatOff from 'vue-material-design-icons/RepeatOff.vue'
     import RepeatOnce from 'vue-material-design-icons/RepeatOnce.vue'
     import Shuffle from 'vue-material-design-icons/ShuffleVariant.vue'
-    import { playerPlay , playerPause, seekPlayerSong, forceTimeUpdation, jumptoprevious, jumptonext, setVolume} from '../spotify/player.js'
+    import { getPlayer, playerPlay , playerPause, seekPlayerSong, forceTimeUpdation, jumptoprevious, jumptonext, setVolume} from '../spotify/player.js'
     import { usePlayerStore } from '../stores/player-store.js'
     import { useRouter } from 'vue-router'
     const router = useRouter()
@@ -91,9 +88,16 @@
     const songPlaying = computed(() => PlayerStore.songPlaying)
     const currentTrack = computed(() => PlayerStore.currentTrack)
     const volumeColor = computed(() => `background: linear-gradient(to right, rgb(74,222,128), ${volume.value}%, rgb(156, 163, 175)   ${100-volume.value}%`)
-    
     const prevVolume = ref(50)
-    watch(volume, (newVal, prevVal) => {
+
+    watch(volume, () => {
+        PlayerStore.volume = volume.value
+        if(getPlayer() != null){
+            setVolume(volume.value/100)
+        }     
+    })
+
+    watch(volume, (newVal, prevVal) => {        
         if (newVal == 0) {
             prevVolume.value = prevVal
         }
@@ -102,24 +106,32 @@
         }
     })
 
-
     function goToAlbumView() {         
         router.push(`/library/${currentTrack.value.album_id}`)
     }
 
     function playPause() {
-      if (songPlaying.value == true) {
-        playerPause();       
-      } else {
-        playerPlay();
-      }
+        if(!PlayerStore.queue.length){
+            return
+        }
+        if (songPlaying.value == true) {
+            playerPause();       
+        } else {
+            playerPlay();
+        }
     }
 
     function playPrev() {
+        if(!PlayerStore.queue.length){
+            return
+        }
         jumptoprevious()
     }
 
     function playNext() {
+        if(!PlayerStore.queue.length){
+            return
+        }
         jumptonext('web-player')
     }
     
@@ -131,14 +143,6 @@
       forceTimeUpdation(value);
     }
 
-    watch(volume, () => {
-        setVolume(volume.value/100)
-    })
-
-    
-        
-  
-
 </script>
 
 <style lang="scss" scoped>
@@ -147,7 +151,7 @@
 }
 
 .info-container{
-    @apply  flex items-center w-1/3 h-full;
+    @apply  flex items-center w-1/3 h-full min-w-[33%];
 }
 .cover-container{
     @apply  w-20 items-center justify-center flex;

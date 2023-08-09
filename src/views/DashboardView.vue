@@ -1,6 +1,6 @@
 <template> 
     <div  ref="c" class="pt-[60px] w-full h-full">
-        <div v-if="loading" class="flex w-full h-full justify-center items-center">
+        <!-- <div v-if="loading" class="flex w-full h-full justify-center items-center">
             <Spinner/>
         </div>
         <div v-else class="flex w-full h-full justify-center items-center">
@@ -12,7 +12,8 @@
             <div v-else class="w-full h-full">
                 <iframe :width="w" :height="h" src="http://192.168.100.14:8050"  ></iframe>
             </div> 
-        </div>
+        </div> -->
+        <iframe :width="w" :height="h" src="http://192.168.100.14:8050"  ></iframe>
                      
     </div>
 </template>

@@ -1,8 +1,5 @@
 import { usePlayerStore } from '../stores/player-store.js'
 
-
-//let songPlaying = false;
-//let index = 0;
 const timeoutIds = [];
 let player = null;
 let deviceId = null;
@@ -26,110 +23,123 @@ export const playerPlay = () => {
 }
 export const jumptoprevious=()=>{
   const PlayerStore = usePlayerStore();  
-  const index=PlayerStore.currentIndex;
-  console.log('INDEXX',index);
-  if(index!=0){
-    
+  const index=PlayerStore.currentIndex;  
+  if(index!=0){    
       PlayerStore.currentIndex=index-1;
+      PlayerStore.setTrack();
       PlayerStore.songPlaying=false;
       playerPause();
       playSong();
-      
-      
-    
-
   }
 }
 export const jumptonext= async (via)=>{
   const PlayerStore = usePlayerStore();
   const index = PlayerStore.currentIndex;
   const isLastSong = index == PlayerStore.totalTracks-1 ? true : false
+
+  //when the song ends
   if(via==='autoplay'){
     //repeat off
     if(PlayerStore.repeat===0){      
       if(!isLastSong){        
-        PlayerStore.currentIndex=index+1;       
+        PlayerStore.currentIndex=index+1;
+        //
+        PlayerStore.currentTrackId = PlayerStore.queue[PlayerStore.currentIndex].id
+        //
+        PlayerStore.setTrack();       
         playerPause();
         playSong();
       }
       else{
-        PlayerStore.songPlaying=false;
         playerPause();
         seekPlayerSong(0);
         const currentTime = document.getElementById('currentTime');        
         currentTime.innerHTML = '0:00'
-        
       }
-    }
-  //Repeat All
+    }else//Repeat All
     if(PlayerStore.repeat===1){
       if(isLastSong){
-        PlayerStore.currentIndex=0; 
-        PlayerStore.songPlaying=false;       
+        PlayerStore.currentIndex=0;
+        //
+        PlayerStore.currentTrackId = PlayerStore.queue[PlayerStore.currentIndex].id
+        //
+        PlayerStore.setTrack();       
         playerPause();
         playSong();
       }else{        
         PlayerStore.currentIndex=index+1;
-        PlayerStore.songPlaying=false;        
+        //
+        PlayerStore.currentTrackId = PlayerStore.queue[PlayerStore.currentIndex].id
+        //        
+        PlayerStore.setTrack();        
         playerPause();
         playSong();
       }
-    }
-  //Repeat One Song
-    if(PlayerStore.repeat===2){ 
-            
+    }else
+  //Repeat Current Song
+    if(PlayerStore.repeat===2){             
         playerPause();
         playSong();
     }
-  }
+  } else
   //clicking next button on player
   if(via==='web-player'){
     //repeat off
     if(PlayerStore.repeat===0){      
       if(!isLastSong){        
-        PlayerStore.currentIndex=index+1;        
+        PlayerStore.currentIndex=index+1;
+        //
+        PlayerStore.currentTrackId = PlayerStore.queue[PlayerStore.currentIndex].id
+        //
+        PlayerStore.setTrack();        
         playerPause();
         playSong();
       }
-    }
+    } else 
   //Repeat All
     if(PlayerStore.repeat===1){
       if(isLastSong){
         PlayerStore.currentIndex=0;
-        PlayerStore.songPlaying=false;        
+        //
+        PlayerStore.currentTrackId = PlayerStore.queue[PlayerStore.currentIndex].id
+        //
+        PlayerStore.setTrack();        
         playerPause();
         playSong();
       }else{        
         PlayerStore.currentIndex=index+1;
-        PlayerStore.songPlaying=false;
+        //
+        PlayerStore.currentTrackId = PlayerStore.queue[PlayerStore.currentIndex].id
+        //
+        PlayerStore.setTrack();
         playerPause();
         playSong();
       }
-    }
+    } else
   //Repeat One Song
     if(PlayerStore.repeat===2){
       if(isLastSong){
-        PlayerStore.currentIndex=0;  
-        PlayerStore.songPlaying=false;      
+        PlayerStore.currentIndex=0;
+        //
+        PlayerStore.currentTrackId = PlayerStore.queue[PlayerStore.currentIndex].id
+        //
+        PlayerStore.setTrack();       
         playerPause();
         playSong();
       }else{        
-        PlayerStore.currentIndex=index+1;        
+        PlayerStore.currentIndex=index+1; 
+        //
+        PlayerStore.currentTrackId = PlayerStore.queue[PlayerStore.currentIndex].id
+        // 
+        PlayerStore.setTrack();      
         playerPause();
         playSong();
       }
       PlayerStore.repeat=1
     }
   }
-
-
-    // if(index!=PlayerStore.totalTracks-1){
-    //   PlayerStore.currentIndex=index+1;
-    //   songPlaying=false;
-    //   playerPause();
-    //   playSong();
-    // }
 }
+
 export const forceTimeUpdation = value => {
   const PlayerStore = usePlayerStore();
   PlayerStore.songPlaying = value;
@@ -137,6 +147,7 @@ export const forceTimeUpdation = value => {
     updateTime();
   }
 }
+
 export const seekPlayerSong = async value => {
   const PlayerStore = usePlayerStore();
   const seekValue = (PlayerStore.currentTrack.duration * value) / 100;
@@ -144,14 +155,12 @@ export const seekPlayerSong = async value => {
     console.log('Changed position!');
   });
 }
+
 export const setVolume = async value => {
   await player.setVolume(value).then(() => {
     console.log('Changed volume!');
   });
 }
-
-
-
 
 // Clear all setTimeout functions
 function terminateUpdatetime() {
@@ -164,7 +173,6 @@ export const playSong = async () => {
   terminateUpdatetime();
   const PlayerStore = usePlayerStore();
   const currentTrack = PlayerStore.currentTrack;
-  console.log('id EN PLAYSONG',PlayerStore.currentIndex);
   const uri = `spotify:track:${currentTrack.id}`
   player.activateElement();
   if (player) {
@@ -216,7 +224,6 @@ export const playSong = async () => {
       playerInstance: player,
       spotify_uri: uri
     });
-
     //Listener for updating song progress
     player.addListener(
       'player_state_changed',
@@ -227,7 +234,6 @@ export const playSong = async () => {
         }
       }
     );
-
   } else {
     console.error('Player is not available.');
   }
@@ -289,9 +295,6 @@ const updateTime = async () => {
   }
 };
 
-
-
-
 window.addEventListener('beforeunload', event => {
   player.disconnect();  
 });
@@ -302,6 +305,7 @@ window.addEventListener('beforeunload', event => {
 // Function to run the Spotify installation code
 function runSpotifyInstallation() {
   console.log("Spotify");
+  const PlayerStore = usePlayerStore();
   // let loaded=false;
   const script = document.createElement('script');
   script.src = 'https://sdk.scdn.co/spotify-player.js';
@@ -311,11 +315,11 @@ function runSpotifyInstallation() {
       // Define the Spotify Connect device, getOAuthToken has an actual token
       // hardcoded for the sake of simplicity
       player = new Spotify.Player({
-        name: 'RYS Web Player yo!',
+        name: 'Rate Your Spotify!',
         getOAuthToken: callback => {
           callback(token);
         },
-        volume: 0.5
+        volume: PlayerStore.volume
       });
       player.addListener('initialization_error', ({ message }) => {
         console.error(message + " initialization_error");
