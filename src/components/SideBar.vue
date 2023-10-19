@@ -12,6 +12,9 @@
         </RouterLink>
         <RouterLink to="/dashboard">            
             <SideBarItem materialIcon="ChartBox" :sizeIcon="sizeIcon" label="Statistics" pageUrl="/dashboard" title="Check out some stats based on your library content!" />          
+        </RouterLink>  
+        <RouterLink to="/tableaudashboard">            
+            <SideBarItem materialIcon="ChartBox" :sizeIcon="sizeIcon" label="Tableu" pageUrl="/tableaudashboard" title="Check out some stats now in tablea" />          
         </RouterLink>   
     </div>
 </template>

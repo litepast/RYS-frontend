@@ -4,6 +4,7 @@ import SearchView from '../views/SearchView.vue'
 import LibraryView from '../views/LibraryView.vue'
 import AlbumView from '../views/AlbumView.vue'
 import DashboardView from '../views/DashboardView.vue'
+import TableauView from '../views/TableauView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 
 const router = createRouter({
@@ -39,6 +40,12 @@ const router = createRouter({
       name: 'dashboard',
       component: DashboardView,      
     },
+    {
+      path: '/tableaudashboard',
+      name: 'tableau',
+      component: TableauView,      
+    },
+    ,
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
