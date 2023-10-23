@@ -95,6 +95,9 @@
     import Paginate from 'vuejs-paginate-next';
     import { useRouter } from 'vue-router'
     import Spinner from '../components/SpinnerLoaderBlack.vue'
+    import { FLASK_API } from '../../config';
+  
+    
 
     const router = useRouter()
     const storeSearch = useSearchStore()   
@@ -226,7 +229,7 @@
 
     async function getAlbums() {
         loading.value = true
-        axios.get('http://192.168.100.14:5000/api/v1/search-album-catalog', { params: LibraryViewStore.query })
+        axios.get(`${FLASK_API}api/v1/search-album-catalog`, { params: LibraryViewStore.query })
         .then(async response => {  
             goodResponse.value = true
             albums.value = await response.data.albums

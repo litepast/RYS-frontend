@@ -12,17 +12,31 @@
             </div>
             <SearchBox/>       
         </div>
-        <div ref="topmenu" class="profile-container relative" @click="openMenu = !openMenu" :class="openMenu ? 'bg-zinc-800' : 'bg-black'">            
-                <img class="profile-img"  width="27" src="./img/profile.jpg">
-                <div class="profile-name"> {{userName}}</div>
-                <ChevronDown v-if="!openMenu" fillColor="#FFFFFF" :size="25" />
-                <ChevronUp v-else fillColor="#FFFFFF" :size="25" />                
-                <div v-if="openMenu" class="menu-container absolute">
-                    <ul class="text-white font-semibold text-[13px]">
-                         <li @click="goStats()" class="p-2.5 hover:bg-zinc-500">Statistics</li>                
-                    </ul>
-                </div>
+
+        <div class="flex">            
+            <div class="text-white flex items-center">
+                <Check v-if="PlayerStore.deviceId != null  && PlayerStore.deviceId != 'X'" :size="20" class="text-green-600"  
+                title="Player Connected to Spotify"/>
+                <Error v-if="PlayerStore.deviceId=='X'" :size="20" class="text-red-600"  
+                title="Error connecting Player to Spotify"/>
+                
+            </div>        
+            <div ref="topmenu" class="profile-container relative" @click="openMenu = !openMenu" :class="openMenu ? 'bg-zinc-800' : 'bg-black'">            
+                    <img class="profile-img"  width="27" src="./img/profile.jpg">
+                    <div class="profile-name"> {{userName}}</div>
+                    <ChevronDown v-if="!openMenu" fillColor="#FFFFFF" :size="25" />
+                    <ChevronUp v-else fillColor="#FFFFFF" :size="25" />                
+                    <div v-if="openMenu" class="menu-container absolute">
+                        <ul class="text-white font-semibold text-[13px]">
+                            <li @click="goStats()" class="p-2.5 hover:bg-zinc-500">Statistics on Dash</li>                
+                        </ul>
+                        <ul class="text-white font-semibold text-[13px]">
+                            <li @click="goStatsTab()" class="p-2.5 hover:bg-zinc-500">Statistics on Tableau</li>                
+                        </ul>
+                    </div>
+            </div>
         </div>
+
     </div>
 </template>
 
@@ -31,11 +45,16 @@
     import ChevronDown from 'vue-material-design-icons/ChevronDown.vue';
     import ChevronRight from 'vue-material-design-icons/ChevronRight.vue';
     import ChevronLeft from 'vue-material-design-icons/ChevronLeft.vue';
+    import Check from 'vue-material-design-icons/CheckBold.vue'   
+    import Error from 'vue-material-design-icons/CloseCircle.vue'
     import SearchBox from '../components/SearchBox.vue'
     import { ref, computed} from 'vue'
     import { useRouter, useRoute } from 'vue-router';
     import { useAppStore } from '../stores/app-store.js'
     import { onClickOutside } from '@vueuse/core'
+    import { USER_NAME } from '../../config';
+    import { usePlayerStore } from '../stores/player-store.js'
+    const PlayerStore = usePlayerStore();
     const topmenu = ref(null)
     onClickOutside(topmenu, () => (openMenu.value=false))    
     const appStore = useAppStore()
@@ -48,7 +67,10 @@
     const goBack = () => {canGoBack.value ? router.back() : null}
     const goFoward = () => {canGoFoward.value ? router.forward() : null }
     const goStats = () => {router.push('/dashboard')}
-    const userName = computed(() => appStore.userName)
+    const goStatsTab = () => {router.push('/tableaudashboard')}
+
+    const userName = USER_NAME
+    
     const classAllowed = 'cursor-pointer'
     const classNotAllowed = 'cursor-not-allowed opacity-40'
     const buttonFwdClass = computed(() => {

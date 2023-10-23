@@ -2,10 +2,7 @@
     <div class="sidebar">
         <SideBarLogo/>        
         <RouterLink to="/">
-            <SideBarItem materialIcon="Home" :sizeIcon="sizeIcon" label="Home"  pageUrl="/" title="Check out something to rate or listen!" />
-        </RouterLink>
-        <RouterLink to="/search">
-            <SideBarItem materialIcon="Search" :sizeIcon="sizeIcon" label="Search"  pageUrl="/search" title="Look on the Spotify catalog to add albums to your Library" />
+            <SideBarItem materialIcon="Search" :sizeIcon="sizeIcon" label="Search"  pageUrl="/" title="Look on the Spotify catalog to add albums to your Library" />
         </RouterLink>
         <RouterLink to="/library">
             <SideBarItem materialIcon="Library" :sizeIcon="sizeIcon" label="Library"  pageUrl="/library" title="Browse the albums you have added by different filters and the go rate them!" />
@@ -14,7 +11,7 @@
             <SideBarItem materialIcon="ChartBox" :sizeIcon="sizeIcon" label="Statistics" pageUrl="/dashboard" title="Check out some stats based on your library content!" />          
         </RouterLink>  
         <RouterLink to="/tableaudashboard">            
-            <SideBarItem materialIcon="ChartBox" :sizeIcon="sizeIcon" label="Tableu" pageUrl="/tableaudashboard" title="Check out some stats now in tablea" />          
+            <SideBarItem materialIcon="ViewDashboardVariant" :sizeIcon="sizeIcon" label="Tableu" pageUrl="/tableaudashboard" title="Check out some stats now in tableau!" />          
         </RouterLink>   
     </div>
 </template>

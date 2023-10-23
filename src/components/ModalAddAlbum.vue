@@ -39,6 +39,7 @@
     import { useRouter } from 'vue-router';
     import { onClickOutside } from '@vueuse/core'
     import Spinner from '../components/SpinnerLoaderWhite.vue'
+    import { FLASK_API } from '../../config';
 
     const router = useRouter()
     const loading = ref(true)
@@ -70,7 +71,7 @@
        
     function addAlbumLibrary(){
         loading.value = true;
-        let url = `http://192.168.100.14:5000/api/v1/insert-album-catalog/${id}`              
+        let url = `${FLASK_API}api/v1/insert-album-catalog/${id}`              
         axios.put(url)
             .then((response) => {      
                     goodResponse.value = true                        

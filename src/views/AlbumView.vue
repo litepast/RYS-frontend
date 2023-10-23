@@ -227,7 +227,8 @@
     import Modal from '../components/ModalEditAlbum.vue'
     import Pen from 'vue-material-design-icons/Pen.vue'
     import {usePlayerStore} from '../stores/player-store'
-    import { playSong, playerPause, playerPlay } from '../spotify/player';    
+    import { playSong, playerPause, playerPlay } from '../spotify/player';
+    import { FLASK_API } from '../../config';    
     const PlayerStore = usePlayerStore() 
     const trackHovered = ref(0)
     const isHovered = ref(false)
@@ -524,7 +525,7 @@
             ar: albumRatingsParams.value,
             tr: tracksRatingsParams.value
         }        
-        axios.put('http://192.168.100.14:5000/api/v1/update-album-ratings/', { data })
+        axios.put(`${FLASK_API}api/v1/update-album-ratings/`, { data })
         .then(response => {
             let result = response.data.msg 
             if (result){
@@ -551,7 +552,7 @@
    function loadAlbum() {
         loading.value = true
         const id_album = route.params.id
-        let url = `http://192.168.100.14:5000/api/v1/get-album-data/${id_album}`
+        let url = `${FLASK_API}api/v1/get-album-data/${id_album}`
         axios.get(url)
             .then((response) => {
                 album.value = response.data.album

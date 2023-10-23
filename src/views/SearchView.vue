@@ -50,6 +50,8 @@
     import Modal from '../components/ModalAddAlbum.vue'
     import Spinner from '../components/SpinnerLoaderBlack.vue'
     import SomethingWrong from '../components/SomethingWrong.vue'
+    import { FLASK_API } from '../../config';
+   
 
     const goodResponse = computed(() => storeSearchView.goodResponse)
     const showModal = ref(false)
@@ -72,7 +74,7 @@
         if (!storeSearch.input.length)
             {return}
         loading.value = true;              
-        let url = 'http://192.168.100.14:5000/api/v1/search-spotify?p1='+String(Number(typeSearch.value))+'&p2='+storeSearch.input        
+        let url = FLASK_API+'/api/v1/search-spotify?p1='+String(Number(typeSearch.value))+'&p2='+storeSearch.input        
         axios.get(url)
             .then((response) => {    
                 storeSearchView.goodResponse = true
@@ -92,7 +94,7 @@
 
     function newSearch(){        
         loading.value = true;              
-        let url = 'http://192.168.100.14:5000/api/v1/search-spotify?p1=0&p2=tag:new'     
+        let url = `${FLASK_API}api/v1/search-spotify?p1=0&p2=tag:new`     
         axios.get(url)
             .then((response) => {    
                 storeSearchView.goodResponse = true

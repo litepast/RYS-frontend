@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import SearchView from '../views/SearchView.vue'
 import LibraryView from '../views/LibraryView.vue'
 import AlbumView from '../views/AlbumView.vue'
@@ -13,17 +12,12 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/home',
-      redirect: '/'
+      name: 'search',
+      component: SearchView
     },
     {
       path: '/search',
-      name: 'search',
-      component: SearchView
+      redirect: '/'
     },
     {
       path: '/library',

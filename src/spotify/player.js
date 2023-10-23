@@ -1,4 +1,5 @@
 import { usePlayerStore } from '../stores/player-store.js'
+import { useRouter} from 'vue-router';
 
 const timeoutIds = [];
 let player = null;
@@ -331,6 +332,9 @@ function runSpotifyInstallation() {
         // if(retry===3){
         //   retry=0;
           console.error(message + " authentication");
+          const PlayerStore = usePlayerStore();
+          PlayerStore.deviceId = "X";        
+         
         // }else{
         //   retry++;
         //   runSpotifyInstallation();
@@ -347,12 +351,16 @@ function runSpotifyInstallation() {
         deviceId = device_id;
         const PlayerStore = usePlayerStore();
         PlayerStore.deviceId = device_id;
+     
       });
 
       player.connect();
     };
   };
   document.body.appendChild(script);
+ 
+
+
 }
 
 export default {

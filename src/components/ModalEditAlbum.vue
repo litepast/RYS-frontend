@@ -133,6 +133,8 @@
     import stylesJson from '../data/styles-w-value.json'
     import axios from "axios";
     import Spinner from '../components/SpinnerLoaderBlack.vue'
+    import { FLASK_API } from '../../config';
+   
 
     const showEditMessage = ref(true)
     const filteredOptions = ref([])  
@@ -259,7 +261,7 @@
         showEditMessage.value = false
         loading.value = true
       
-        axios.put('http://192.168.100.14:5000/api/v1/edit-album-catalog', { params })
+        axios.put(`${FLASK_API}api/v1/edit-album-catalog`, { params })
         .then( response => {  
             goodResponse.value = true
             console.log(response.data)

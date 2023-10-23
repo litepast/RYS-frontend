@@ -16,9 +16,10 @@
     import { useRoute } from 'vue-router';
     import { useSearchStore } from '../stores/search.js'
     const route = useRoute() 
+    const nameView = computed(() => route.name)
     const path = computed (() => route.fullPath ) 
-    const showSearch = computed (() => path.value == '/search' || path.value == '/library' ?  true : false ) 
-    const placeholder = computed (() => path.value === '/search' ? 'Search Album from spotify':'Search Album in your library' ) 
+    const showSearch = computed (() => path.value == '/library' || path.value == '/' ?  true : false ) 
+    const placeholder = computed (() => path.value === '/' ? 'Search Album from spotify':'Search Album in your library' ) 
     const isFocused = ref(false)
     const store = useSearchStore()
     const searchClose = () =>{ store.input='' }

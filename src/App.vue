@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-  import { computed,  watch, onBeforeMount } from 'vue';
+  import { computed,  watch, onBeforeMount, onMounted } from 'vue';
   import { RouterView, useRouter, useRoute } from 'vue-router';  
   import { useAppStore } from './stores/app-store.js'
   import TopBar from './components/TopBar.vue';
@@ -35,6 +35,11 @@
   const router = useRouter()
   const route = useRoute()
   const nameView = computed(() => route.name)
+
+ 
+
+  const path = computed (() => route.fullPath )    
+  console.log("path ",path.value)
 
   watch(nameView, () => {
     appStore.stateHistory.value = router.options.history.state
@@ -55,6 +60,10 @@
       await generateToken();
     }
   })
+
+  onMounted(()=>
+    router.push("/")
+  )
  
 </script>
 

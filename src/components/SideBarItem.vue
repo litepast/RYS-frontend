@@ -21,26 +21,27 @@
         'label',
         'pageUrl'
     ])
+
     const route = useRoute() 
     const path = computed (() => route.fullPath )    
     const IconOutlineName = materialIcon+'Outline'
     const IconName = materialIcon   
     const Icon = defineAsyncComponent(()=> import(/* @vite-ignore */ `./materialIcons/${IconName}.vue`))
     const IconOutline = defineAsyncComponent(()=> import(/* @vite-ignore */ `./materialIcons/${IconOutlineName}.vue`))
-    const isActive = computed (() => path.value == pageUrl)
-    const hover = ref(false) 
+    const hover = ref(false)    
+    
 
-    // const fillColor = () =>{
-    //     if (isActive.value){
-    //         return "#FFFFFF"
-    //     }
-    //     if(hover.value){
-    //         return "#FFFFFF"
-    //     }
-    //     else{
-    //         return "#9CA3AF"
-    //     }
-    // }
+    const isActive = computed(() => {
+        if(path.value == pageUrl ){
+            return true
+        }else{
+            return false
+        }
+    }
+    )
+   
+
+ 
 
     const bgColor = () =>{
         if (isActive.value){

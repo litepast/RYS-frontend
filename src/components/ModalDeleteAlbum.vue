@@ -44,6 +44,8 @@
     import {defineEmits, defineProps, ref} from "vue";
     import axios from "axios";
     import Spinner from '../components/SpinnerLoaderWhite.vue'
+    import { FLASK_API } from '../../config';
+   
     const goodResponse = ref(true)
 
     const {name, id}   = defineProps([
@@ -68,7 +70,7 @@
     const deleteAlbum = async () =>{
         showDeleteMessage.value = true
         loading.value = true
-        let url = `http://192.168.100.14:5000/api/v1/delete-album-data/${id}`
+        let url = `${FLASK_API}api/v1/delete-album-data/${id}`
         
 
         axios.delete(url)

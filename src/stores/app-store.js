@@ -2,7 +2,6 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useAppStore = defineStore('App', () => {
-  const userName = ref('Enrique')  
   const expandedBar = ref(false)
   const stateHistory = ref({})
   const scrollSearch = ref(0)
@@ -11,5 +10,5 @@ export const useAppStore = defineStore('App', () => {
     this.expandedBar=!this.expandedBar       
   }
 
-  return {scrollSearch , scrollLibrary, expandedBar, stateHistory, userName, changeSideBar}
+  return {scrollSearch , scrollLibrary, expandedBar, stateHistory, changeSideBar}
 })
