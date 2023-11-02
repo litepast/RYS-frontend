@@ -27,13 +27,19 @@ The idea behind this is heavily inspired by the site [rate your music](www.ratey
 This repository is built mainly using [Vue.Js Version 3](https://vuejs.org/)
 
 ## Screenshots
-
+#### Search showing new releases!
 ![First Search](/screenshots/first_search_home.JPG?raw=true)
+#### Search by Album Name
 ![Artist Search](/screenshots/search_album.JPG?raw=true)
+#### Search by Artist Name
 ![name Search](/screenshots/search_artists.JPG?raw=true)
+### Library (Albums added on the Search page)
 ![lib](/screenshots/library.JPG?raw=true)
+#### Album page (can only be accessed if album is on Library)
 ![album](/screenshots/album.JPG?raw=true)
+#### Dash Dashboard
 ![Dash Dashboard](/screenshots/dash_dashboard.JPG?raw=true)
+#### Tableau Dashboatd
 ![Tableau Dashboard](/screenshots/tableau.JPG?raw=true)
 
 
