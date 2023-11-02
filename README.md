@@ -1,4 +1,4 @@
-# RYS Backend
+# RYS Frontend
 
 This repository is the frontend logic for the complete application, [the RYS backend repository](https://github.com/litepast/RYS-backend) hosts the frontend logic, for which I used Python! That would need to be set up and be running first in order for this to fully work.
 
@@ -20,7 +20,7 @@ __You need an Spotify Premium Account for Music Playback!__
   * Get a suggested rating for the album if all the songs are rated, using multiple custom formulas created by me.
 * Get genres and styles (sub-genres) of album. 
 * Edit genres/styles or type of release such as album, single, compilation and EP. EP (Extended Play) is not used on the Spotify Data
-* Get insight about your ratings, such as your favorite artists, years, decades and genres given your ratings by a dash dadhboard launched on the backend.
+* Get insight about your ratings, such as your favorite artists, years, decades and genres given your ratings by a dash dadhboard launched on the backend, displayed by the frontend.
 
 The reason for needing to add albums to your library in order to do the things above, is because this is not meant to substitute the Spotify core experience, but to have a database where you can have a sort of digital library with your ratings and such.
 
@@ -43,22 +43,26 @@ The reason for needing to add albums to your library in order to do the things a
 
 ## A little insight on the suggested rating
 
-
-
-
+Place Holder
 
 ## How to use this Project
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+I used [VSCode](https://code.visualstudio.com/) as the IDE. 
 
 
-### Set the backend API's
+### Set the backend
+
+Follow the instructions for the [Backend Set Up](https://github.com/litepast/RYS-backend#how-to-use-this-project). The flask server, dash dashboard and the MySQL database.
 
 ### Set up config.js
 
-### Customize configuration
+After setting up the backend, change the name of the *config_dummy.js* file to *config.js* and set each of the variables as the followin
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+* REDIRECT_URI will be the ip where the Vue will be host, it should be "http://localhost:5173/" 
+* CLIENT_ID and CLIENT_SECRET will be the same as set in [backend config file](https://github.com/litepast/RYS-backend#set-up-the-configpy-file), as for Spotify we will be using the same application, the main the difference is that the API keys here will be used for access to the [Spotify Web Player](https://developer.spotify.com/documentation/web-playback-sdk), so we can listen to the albums added, meanwhile on the backend they are used for the [Web Api](https://developer.spotify.com/documentation/web-api), where we get the albums metadata displayed on the webapp and saved on the database.
+* FLASK_API is the ip where the Flask api is served, by running [this file in the backend](https://github.com/litepast/RYS-backend/blob/main/src/flask_api/app.py), when run locally it should be "http://localhost:5000/"
+* USER_NAME is the name shown in the top right corner, set it to your name, mine was set to "Enrique"
+* DASH_URL is the ip hosting the Dashboard, by running [this file in the backend](https://github.com/litepast/RYS-backend/blob/main/src/dash_dashboard/dash_index.py),  when run locally it should be "http://localhost:8050/"
 
 ## Project Setup
 
@@ -86,4 +90,6 @@ npm run build
 ```
 
 ## Credits
-player component materials
+player
+materials
+vie star
