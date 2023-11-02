@@ -13,7 +13,7 @@
                 <iframe :width="w" :height="h" src="http://192.168.100.14:8050"  ></iframe>
             </div> 
         </div> -->
-        <iframe :width="w" :height="h" src="http://192.168.100.14:8050"  ></iframe>
+        <iframe :width="w" :height="h" :src="DASH_URL"  ></iframe>
                      
     </div>
 </template>
@@ -23,6 +23,7 @@ import { ref, computed, onBeforeMount } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import SomethingWrong from '../components/SomethingWrong.vue'
 import Spinner from '../components/SpinnerLoaderBlack.vue'
+import { DASH_URL } from '../../config'
 const c = ref(null)
 const size = useElementSize(c, { width: 0, height: 0 })
 const w = computed(() => size.width.value)
@@ -33,27 +34,27 @@ const loading = ref(true)
 function isServerUp() {
     loading.value = true
     const url = 'http://192.168.100.14:8050';
-    fetch(url, { method: 'HEAD' }) // Use the HEAD method for a lightweight check.
+    fetch(url, { method: 'HEAD' }) 
     .then(response => {
       if (response.ok) {
-        iframeLoaded.value = true // Status code is in the success range (200-299).
+        iframeLoaded.value = true 
       } else {
-        iframeLoaded.value = false// Status code is not in the success range.
+        iframeLoaded.value = false
       }
     })
     .catch(error => {
       console.error('Error:', error);
-      iframeLoaded.value = false // Handle the case when there's an error fetching the URL.
+      iframeLoaded.value = false 
     })
     .finally(() => {
         loading.value = false
     })    
 }
 
-onBeforeMount(async () => {    
-    isServerUp()
+// onBeforeMount(async () => {    
+//     isServerUp()
   
-})
+// })
 
  
 
