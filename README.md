@@ -18,6 +18,8 @@ __You need an Spotify Premium Account for Music Playback!__
   * With shuffle and repeat funcionality! As of now, the play queue can only have one album's tracks. 
 * Rate the albums and also its songs on a scale from 0.5 to 5 stars
   * Get a suggested rating for the album if all the songs are rated, using multiple custom formulas created by me.
+  * You can choose which tracks are counted towards the suggested rating, by the Included checkbox, this might be useful if the album has a track which lasts seconds and might affect the overall average, and sometimes it not might be a typical song.
+  * Mark you truly favorite songs with the GOATED mark, this will be the track 5 stars plus a little extra ;) which it will boost the suggested rating
 * Get genres and styles (sub-genres) of album. 
 * Edit genres/styles or type of release such as album, single, compilation and EP. EP (Extended Play) is not used on the Spotify Data
 * Get insight about your ratings, such as your favorite artists, years, decades and genres given your ratings by a dash dadhboard launched on the backend, displayed by the frontend.
