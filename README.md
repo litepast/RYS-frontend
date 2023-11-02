@@ -24,7 +24,6 @@ __You need an Spotify Premium Account for Music Playback!__
 
 The reason for needing to add albums to your library in order to do the things above, is because this is not meant to substitute the Spotify core experience, but to have a database where you can have a sort of digital library with your ratings and such.
 
-
 ## Screenshots
 ##### Search showing new releases!
 ![First Search](/screenshots/first_search_home.JPG?raw=true)
@@ -49,12 +48,11 @@ Place Holder
 
 I used [VSCode](https://code.visualstudio.com/) as the IDE. 
 
-
-### Set the backend
+#### Set the backend servers
 
 Follow the instructions for the [Backend Set Up](https://github.com/litepast/RYS-backend#how-to-use-this-project). The flask server, dash dashboard and the MySQL database.
 
-### Set up config.js
+#### Set up config.js
 
 After setting up the backend, change the name of the *config_dummy.js* file to *config.js* and set each of the variables as the followin
 
@@ -64,14 +62,14 @@ After setting up the backend, change the name of the *config_dummy.js* file to *
 * USER_NAME is the name shown in the top right corner, set it to your name, mine was set to "Enrique"
 * DASH_URL is the ip hosting the Dashboard, by running [this file in the backend](https://github.com/litepast/RYS-backend/blob/main/src/dash_dashboard/dash_index.py),  when run locally it should be "http://localhost:8050/"
 
-## Project Setup
+#### Install npm libraries
 
 After clonning the repository, run this to install of the libraries needed.
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+#### Compile and Hot-Reload for Development
 
 Run the next to launch on your localhost
 ```sh
@@ -82,7 +80,7 @@ This to access it on your local network
 npm run dev -- host
 ```
 
-### Compile for Production
+#### Compile for Production
 
 Run the next command and mount the dist folder on a web server of your choice if you want!
 ```sh
