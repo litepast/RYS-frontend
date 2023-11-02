@@ -6,7 +6,7 @@ RYS (an acronym for Rate Your Spotify) is a personal project where you can add m
 
 The motivation for this project is my love for music and the fact I really really like ratings stuff in my head plus the idea it would be great to get some sort of data analysis behind your ratings. My music plaform of choice had been Spotify for years and them having their API for free was a great match. The rating systems is heavily inspired by the site [rate your music](www.rateyourmusic.com) (now you know my project's name is not original!), where you can give music album ratings, but you cannot listen to them. The site is great enough for it to link you to streaming plarforms where you can listen to music via links to Spotify, Apple music and so on, but I wanted a sort of mix between the two where you can rate and play the songs on the same web app! Spotify as of this moment (November 2023) doesn't have the feature to give a numerical rating to albums or tracks, as it focuses on giving you recommendations given your listening habits.
 
-This repository is built mainly using [Vue.Js Version 3](https://vuejs.org/) as the framework, in addition (Tailwind)[https://tailwindcss.com/] for the styling. The UI is obviously inspired by the current Spotify UI to give a sense of familiarity.
+This repository is built mainly using [Vue.Js Version 3](https://vuejs.org/) as the framework, in addition (Tailwind)[https://tailwindcss.com/] for the styling. The UI is obviously inspired by the current Spotify UI to give a sense of familiarity. I'd like to add as of right now this project works with only one user/spotify application!
 
 ## Features
 __You need an Spotify Premium Account for Music Playback!__
@@ -42,15 +42,13 @@ The reason for needing to add albums to your library in order to do the things a
 
 ## A little insight on the suggested rating
 
-Place Holder
+Place Holder!
 
 ## How to use this Project
 
-I used [VSCode](https://code.visualstudio.com/) as the IDE. 
+#### Set the backend (database, RESTful Api and Dash Dashboard)
 
-#### Set the backend servers
-
-Follow the instructions for the [Backend Set Up](https://github.com/litepast/RYS-backend#how-to-use-this-project). The flask server, dash dashboard and the MySQL database.
+Follow the instructions for the [Backend Set Up](https://github.com/litepast/RYS-backend#how-to-use-this-project). The flask server with the RESTful API, dash dashboard and the MySQL database.
 
 #### Set up config.js
 
@@ -87,7 +85,5 @@ Run the next command and mount the dist folder on a web server of your choice if
 npm run build
 ```
 
-## Credits
-player
-materials
-vie star
+## Thanks
+https://github.com/Lakshya0257/LUNA-Spotify-  by https://github.com/Lakshya0257/ for making public how to easily connect and control the Spotify Web Player with Vue.JS
