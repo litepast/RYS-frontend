@@ -52,9 +52,36 @@ The reason for needing to add albums to your library in order to do the things a
 ##### Tableau Dashboard
 ![Tableau Dashboard](/screenshots/tableau.JPG?raw=true)
 
-## A little insight on the suggested rating
+## Insight on the suggested rating calculation
 
-Place Holder!
+As mentioned on the features, on the album page, the app will suggest the user a rating to give the album if all tracks are rated. I came to the conclusion that suggesting a simple average rating for this was not good enough, so I came up with some formulas in order to give, in what my opinion is a better solution, after the all, it is just a suggested rating rating and the user has the rating that matters.
+
+The calculations for the suggested ratings are [on the album vue file](https://github.com/litepast/RYS-frontend/blob/main/src/views/AlbumView.vue).
+
+I use the following formulas (all ratings with decimals of precision):
+
+### Weighted Average Rating
+
+Kind of an average calculation, but tracks marked as GOATED have an internal rating of 5.5 instead of the maximun of 5.0, so an album with one or several GOATED tracks will get a boost to this rating, without GOATED tracks it behaaves as a simple average calculation.
+
+### Greatness Rating
+
+The porcentage of tracks with rating of 4.5 stars or above, from the scale or 0 to 5.0. So let's say a 10-track album has 5 tracks rated with 4.5 stars or above (5 stars/GOATED), the porcentage of ratings with 4.5 or above is 50%, which in a scale from 0 to 5.0 would result in a 2.50 greatness ratings. This was done to rewards albums where most of all tracks are considered, let's say, great, by the user.
+
+### Consistency Rating
+
+The idea behind this to not punish albums with multiple discs or with far more tacks than the average album. One of my favorite album is [69 Love Songs by The Magnetic Fields](https://open.spotify.com/album/2GuROKcqyHdpIDcgxml1C7), which has in fact, 69 songs, an album which I consider greatly consitent (few if any tracks are skipped in my listens) but will not hace as many 4.5 stars or above tracks just for the sheer number of tracks, but I think most of the tracks are 4.0 stars or above. 
+
+The calculation of this rating is subtracting 0.125 to 5 for every rated track below 4.0, a penalty if you want. So let's say an album with 20 tracks, where 10 are rated 3.5 or below will have
+**5 stars - ( 10 tracks rated * 0.125 as penalty) = 3.75 out of 5 consistency rating**, which might seem a little high given only 50% or the tracks are, but the idea of this rating is not to punish but reward albums which dare to have a great quantity and quality of songs. An album of 10 tracks with only 4 trackes rated 3.5 or below will have a consistency rating of 4.5 again not much of a pentalty.
+
+### Final Suggest rating
+
+Once an album has all its tracks rated there will be 2 another foumulas:
+
+* Suggested rating A: 0.85 * Weighted Average Rating + 0.15 * Greatness Rating
+* Suggest rating B: 0.85 * Weight Rating + 0.15 * Consistency Rating 
+
 
 ## How to use this Project
 
