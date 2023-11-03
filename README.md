@@ -80,8 +80,18 @@ The calculation of this rating is subtracting 0.125 to 5 for every rated track b
 Once an album has all its tracks rated there will be 2 another foumulas:
 
 * Suggested rating A: 0.85 * Weighted Average Rating + 0.15 * Greatness Rating
-* Suggest rating B: 0.85 * Weight Rating + 0.15 * Consistency Rating 
+* Suggest rating B: 0.85 * Weight Rating + 0.15 * Consistency Rating
 
+And the final suggested rating with be the average of the two above. Keeping it with the example of [69 Love Songs by The Magnetic Fields](https://open.spotify.com/album/2GuROKcqyHdpIDcgxml1C7), I rated aññ the 69 songs according to my liking and these are its ratings:
+
+* Weighted Average: 4.43 (without GOATED tracks it would be 4.41)
+* Greatness = 3.41 (Keeping in mind it has 69 songs, this means I rated 47 of them 4.5 or above, which I think is great)
+* Consistency = 3.75 (Greater than the Greatness Rating, which is the idea on album with a lot of tracks liked by the user)
+* Suggested Rating A =  0.85 * Weighted + 0.15 * Greatness = 4.27
+* Suggested Rating B =  0.85 * Weighted + 0.15 * Consistency = 4.33
+* Final Rating = (4.27 + 4.33) / 2 = 4.30 which would be rounded up to 4.5 stars.
+
+The simple average would have got there as well, mainly because this album is rated high in most of the tracks. And in the end, this is only a suggested rating, I gave the album a final rating of 5 stars anyways because I like it as much ;)
 
 ## How to use this Project
 
