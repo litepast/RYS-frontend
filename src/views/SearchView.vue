@@ -4,12 +4,15 @@
             <button class="h-[36px] w-[130px] bg-green-400 text-sm text-black active:bg-green-600" @click="searchAlbumSpotify">
                 Update Search
             </button>
+            <button class="h-[36px] w-[130px] bg-green-400 text-sm text-black active:bg-green-600"  @click="newSearch()">
+                New Releases
+            </button>
             <button class="h-[36px] w-[110px]" @click="storeSearchView.typeSearch=true" :class="!typeSearch ? 'bg-slate-600 text-sm text-white  hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
             Artist Name</button>
             <button class="h-[36px] w-[115px]" @click="storeSearchView.typeSearch=false" :class="typeSearch ? 'bg-slate-600 text-sm text-white  hover:bg-slate-500' : 'bg-slate-50 text-sm text-black' ">
             Album Name</button> 
             <div v-if="welcomeMsg && goodResponse" class="text-white">
-                Welcome Back! Here you have the newest releases from Spotify
+               Here you have the newest releases from Spotify
             </div>
             <div v-else>
                 <div v-if="result && goodResponse">        
@@ -70,6 +73,9 @@
         searchAlbumSpotify()
     })
     
+
+
+
     function searchAlbumSpotify(){
         if (!storeSearch.input.length)
             {return}
@@ -106,6 +112,7 @@
                 console.error(error);
             })
             .finally(() => {
+                storeSearchView.welcomeMsg = true
                 loading.value = false                  
             })
     }
