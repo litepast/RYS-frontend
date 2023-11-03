@@ -6,7 +6,7 @@ RYS (an acronym for Rate Your Spotify) is a personal project where you can add m
 
 The motivation for this project is my love for music and the fact I really really like ratings stuff in my head plus the idea it would be great to get some sort of data analysis behind your ratings. My music plaform of choice had been Spotify for years and them having their API for free was a great match. The rating system is heavily inspired by the site [rate your music](www.rateyourmusic.com) (now you know my project's name is not original!), where you can give music album ratings, but you cannot listen to them. The site is great enough for it to link you to streaming platforms where you can listen to music via links to Spotify, Apple music and so on, but I wanted a sort of mix between the two where you can rate and play the songs on the same web app! Spotify as of this moment (November 2023) doesn't have the feature to give a numerical rating to albums or tracks, as it focuses on giving you recommendations given your listening habits.
 
-This repository is built mainly using [Vue.Js Version 3](https://vuejs.org/) as the framework, in addition (Tailwind)[https://tailwindcss.com/] for the styling. The UI is obviously inspired by the current Spotify UI to give a sense of familiarity. I'd like to add that as of right now, this project works with only one user/spotify application!
+This repository is built mainly using [Vue.Js Version 3](https://vuejs.org/) as the framework, in addition [Tailwind](https://tailwindcss.com/) for the styling. The UI is obviously inspired by the current Spotify UI to give a sense of familiarity. I'd like to add that as of right now, this project works with only one user/spotify application!
 
 
 ## Thanks
