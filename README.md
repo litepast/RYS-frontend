@@ -11,6 +11,8 @@ This repository is built mainly using [Vue.Js Version 3](https://vuejs.org/) as 
 
 I'd like to add that as of right now, this project works with only one user/spotify application.
 
+## Youtube Video of the App
+[![YouTube vid](/screenshots/yt.JPG)](https://www.youtube.com/watch?v=l5U5Uq07XiM)
 
 ## Thanks
 https://github.com/Lakshya0257/LUNA-Spotify-  by https://github.com/Lakshya0257/ for making public how to easily connect and control the Spotify Web Player with Vue.JS
