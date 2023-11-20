@@ -34,3 +34,4 @@ dev-dist/registerSW.js
 dev-dist/sw.js
 dev-dist/workbox-5357ef54.js
 config.js
+practice.js
